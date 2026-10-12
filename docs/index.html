@@ -1,1121 +1,953 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="auto">
+<html lang="en-US" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#2563eb">
-<title>ZKM Next – Zuan Kernel Manager</title>
+<title>Zuan Kernel Manager Next (ZKM Next) — Kernel &amp; System Utility for Rooted Android</title>
+<meta name="description" content="ZKM Next: an open-source (GPL-3.0) app for CPU/GPU governor control, ZRAM, UFS devfreq, kernel flashing, root terminal, SetEdit, and advanced Android system customization. Kotlin + Jetpack Compose, Material 3.">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Zuan Kernel Manager Next (ZKM Next)">
+<meta property="og:description" content="Modern, open-source Android kernel management and advanced system customization. Supports Magisk, KernelSU, and APatch.">
+<meta property="og:image" content="assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
 <style>
 /* ============ TOKENS ============ */
 :root{
-  --bg:#ffffff;
-  --bg-1:#f6f8fc;
-  --bg-2:#eef2f9;
-  --surface:rgba(255,255,255,.72);
-  --surface-solid:#ffffff;
-  --tx:#0b1220;
-  --tx-2:#334155;
-  --mu:#64748b;
-  --mu-2:#94a3b8;
-  --ln:rgba(15,23,42,.08);
-  --ln-2:rgba(15,23,42,.12);
-  --ac:#2563eb;
-  --ac-2:#3b82f6;
-  --ac-3:#60a5fa;
-  --ac-soft:rgba(37,99,235,.08);
-  --hero-1:#dbeafe;
-  --hero-2:#eff6ff;
-  --glow:rgba(37,99,235,.35);
-  --dk:#0b1220;
-  --ok:#10b981;
-  --warn:#f59e0b;
-  --danger:#ef4444;
-  --radius-sm:12px;
-  --radius:20px;
-  --radius-lg:28px;
-  --radius-xl:36px;
-  --shadow-sm:0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
-  --shadow:0 4px 24px -8px rgba(15,23,42,.08), 0 2px 8px -2px rgba(15,23,42,.06);
-  --shadow-lg:0 24px 48px -12px rgba(15,23,42,.15), 0 8px 24px -8px rgba(37,99,235,.15);
-  --shadow-glow:0 24px 64px -16px var(--glow);
-  color-scheme:light;
+  --blue:#2563EB; --green:#10B981; --blue-soft:#60a5fa; --green-soft:#34d399;
+  --bg:#000; --bg-2:#05080f; --surface:rgba(255,255,255,.04); --surface-2:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.09); --border-2:rgba(255,255,255,.16);
+  --text:#eef2f9; --muted:#9aa6bb; --faint:#66738a;
+  --code-bg:rgba(0,0,0,.55); --nav-bg:rgba(6,9,15,.62); --menu-bg:rgba(8,12,20,.97);
+  --shadow:0 30px 80px -30px rgba(0,0,0,.9);
+  --glow-a:rgba(37,99,235,.22); --glow-b:rgba(16,185,129,.16);
+  --grad:linear-gradient(135deg,var(--blue),var(--green));
+  --radius:22px; --ease:cubic-bezier(.2,.8,.2,1);
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
-:root[data-theme="dark"],
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"])}
-:root[data-theme="dark"]{
-  --bg:#050a15;
-  --bg-1:#0a1220;
-  --bg-2:#0f172a;
-  --surface:rgba(15,23,42,.55);
-  --surface-solid:#0f172a;
-  --tx:#f1f5f9;
-  --tx-2:#cbd5e1;
-  --mu:#94a3b8;
-  --mu-2:#64748b;
-  --ln:rgba(148,163,184,.12);
-  --ln-2:rgba(148,163,184,.2);
-  --ac:#3b82f6;
-  --ac-2:#60a5fa;
-  --ac-3:#93c5fd;
-  --ac-soft:rgba(59,130,246,.12);
-  --hero-1:#0f1e3d;
-  --hero-2:#050a15;
-  --glow:rgba(59,130,246,.5);
-  color-scheme:dark;
-}
-@media(prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#050a15;--bg-1:#0a1220;--bg-2:#0f172a;
-    --surface:rgba(15,23,42,.55);--surface-solid:#0f172a;
-    --tx:#f1f5f9;--tx-2:#cbd5e1;--mu:#94a3b8;--mu-2:#64748b;
-    --ln:rgba(148,163,184,.12);--ln-2:rgba(148,163,184,.2);
-    --ac:#3b82f6;--ac-2:#60a5fa;--ac-3:#93c5fd;
-    --ac-soft:rgba(59,130,246,.12);
-    --hero-1:#0f1e3d;--hero-2:#050a15;
-    --glow:rgba(59,130,246,.5);
-    color-scheme:dark;
-  }
+:root[data-theme="light"]{
+  --bg:#f5f7fb; --bg-2:#eef2f8; --surface:rgba(255,255,255,.72); --surface-2:rgba(255,255,255,.95);
+  --border:rgba(15,23,42,.09); --border-2:rgba(15,23,42,.18);
+  --text:#0b1220; --muted:#475569; --faint:#64748b;
+  --code-bg:rgba(15,23,42,.06); --nav-bg:rgba(255,255,255,.7); --menu-bg:rgba(255,255,255,.98);
+  --shadow:0 30px 70px -35px rgba(15,23,42,.35);
+  --glow-a:rgba(37,99,235,.14); --glow-b:rgba(16,185,129,.12);
+  --blue-soft:#2563EB; --green-soft:#059669;
 }
 
-/* ============ RESET ============ */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{
-  scroll-behavior:smooth;
-  scroll-padding-top:96px;
-  -webkit-text-size-adjust:100%;
-  text-rendering:optimizeLegibility;
-  -webkit-font-smoothing:antialiased;
-}
-body{
-  background:var(--bg);
-  color:var(--tx);
-  font:16px/1.6 'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
-  overflow-x:hidden;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
-  transition:background .3s ease,color .3s ease;
-}
+/* ============ BASE ============ */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px;-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .35s,color .35s}
+img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
-img,svg{max-width:100%;display:block}
-button{font-family:inherit}
-:focus-visible{outline:3px solid var(--ac-2);outline-offset:3px;border-radius:6px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+code,pre,kbd{font-family:var(--mono)}
+:focus-visible{outline:2px solid var(--blue-soft);outline-offset:3px;border-radius:8px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--blue);color:#fff;padding:8px 14px;border-radius:10px;z-index:200}
+.skip:focus{left:12px}
+.container{width:min(1180px,100% - 40px);margin-inline:auto}
+section{position:relative;padding:96px 0}
+.bg-glow{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+   radial-gradient(900px 520px at 85% -5%,var(--glow-a),transparent 60%),
+   radial-gradient(800px 560px at 5% 35%,var(--glow-b),transparent 60%),
+   radial-gradient(700px 500px at 90% 85%,var(--glow-a),transparent 60%)}
+.bg-grid{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(ellipse at 50% 0,#000 0,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 50% 0,#000 0,transparent 70%)}
 
-/* ============ UTILS ============ */
-.w{max-width:1180px;margin:0 auto;padding:0 24px;width:100%}
-.gradient-text{
-  background:linear-gradient(135deg,var(--ac) 0%,var(--ac-3) 100%);
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:transparent;
-}
-.glass{
-  background:var(--surface);
-  backdrop-filter:blur(20px) saturate(160%);
-  -webkit-backdrop-filter:blur(20px) saturate(160%);
-  border:1px solid var(--ln);
-}
-.eyebrow{
-  display:inline-flex;align-items:center;gap:8px;
-  font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--ac);background:var(--ac-soft);
-  border:1px solid rgba(37,99,235,.15);
-  padding:6px 14px;border-radius:999px;
-}
-.eyebrow::before{
-  content:"";width:6px;height:6px;border-radius:50%;
-  background:var(--ac);box-shadow:0 0 0 3px rgba(37,99,235,.2);
-  animation:pulse 2s ease-in-out infinite;
-}
-@keyframes pulse{
-  0%,100%{box-shadow:0 0 0 3px rgba(37,99,235,.2)}
-  50%{box-shadow:0 0 0 6px rgba(37,99,235,.05)}
-}
+.glass{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%)}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 
-/* ============ ANIMATIONS ============ */
-@keyframes float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
-}
-@keyframes floatSlow{
-  0%,100%{transform:translateY(0) rotate(0deg)}
-  50%{transform:translateY(-8px) rotate(1deg)}
-}
-@keyframes shimmer{
-  0%{background-position:-200% 0}
-  100%{background-position:200% 0}
-}
-@keyframes growBar{
-  from{width:0}
-}
-.reveal{
-  opacity:0;transform:translateY(28px);
-  transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);
-}
-.reveal.in{opacity:1;transform:translateY(0)}
-.reveal[data-delay="1"]{transition-delay:.08s}
-.reveal[data-delay="2"]{transition-delay:.16s}
-.reveal[data-delay="3"]{transition-delay:.24s}
-.reveal[data-delay="4"]{transition-delay:.32s}
-.reveal[data-delay="5"]{transition-delay:.4s}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--green-soft)}
+.eyebrow::before{content:"";width:22px;height:2px;border-radius:2px;background:var(--grad)}
+.sec-head{max-width:720px;margin-bottom:48px}
+.sec-head h2{font-size:clamp(1.8rem,3.4vw,2.7rem);line-height:1.15;margin:14px 0 14px;letter-spacing:-.025em;font-weight:800}
+.sec-head p{color:var(--muted);font-size:1.05rem;margin:0}
 
-/* ============ HEADER ============ */
-header{
-  position:sticky;top:0;z-index:50;
-  padding-top:env(safe-area-inset-top,0px);
-}
-.appbar{
-  position:relative;
-  background:color-mix(in srgb,var(--bg) 70%,transparent);
-  backdrop-filter:blur(16px) saturate(180%);
-  -webkit-backdrop-filter:blur(16px) saturate(180%);
-  border-bottom:1px solid var(--ln);
-  transition:background .3s ease,border-color .3s ease;
-}
-.appbar::before{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 90%,transparent) 0%,transparent 100%);
-  pointer-events:none;
-}
-nav{
-  display:flex;align-items:center;justify-content:space-between;
-  height:68px;position:relative;z-index:1;
-}
-.logo{
-  display:flex;align-items:center;gap:10px;
-  font-weight:800;font-size:19px;letter-spacing:-.02em;
-}
-.logo-mark{
-  width:34px;height:34px;border-radius:10px;
-  background:linear-gradient(135deg,var(--ac) 0%,var(--ac-3) 100%);
-  display:grid;place-items:center;color:#fff;font-size:15px;font-weight:800;
-  box-shadow:0 6px 16px -4px var(--glow);
-  position:relative;overflow:hidden;
-}
-.logo-mark::after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.4) 50%,transparent 60%);
-  background-size:200% 100%;
-  animation:shimmer 3s linear infinite;
-}
-.nav-links{display:flex;gap:6px;list-style:none;font-size:14px;font-weight:500}
-.nav-links a{
-  padding:8px 14px;border-radius:999px;color:var(--tx-2);
-  transition:all .2s ease;position:relative;
-}
-.nav-links a:hover{background:var(--ac-soft);color:var(--ac)}
-@media(max-width:840px){.nav-links{display:none}}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:12px 22px;border-radius:999px;
-  font-weight:600;font-size:14px;letter-spacing:-.01em;
-  background:linear-gradient(135deg,var(--ac) 0%,var(--ac-2) 100%);
-  color:#fff;border:1px solid transparent;
-  box-shadow:0 8px 20px -8px var(--glow);
-  transition:all .25s cubic-bezier(.22,1,.36,1);
-  cursor:pointer;white-space:nowrap;
-}
-.btn:hover{transform:translateY(-2px);box-shadow:0 14px 28px -8px var(--glow)}
-.btn:active{transform:translateY(0)}
-.btn.ghost{
-  background:transparent;color:var(--tx);
-  border-color:var(--ln-2);box-shadow:none;
-}
-.btn.ghost:hover{background:var(--ac-soft);border-color:var(--ac);color:var(--ac)}
-.btn.sm{padding:10px 18px;font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 24px;border-radius:16px;
+  font-weight:600;font-size:.97rem;transition:transform .25s var(--ease),box-shadow .25s,background .25s,border-color .25s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 12px 34px -10px rgba(37,99,235,.65)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 40px -10px rgba(16,185,129,.55)}
+.btn-ghost{background:var(--surface);border:1px solid var(--border-2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.btn-ghost:hover{transform:translateY(-2px);background:var(--surface-2);border-color:var(--blue-soft)}
+.btn-sm{padding:10px 18px;border-radius:14px;font-size:.9rem}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* ============ NAVBAR ============ */
+.nav{position:fixed;top:12px;left:0;right:0;z-index:100}
+.nav-inner{width:min(1180px,100% - 24px);margin-inline:auto;display:flex;align-items:center;gap:18px;
+  padding:10px 12px 10px 16px;background:var(--nav-bg);border:1px solid var(--border);border-radius:20px;
+  backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:0 10px 40px -20px rgba(0,0,0,.6);transition:border-color .3s}
+.nav.scrolled .nav-inner{border-color:var(--border-2)}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:-.01em}
+.brand-logo{width:36px;height:36px;border-radius:11px;background:#080c14;border:1px solid var(--border);display:grid;place-items:center;overflow:hidden;flex:none}
+.brand-logo img{width:30px;height:30px;object-fit:contain}
+.brand-name{font-size:1rem;white-space:nowrap}
+.badge-ver{font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:99px;color:var(--green-soft);
+  background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);white-space:nowrap}
+.nav-links{display:flex;gap:2px;margin-left:auto}
+.nav-links a{padding:8px 13px;border-radius:12px;font-size:.9rem;font-weight:500;color:var(--muted);transition:color .2s,background .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--surface-2)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.theme-toggle{width:58px;height:32px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border-2);position:relative;flex:none;transition:background .3s}
+.theme-toggle .knob{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--grad);display:grid;place-items:center;
+  color:#fff;font-size:.8rem;transition:transform .35s var(--ease)}
+:root[data-theme="light"] .theme-toggle .knob{transform:translateX(26px)}
+.nav-links .nav-dl{display:none}
+.menu-btn{display:none;width:42px;height:42px;border-radius:13px;background:var(--surface-2);border:1px solid var(--border);font-size:1.25rem;place-items:center}
 
 /* ============ HERO ============ */
-.hero{
-  position:relative;overflow:hidden;
-  padding:80px 0 100px;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% -10%,var(--hero-1) 0%,transparent 60%),
-    radial-gradient(ellipse 60% 40% at 100% 0%,rgba(96,165,250,.15) 0%,transparent 50%),
-    linear-gradient(180deg,var(--hero-2) 0%,var(--bg) 100%);
-}
-.hero::before{
-  content:"";position:absolute;inset:0;
-  background-image:
-    linear-gradient(var(--ln) 1px,transparent 1px),
-    linear-gradient(90deg,var(--ln) 1px,transparent 1px);
-  background-size:64px 64px;
-  mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,#000 30%,transparent 75%);
-  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,#000 30%,transparent 75%);
-  opacity:.5;pointer-events:none;
-}
-.hero-grid{
-  display:grid;grid-template-columns:1.05fr .95fr;gap:60px;
-  align-items:center;position:relative;z-index:1;
-}
-@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:48px}}
-h1{
-  font-size:clamp(36px,5.4vw,60px);line-height:1.04;
-  letter-spacing:-.035em;font-weight:800;
-  margin:20px 0 20px;
-}
-.lead{
-  color:var(--mu);font-size:clamp(15px,1.5vw,17px);
-  max-width:520px;margin-bottom:32px;line-height:1.65;
-}
-.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:32px}
-.trust-row{
-  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
-  padding-top:24px;border-top:1px solid var(--ln);
-}
-.avatars{display:flex}
-.avatars span{
-  width:32px;height:32px;border-radius:50%;
-  border:2px solid var(--bg);margin-left:-10px;
-  background:linear-gradient(135deg,var(--ac),var(--ac-3));
-  display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700;
-}
-.avatars span:first-child{margin-left:0}
-.trust-row p{font-size:13px;color:var(--mu)}
-.trust-row b{color:var(--tx);font-weight:700}
+.hero{padding:150px 0 70px}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:9px;padding:7px 14px 7px 8px;border-radius:99px;font-size:.82rem;color:var(--muted)}
+.pill b{background:var(--grad);color:#fff;border-radius:99px;padding:2px 10px;font-size:.72rem;letter-spacing:.04em}
+.hero h1{font-size:clamp(2.3rem,5.4vw,4.3rem);line-height:1.04;letter-spacing:-.035em;margin:22px 0 20px;font-weight:800}
+.hero p.lead{font-size:clamp(1.02rem,1.5vw,1.2rem);color:var(--muted);max-width:590px;margin:0 0 30px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:34px}
+.badges{display:flex;flex-wrap:wrap;gap:9px}
+.badge{display:inline-flex;align-items:center;gap:8px;font-size:.8rem;font-weight:500;padding:7px 13px;border-radius:12px;
+  background:var(--surface);border:1px solid var(--border);transition:transform .25s var(--ease),border-color .25s}
+.badge:hover{transform:translateY(-2px);border-color:var(--border-2)}
+.badge i{font-size:1rem}
+.badge .c-green{color:var(--green-soft)}.badge .c-blue{color:var(--blue-soft)}.badge .c-violet{color:#a78bfa}.badge .c-red{color:#f87171}
 
-/* ============ PHONE MOCKUP ============ */
-.phone-wrap{position:relative;display:flex;justify-content:center}
-.phone-glow{
-  position:absolute;width:420px;height:420px;
-  background:radial-gradient(circle,var(--glow) 0%,transparent 65%);
-  filter:blur(60px);opacity:.5;
-  top:50%;left:50%;transform:translate(-50%,-50%);
-  pointer-events:none;
-}
-.phone{
-  position:relative;
-  width:280px;aspect-ratio:9/19;
-  border-radius:44px;
-  background:linear-gradient(160deg,#1e293b 0%,#0f172a 100%);
-  padding:12px;
-  box-shadow:
-    0 40px 80px -30px rgba(15,23,42,.6),
-    0 0 0 2px rgba(148,163,184,.12) inset,
-    0 0 60px -10px var(--glow);
-  animation:floatSlow 6s ease-in-out infinite;
-}
-.phone::before{
-  content:"";position:absolute;
-  top:22px;left:50%;transform:translateX(-50%);
-  width:90px;height:24px;background:#050810;border-radius:999px;
-  z-index:2;
-}
-.phone-screen{
-  width:100%;height:100%;
-  background:
-    radial-gradient(ellipse 90% 40% at 50% 0%,rgba(37,99,235,.18) 0%,transparent 70%),
-    linear-gradient(180deg,#0b1220 0%,#050810 100%);
-  border-radius:34px;overflow:hidden;
-  padding:56px 16px 20px;
-  display:flex;flex-direction:column;gap:10px;
-  color:#cbd5e1;font-size:11px;
-  position:relative;
-}
-.phone-screen::after{
-  content:"";position:absolute;inset:0;
-  background:radial-gradient(circle at 30% 20%,rgba(96,165,250,.08),transparent 50%);
-  pointer-events:none;
-}
-.phone h4{
-  color:#fff;font-size:15px;font-weight:700;
-  text-align:center;margin-bottom:4px;letter-spacing:-.01em;
-}
-.phone-sub{text-align:center;color:#64748b;font-size:10px;margin-bottom:6px}
-.ws{
-  background:rgba(30,41,59,.7);
-  backdrop-filter:blur(10px);
-  border:1px solid rgba(148,163,184,.08);
-  border-radius:14px;padding:10px 12px;
-  position:relative;overflow:hidden;
-  transition:transform .2s ease;
-}
-.ws:hover{transform:translateX(3px)}
-.ws b{color:#e2e8f0;font-size:11px;font-weight:600}
-.ws span{float:right;color:var(--ac-3);font-weight:600;font-variant-numeric:tabular-nums}
-.bar{height:5px;border-radius:9px;background:rgba(51,65,85,.6);margin-top:8px;overflow:hidden}
-.bar i{
-  display:block;height:100%;border-radius:9px;
-  background:linear-gradient(90deg,#3b82f6,#93c5fd);
-  box-shadow:0 0 8px rgba(59,130,246,.6);
-  animation:growBar 1.6s cubic-bezier(.22,1,.36,1) both;
-}
-.float-card{
-  position:absolute;
-  padding:12px 14px;border-radius:16px;
-  background:var(--surface);
-  backdrop-filter:blur(20px) saturate(160%);
-  -webkit-backdrop-filter:blur(20px) saturate(160%);
-  border:1px solid var(--ln-2);
-  box-shadow:var(--shadow-lg);
-  display:flex;align-items:center;gap:10px;
-  font-size:11px;font-weight:600;color:var(--tx);
-  white-space:nowrap;z-index:3;
-}
-.float-card .dot{
-  width:22px;height:22px;border-radius:8px;
-  display:grid;place-items:center;color:#fff;font-size:11px;
-  background:linear-gradient(135deg,var(--ac),var(--ac-3));
-}
-.float-card small{display:block;color:var(--mu);font-weight:500;font-size:10px}
-.fc-1{top:14%;left:-8%;animation:float 5s ease-in-out infinite}
-.fc-2{bottom:16%;right:-10%;animation:float 5s ease-in-out infinite .8s}
-@media(max-width:900px){.fc-1{left:-4%}.fc-2{right:-4%}}
+/* mockup */
+.stage{position:relative;display:grid;place-items:center}
+.stage::before{content:"";position:absolute;inset:6% 8%;border-radius:50%;background:var(--grad);filter:blur(90px);opacity:.28}
+.device{position:relative;width:min(380px,100%);padding:20px;border-radius:34px;background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.03));
+  border:1px solid var(--border-2);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);box-shadow:var(--shadow);animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-10px)}}
+.dev-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.dev-title{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.95rem}
+.dev-title img{width:26px;height:26px;object-fit:contain}
+.live{display:inline-flex;align-items:center;gap:7px;font-size:.7rem;font-weight:600;color:var(--green-soft);padding:4px 10px;border-radius:99px;background:rgba(16,185,129,.12)}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(16,185,129,.6);animation:pulse 1.8s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+.m-card{padding:14px 15px;border-radius:18px;background:var(--surface);border:1px solid var(--border);margin-bottom:11px}
+.m-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.m-label{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.m-label i{color:var(--blue-soft);font-size:.95rem}
+.m-val{font-family:var(--mono);font-weight:600;font-size:.95rem}
+.root-chip{display:flex;align-items:center;gap:10px}
+.root-chip .ic{width:38px;height:38px;border-radius:12px;background:rgba(16,185,129,.14);color:var(--green-soft);display:grid;place-items:center;font-size:1.2rem}
+.root-chip b{display:block;font-size:.92rem}.root-chip small{color:var(--muted);font-size:.74rem}
+.bars{display:grid;gap:8px;margin-top:11px}
+.bar{display:grid;grid-template-columns:62px 1fr 74px;align-items:center;gap:9px;font-size:.72rem;color:var(--muted)}
+.bar .track{height:7px;border-radius:9px;background:var(--surface-2);overflow:hidden}
+.bar .fill{height:100%;width:50%;border-radius:9px;background:var(--grad);transition:width 1s var(--ease)}
+.bar span:last-child{font-family:var(--mono);color:var(--text);text-align:right}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.grid2 .m-card{margin:0}
+.chip{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:.72rem;padding:4px 9px;border-radius:9px;background:rgba(37,99,235,.15);color:var(--blue-soft);border:1px solid rgba(37,99,235,.3)}
+.temp{font-size:1.5rem;font-weight:700;margin-top:4px;font-family:var(--mono)}
+.temp small{font-size:.8rem;color:var(--muted)}
+.demo-note{text-align:center;font-size:.68rem;color:var(--faint);margin-top:12px}
 
-/* ============ CHIPS ============ */
-.chips-section{padding:36px 0;border-bottom:1px solid var(--ln);background:var(--bg-1)}
-.chips{
-  display:flex;flex-wrap:wrap;justify-content:center;
-  gap:14px 40px;color:var(--mu-2);font-weight:700;font-size:15px;
-  letter-spacing:-.01em;
-}
-.chips small{
-  width:100%;text-align:center;font-weight:500;
-  font-size:12px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--mu-2);margin-bottom:8px;
-}
-.chips span{opacity:.75;transition:opacity .2s}
-.chips span:hover{opacity:1;color:var(--tx)}
+/* trust strip */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:70px}
+.stat{padding:22px;text-align:left}
+.stat b{display:block;font-size:2rem;letter-spacing:-.03em;font-weight:800}
+.stat span{color:var(--muted);font-size:.88rem}
 
-/* ============ SECTION ============ */
-section{padding:96px 0;position:relative}
-.c{text-align:center}
-.c>.w>p.sec-lead{
-  color:var(--mu);max-width:640px;margin:16px auto 0;
-  font-size:16px;line-height:1.7;
-}
-h2{
-  font-size:clamp(28px,3.8vw,42px);line-height:1.12;
-  letter-spacing:-.03em;font-weight:800;
-}
-h2 .gradient-text{display:inline}
+/* ============ FEATURES ============ */
+.f-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.f-card{padding:28px;position:relative;overflow:hidden;transition:transform .35s var(--ease),border-color .35s,background .35s}
+.f-card::after{content:"";position:absolute;inset:0;background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(37,99,235,.16),transparent 45%);opacity:0;transition:opacity .35s;pointer-events:none}
+.f-card:hover{transform:translateY(-6px);border-color:var(--border-2);background:var(--surface-2)}
+.f-card:hover::after{opacity:1}
+.f-ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:1.5rem;margin-bottom:20px;
+  color:#fff;background:var(--grad);box-shadow:0 12px 28px -12px rgba(37,99,235,.8)}
+.f-card h3{margin:0 0 9px;font-size:1.15rem;letter-spacing:-.01em}
+.f-card p{margin:0 0 16px;color:var(--muted);font-size:.94rem}
+.tags{display:flex;flex-wrap:wrap;gap:7px}
+.tag{font-size:.72rem;padding:4px 10px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted);font-family:var(--mono)}
+.f-card.wide{grid-column:span 2}
 
-/* ============ STATS ============ */
-.stats{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  margin-top:52px;
-  background:var(--surface);
-  backdrop-filter:blur(20px);
-  border:1px solid var(--ln);
-  border-radius:var(--radius-lg);
-  overflow:hidden;
-  box-shadow:var(--shadow);
-}
-.stats div{
-  padding:32px 16px;border-right:1px solid var(--ln);
-  position:relative;
-}
-.stats div:last-child{border-right:0}
-.stats b{
-  font-size:34px;display:block;letter-spacing:-.03em;
-  font-weight:800;line-height:1;
-  background:linear-gradient(135deg,var(--tx) 0%,var(--ac) 100%);
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.stats span{color:var(--mu);font-size:13px;display:block;margin-top:8px}
-@media(max-width:700px){
-  .stats{grid-template-columns:1fr 1fr}
-  .stats div:nth-child(2){border-right:0}
-  .stats div:nth-child(1),.stats div:nth-child(2){border-bottom:1px solid var(--ln)}
-}
+/* ============ DOCS ============ */
+.docs-shell{overflow:hidden}
+.tabs{display:flex;gap:6px;padding:10px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:inline-flex;align-items:center;gap:9px;padding:11px 18px;border-radius:14px;font-weight:600;font-size:.92rem;color:var(--muted);white-space:nowrap;transition:all .25s var(--ease)}
+.tab:hover{color:var(--text);background:var(--surface-2)}
+.tab[aria-selected="true"]{color:#fff;background:var(--grad);box-shadow:0 10px 26px -12px rgba(37,99,235,.8)}
+.panel{padding:30px;display:none;animation:fadeUp .45s var(--ease)}
+.panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}}
+.panel h3{margin:0 0 8px;font-size:1.35rem;letter-spacing:-.02em}
+.panel > p.sub{color:var(--muted);margin:0 0 22px;max-width:760px}
 
-/* ============ SPLIT ============ */
-.split{display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;align-items:start}
-@media(max-width:900px){.split{grid-template-columns:1fr;gap:36px}}
-.split h2{margin-bottom:16px}
-.split>div>p{color:var(--mu);margin-bottom:24px;line-height:1.7}
-.stack{display:grid;gap:16px}
-.fc{
-  background:var(--surface);
-  backdrop-filter:blur(20px) saturate(160%);
-  -webkit-backdrop-filter:blur(20px) saturate(160%);
-  border:1px solid var(--ln);
-  border-radius:var(--radius);
-  padding:24px;
-  transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s;
-  position:relative;overflow:hidden;
-}
-.fc:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
-.fc.dk{
-  background:linear-gradient(160deg,#0f172a 0%,#0b1220 100%);
-  color:#e2e8f0;border-color:rgba(148,163,184,.15);
-}
-.fc.dk::before{
-  content:"";position:absolute;inset:0;
-  background:radial-gradient(circle at 100% 0%,rgba(59,130,246,.15),transparent 50%);
-  pointer-events:none;
-}
-.fc h3{font-size:18px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em;position:relative}
-.fc p{color:var(--mu);font-size:14px;line-height:1.65;position:relative}
-.fc.dk p{color:#94a3b8}
-.fc ul{list-style:none;margin-top:14px;display:grid;gap:10px;font-size:14px;position:relative}
-.fc li{display:flex;gap:10px;align-items:flex-start;color:var(--tx-2)}
-.fc.dk li{color:#cbd5e1}
-.fc li::before{
-  content:"";flex:none;width:18px;height:18px;border-radius:6px;
-  background:linear-gradient(135deg,var(--ac),var(--ac-3));
-  box-shadow:0 2px 6px -1px var(--glow);
-  margin-top:2px;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
-  background-size:11px;background-position:center;background-repeat:no-repeat;
-}
+.sys-tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:18px}
+.search{flex:1;min-width:220px;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:14px;background:var(--code-bg);border:1px solid var(--border)}
+.search input{flex:1;background:none;border:0;outline:0;color:var(--text);font:inherit;font-family:var(--mono);font-size:.88rem;padding:12px 0}
+.search i{color:var(--faint)}
+.filters{display:flex;flex-wrap:wrap;gap:7px}
+.fchip{padding:7px 14px;border-radius:99px;font-size:.8rem;font-weight:600;border:1px solid var(--border);color:var(--muted);background:var(--surface);transition:all .2s}
+.fchip:hover{border-color:var(--border-2);color:var(--text)}
+.fchip.on{background:rgba(37,99,235,.18);border-color:rgba(96,165,250,.55);color:var(--blue-soft)}
+.paths{display:grid;gap:11px}
+.path{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;padding:16px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--border);transition:border-color .25s,transform .25s var(--ease)}
+.path:hover{border-color:var(--border-2);transform:translateX(3px)}
+.path[hidden]{display:none}
+.path code{font-size:.84rem;color:var(--green-soft);word-break:break-all;display:block}
+.path .nodes{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.path .nodes span{font-family:var(--mono);font-size:.72rem;padding:3px 8px;border-radius:8px;background:var(--code-bg);color:var(--muted);border:1px solid var(--border)}
+.path h4{margin:0 0 4px;font-size:.95rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.path p{margin:0;color:var(--muted);font-size:.86rem}
+.lvl{font-size:.65rem;font-weight:700;letter-spacing:.06em;padding:2px 8px;border-radius:99px;text-transform:uppercase}
+.lvl.rw{background:rgba(251,146,60,.15);color:#fb923c}.lvl.ro{background:rgba(96,165,250,.15);color:var(--blue-soft)}
+.empty{text-align:center;color:var(--faint);padding:30px;display:none}
 
-/* ============ CARDS GRID ============ */
-.grid{display:grid;gap:18px;margin-top:44px;text-align:left}
-.g4{grid-template-columns:repeat(4,1fr)}
-.g3{grid-template-columns:repeat(3,1fr)}
-@media(max-width:960px){.g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.g4{grid-template-columns:1fr}.g3{grid-template-columns:1fr}}
-.card{
-  background:var(--surface);
-  backdrop-filter:blur(20px) saturate(160%);
-  -webkit-backdrop-filter:blur(20px) saturate(160%);
-  border:1px solid var(--ln);
-  border-radius:var(--radius);
-  padding:24px;
-  transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s,border-color .3s;
-  position:relative;overflow:hidden;
-}
-.card:hover{
-  transform:translateY(-6px);
-  box-shadow:var(--shadow-lg);
-  border-color:var(--ln-2);
-}
-.card::before{
-  content:"";position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(96,165,250,.4),transparent);
-  opacity:0;transition:opacity .3s;
-}
-.card:hover::before{opacity:1}
-.card .ic{
-  width:44px;height:44px;border-radius:14px;
-  display:grid;place-items:center;margin-bottom:16px;
-  background:linear-gradient(135deg,var(--ac) 0%,var(--ac-3) 100%);
-  color:#fff;
-  box-shadow:0 8px 20px -6px var(--glow);
-  position:relative;
-}
-.card .ic svg{width:22px;height:22px;stroke-width:2}
-.card h3{font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
-.card p,.card li{color:var(--mu);font-size:13.5px;line-height:1.6}
-.card ul{padding-left:18px;margin-top:8px}
-.card .k{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-.k span{
-  font-size:11px;font-weight:600;
-  border:1px solid var(--ln-2);background:var(--bg-1);
-  border-radius:999px;padding:3px 10px;color:var(--tx-2);
-}
+.code{position:relative;margin:22px 0 0;border-radius:16px;background:var(--code-bg);border:1px solid var(--border);overflow:hidden}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--border);font-size:.74rem;color:var(--faint);font-family:var(--mono)}
+.copy{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;color:var(--muted);padding:4px 10px;border-radius:9px;border:1px solid var(--border);transition:all .2s}
+.copy:hover{color:var(--text);border-color:var(--blue-soft)}
+.copy.ok{color:var(--green-soft);border-color:var(--green)}
+.code pre{margin:0;padding:16px 18px;overflow-x:auto;font-size:.84rem;line-height:1.75;color:var(--text)}
+.code .c{color:var(--faint)}.code .k{color:var(--blue-soft)}.code .s{color:var(--green-soft)}
 
-/* ============ CATEGORY ============ */
-.cat{margin-top:56px;text-align:left}
-.cat:first-of-type{margin-top:44px}
-.cat>h3{
-  font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--ac);margin-bottom:20px;
-  display:flex;align-items:center;gap:12px;
-}
-.cat>h3::after{
-  content:"";flex:1;height:1px;
-  background:linear-gradient(90deg,var(--ln),transparent);
-}
-
-/* ============ STEPS ============ */
-.steps{
-  display:grid;grid-template-columns:1fr 320px;gap:56px;
-  align-items:center;margin-top:52px;text-align:left;
-}
-@media(max-width:860px){.steps{grid-template-columns:1fr;gap:40px}}
-.step{
-  display:flex;gap:20px;padding:24px 0;
-  border-bottom:1px solid var(--ln);position:relative;
-}
-.step:last-child{border-bottom:0}
-.step i{
-  flex:none;width:44px;height:44px;border-radius:14px;
-  background:linear-gradient(135deg,var(--ac),var(--ac-3));
-  color:#fff;display:grid;place-items:center;
-  font-style:normal;font-weight:800;font-size:16px;
-  box-shadow:0 8px 20px -6px var(--glow);
-}
-.step b{display:block;font-size:16px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
-.step p{color:var(--mu);font-size:14px;line-height:1.6}
-
-/* ============ BADGES ============ */
-.st{
-  display:inline-block;font-size:11px;font-weight:700;
-  letter-spacing:.04em;text-transform:uppercase;
-  border-radius:999px;padding:4px 12px;margin-bottom:10px;
-}
-.st.s1{background:rgba(16,185,129,.12);color:#059669;border:1px solid rgba(16,185,129,.2)}
-.st.s2{background:rgba(245,158,11,.12);color:#d97706;border:1px solid rgba(245,158,11,.2)}
-.st.s3{background:rgba(239,68,68,.12);color:#dc2626;border:1px solid rgba(239,68,68,.2)}
-:root[data-theme="dark"] .st.s1{color:#34d399}
-:root[data-theme="dark"] .st.s2{color:#fbbf24}
-:root[data-theme="dark"] .st.s3{color:#f87171}
-@media(prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .st.s1{color:#34d399}
-  :root:not([data-theme="light"]) .st.s2{color:#fbbf24}
-  :root:not([data-theme="light"]) .st.s3{color:#f87171}
-}
+.note{display:flex;gap:14px;padding:16px 18px;border-radius:16px;margin-bottom:14px;border:1px solid}
+.note i{font-size:1.4rem;flex:none;margin-top:1px}
+.note b{display:block;margin-bottom:2px}.note p{margin:0;font-size:.9rem;color:var(--muted)}
+.note.warn{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.35)}.note.warn i{color:#fbbf24}
+.note.danger{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.35)}.note.danger i{color:#f87171}
+.note.info{background:rgba(37,99,235,.08);border-color:rgba(96,165,250,.35)}.note.info i{color:var(--blue-soft)}
+.steps{counter-reset:s;display:grid;gap:12px;margin:18px 0 0;padding:0;list-style:none}
+.steps li{counter-increment:s;display:flex;gap:16px;padding:16px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--border)}
+.steps li::before{content:counter(s);flex:none;width:32px;height:32px;border-radius:10px;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem}
+.steps b{display:block}.steps span{color:var(--muted);font-size:.9rem}
+.req-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.req{padding:20px;border-radius:18px;background:var(--surface);border:1px solid var(--border)}
+.req i{font-size:1.5rem;color:var(--blue-soft)}.req h4{margin:10px 0 6px}.req p,.req li{color:var(--muted);font-size:.88rem;margin:0}
+.req ul{padding-left:18px;margin:8px 0 0;display:grid;gap:4px}
+table.arch{width:100%;border-collapse:collapse;margin-top:18px;font-size:.9rem;border-radius:14px;overflow:hidden}
+.arch th,.arch td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--border)}
+.arch th{color:var(--faint);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;background:var(--surface)}
+.arch tr:last-child td{border-bottom:0}
+.arch code{color:var(--green-soft)}
 
 /* ============ FAQ ============ */
-.faq{display:grid;grid-template-columns:.7fr 1.3fr;gap:56px;align-items:start}
-@media(max-width:860px){.faq{grid-template-columns:1fr;gap:32px}}
-details{
-  border:1px solid var(--ln);
-  border-radius:var(--radius);
-  background:var(--surface);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  margin-bottom:12px;
-  overflow:hidden;
-  transition:border-color .25s,box-shadow .25s;
-}
-details:hover{border-color:var(--ln-2)}
-details[open]{border-color:var(--ac);box-shadow:0 8px 32px -12px var(--glow)}
-summary{
-  cursor:pointer;font-weight:600;list-style:none;
-  display:flex;justify-content:space-between;align-items:center;gap:16px;
-  padding:20px 24px;font-size:15px;
-  transition:color .2s;
-}
-summary::-webkit-details-marker{display:none}
-summary::after{
-  content:"";flex:none;width:24px;height:24px;border-radius:50%;
-  background:var(--ac-soft);border:1px solid rgba(37,99,235,.2);
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='3' stroke-linecap='round'><line x1='12' y1='5' x2='12' y2='19'/><line x1='5' y1='12' x2='19' y2='12'/></svg>");
-  background-size:12px;background-position:center;background-repeat:no-repeat;
-  transition:transform .3s cubic-bezier(.22,1,.36,1),background-image .2s;
-}
-details[open] summary::after{
-  transform:rotate(135deg);
-  background-color:var(--ac);
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'><line x1='12' y1='5' x2='12' y2='19'/><line x1='5' y1='12' x2='19' y2='12'/></svg>");
-}
-details p{
-  color:var(--mu);font-size:14px;
-  padding:0 24px 22px;line-height:1.7;
-  animation:slideDown .3s ease;
-}
-@keyframes slideDown{
-  from{opacity:0;transform:translateY(-6px)}
-  to{opacity:1;transform:translateY(0)}
-}
+.faq-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:start}
+.faq-side{position:sticky;top:110px}
+.faq-side .sec-head{margin-bottom:24px}
+.help-card{padding:22px}
+.help-card h4{margin:0 0 6px}.help-card p{margin:0 0 14px;color:var(--muted);font-size:.9rem}
+.acc{display:grid;gap:12px}
+.acc-item{border-radius:18px;background:var(--surface);border:1px solid var(--border);transition:border-color .3s,background .3s}
+.acc-item.open{border-color:rgba(96,165,250,.5);background:var(--surface-2)}
+.acc-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:20px 22px;text-align:left;font-weight:600;font-size:1rem}
+.acc-q i{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2);transition:transform .35s var(--ease),background .3s}
+.acc-item.open .acc-q i{transform:rotate(45deg);background:var(--grad);color:#fff}
+.acc-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease)}
+.acc-item.open .acc-a{grid-template-rows:1fr}
+.acc-a > div{overflow:hidden}
+.acc-a .in{padding:0 22px 22px;color:var(--muted);font-size:.94rem}
+.acc-a .in p{margin:0 0 10px}.acc-a .in ul{margin:6px 0 0;padding-left:20px;display:grid;gap:5px}
+.acc-a code{font-size:.82rem;padding:2px 7px;border-radius:7px;background:var(--code-bg);color:var(--green-soft)}
 
-/* ============ CTA ============ */
-.cta{
-  position:relative;
-  border-radius:var(--radius-xl);
-  padding:72px 40px;
-  text-align:center;color:#fff;
-  background:
-    radial-gradient(ellipse 60% 100% at 50% 0%,rgba(96,165,250,.4),transparent 70%),
-    linear-gradient(135deg,#1e40af 0%,#2563eb 50%,#3b82f6 100%);
-  overflow:hidden;
-  box-shadow:0 32px 80px -24px var(--glow);
-}
-.cta::before{
-  content:"";position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);
-  background-size:48px 48px;
-  mask-image:radial-gradient(ellipse 60% 80% at 50% 50%,#000,transparent);
-  -webkit-mask-image:radial-gradient(ellipse 60% 80% at 50% 50%,#000,transparent);
-}
-.cta h2,.cta p,.cta .btn-row{position:relative}
-.cta p{opacity:.9;margin:16px auto 32px;max-width:520px;font-size:15px}
-.cta .btn-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.cta .btn{background:#fff;color:#1d4ed8;border-color:#fff}
-.cta .btn:hover{background:#f1f5f9}
-.cta .btn.ghost{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3)}
-.cta .btn.ghost:hover{background:rgba(255,255,255,.2);color:#fff}
+/* ============ DOWNLOAD ============ */
+.dl-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:20px}
+.dl-main{padding:36px;position:relative;overflow:hidden}
+.dl-main::before{content:"";position:absolute;width:420px;height:420px;right:-140px;top:-160px;background:var(--grad);filter:blur(100px);opacity:.22;border-radius:50%}
+.dl-top{display:flex;align-items:center;gap:18px;margin-bottom:22px;position:relative}
+.dl-logo{width:72px;height:72px;border-radius:22px;background:#080c14;border:1px solid var(--border-2);display:grid;place-items:center;flex:none}
+.dl-logo img{width:56px;height:56px;object-fit:contain}
+.dl-top h3{margin:0;font-size:1.5rem;letter-spacing:-.02em}.dl-top p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+.meta{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:0 0 26px;position:relative}
+.meta div{padding:12px 14px;border-radius:14px;background:var(--code-bg);border:1px solid var(--border)}
+.meta small{display:block;color:var(--faint);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em}
+.meta b{font-size:.92rem}
+.dl-actions{display:flex;flex-wrap:wrap;gap:12px;position:relative}
+.dl-side{display:grid;gap:20px}
+.box{padding:26px}
+.box h4{margin:0 0 12px;font-size:1.02rem;display:flex;align-items:center;gap:10px}
+.box h4 i{color:var(--blue-soft)}
+.box ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.box li{display:flex;gap:10px;color:var(--muted);font-size:.9rem}
+.box li i{color:var(--green-soft);margin-top:3px;flex:none}
+.box p{margin:0 0 12px;color:var(--muted);font-size:.9rem}
 
 /* ============ FOOTER ============ */
-footer.f{
-  border-top:1px solid var(--ln);
-  padding:64px 0 32px;
-  color:var(--mu);font-size:14px;
-  background:var(--bg-1);
-}
-.fg{
-  display:grid;grid-template-columns:1.6fr repeat(3,1fr);
-  gap:40px;margin-bottom:48px;
-}
-.fg h4{
-  color:var(--tx);margin-bottom:16px;font-size:13px;
-  font-weight:700;letter-spacing:.04em;text-transform:uppercase;
-}
-.fg a{display:block;margin:10px 0;transition:color .2s,transform .2s}
-.fg a:hover{color:var(--ac);transform:translateX(3px)}
-@media(max-width:760px){.fg{grid-template-columns:1fr 1fr;gap:32px}}
-.cp{
-  padding-top:32px;border-top:1px solid var(--ln);
-  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
-  font-size:13px;color:var(--mu-2);
-}
+footer{border-top:1px solid var(--border);padding:64px 0 36px;background:linear-gradient(to bottom,transparent,var(--bg-2))}
+.f-grid2{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px}
+.f-brand p{color:var(--muted);font-size:.9rem;max-width:340px;margin:14px 0 0}
+footer h5{margin:0 0 16px;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+footer ul a{color:var(--muted);font-size:.92rem;transition:color .2s}
+footer ul a:hover{color:var(--text)}
+.disclaimer{margin-top:46px;padding:18px 20px;border-radius:16px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.3);display:flex;gap:14px;color:var(--muted);font-size:.86rem}
+.disclaimer i{color:#f87171;font-size:1.3rem;flex:none}
+.disclaimer b{color:var(--text)}
+.copy-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:30px;color:var(--faint);font-size:.84rem}
+.to-top{position:fixed;right:18px;bottom:18px;width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:1.2rem;z-index:90;
+  background:var(--nav-bg);border:1px solid var(--border-2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  opacity:0;transform:translateY(14px);pointer-events:none;transition:all .3s var(--ease)}
+.to-top.show{opacity:1;transform:none;pointer-events:auto}
 
-/* ============ REDUCED MOTION ============ */
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
-  html{scroll-behavior:auto}
+/* ============ RESPONSIVE ============ */
+@media (max-width:1020px){
+  .hero-grid,.faq-layout,.dl-grid{grid-template-columns:1fr}
+  .faq-side{position:static}
+  .f-grid{grid-template-columns:repeat(2,1fr)}.f-card.wide{grid-column:span 2}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .req-grid{grid-template-columns:1fr}
+  .f-grid2{grid-template-columns:1fr 1fr}
+  .hero{padding-top:130px}
+}
+@media (max-width:860px){
+  .nav-links{position:absolute;top:calc(100% + 10px);left:0;right:0;flex-direction:column;padding:12px;margin:0;
+    background:var(--menu-bg);border:1px solid var(--border-2);border-radius:20px;box-shadow:0 24px 60px -20px rgba(0,0,0,.7);
+    opacity:0;transform:translateY(-8px);pointer-events:none;transition:all .3s var(--ease)}
+  .nav.open .nav-links{opacity:1;transform:none;pointer-events:auto}
+  .nav-links a{padding:13px 14px}
+  .nav-links .nav-dl{display:block;margin-top:6px;text-align:center;color:#fff;background:var(--grad);font-weight:600}
+  .nav-links .nav-dl:hover{color:#fff}
+  .nav-inner{position:relative}
+  .menu-btn{display:grid}
+  .nav-actions{margin-left:auto}
+  .nav-actions .btn{display:none}
+  .badge-ver{display:none}
+}
+@media (max-width:640px){
+  section{padding:70px 0}
+  .container{width:min(1180px,100% - 32px)}
+  .f-grid{grid-template-columns:1fr}.f-card.wide{grid-column:auto}
+  .path{grid-template-columns:1fr;gap:8px}
+  .panel{padding:22px 16px}
+  .hero-cta .btn{width:100%}
+  .dl-main{padding:24px}.meta{grid-template-columns:1fr}
+  .dl-actions .btn{width:100%}
+  .f-grid2{grid-template-columns:1fr}
+  .brand-name{font-size:.92rem}
+  .stats{gap:10px}.stat{padding:16px}.stat b{font-size:1.6rem}
+  .bar{grid-template-columns:54px 1fr 64px}
+  .to-top{right:12px;bottom:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   .reveal{opacity:1;transform:none}
 }
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="bg-grid" aria-hidden="true"></div>
 
-<header>
-<div class="appbar">
-  <div class="w">
-    <nav>
-      <a class="logo" href="#">
-        <span class="logo-mark">Z</span>
-        <span>ZKM Next</span>
-      </a>
-      <ul class="nav-links">
-        <li><a href="#fitur">Fitur</a></li>
-        <li><a href="#katalog">Katalog</a></li>
-        <li><a href="#mode">Mode kerja</a></li>
-        <li><a href="#propdet">Prop Detected</a></li>
-        <li><a href="#faq">FAQ</a></li>
-      </ul>
-      <a class="btn sm" href="#mode">Mulai</a>
+<!-- ============ NAVBAR ============ -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#overview" class="brand" aria-label="ZKM Next — home">
+      <span class="brand-logo"><img src="assets/logo.png" alt="" onerror="this.replaceWith(document.createTextNode('Z'))"></span>
+      <span class="brand-name">ZKM Next</span>
+      <span class="badge-ver">v1.0.0 Stable</span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="#overview">Overview</a>
+      <a href="#fitur">Key Features</a>
+      <a href="#dokumentasi">Docs &amp; Sysfs</a>
+      <a href="#faq">FAQ/Help</a>
+      <a href="#download" class="nav-dl">Download APK</a>
     </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Toggle Dark / Light theme" title="Dark / Light">
+        <span class="knob"><i class="ri-moon-fill" id="themeIcon"></i></span>
+      </button>
+      <a href="#download" class="btn btn-primary btn-sm"><i class="ri-download-2-line"></i> Download APK</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><i class="ri-menu-line"></i></button>
+    </div>
   </div>
-</div>
 </header>
 
-<main>
+<main id="main">
 
-<!-- HERO -->
-<div class="hero">
-  <div class="w">
-    <div class="hero-grid">
-      <div>
-        <span class="eyebrow reveal">Zuan Kernel Manager · Android</span>
-        <h1 class="reveal" data-delay="1">
-          Kontrol Penuh <span class="gradient-text">Performa Perangkat</span> dalam Satu Aplikasi
-        </h1>
-        <p class="lead reveal" data-delay="2">
-          ZKM Next membaca CPU, GPU, suhu, dan baterai langsung dari node kernel, lalu membiarkanmu menyetel governor, frekuensi, thermal, dan sistem lewat UI kaca yang bisa kamu atur sendiri.
-        </p>
-        <div class="cta-row reveal" data-delay="3">
-          <a class="btn" href="#katalog">
-            Lihat semua fitur
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-          <a class="btn ghost" href="#mode">Mode kerja</a>
-        </div>
-        <div class="trust-row reveal" data-delay="4">
-          <div class="avatars">
-            <span>Q</span><span>M</span><span>K</span><span>S</span>
-          </div>
-          <p><b>Root / ADB ready</b> · Qualcomm · MediaTek · MIUI</p>
-        </div>
-      </div>
-
-      <div class="phone-wrap reveal" data-delay="2">
-        <div class="phone-glow"></div>
-
-        <div class="float-card fc-1">
-          <span class="dot">✓</span>
-          <div>
-            <div>Root aktif</div>
-            <small>KernelSU terdeteksi</small>
-          </div>
-        </div>
-
-        <div class="float-card fc-2">
-          <span class="dot">⚡</span>
-          <div>
-            <div>0.2s response</div>
-            <small>Ultrafast reader</small>
-          </div>
-        </div>
-
-        <div class="phone" role="img" aria-label="Ilustrasi dashboard ZKM Next">
-          <div class="phone-screen">
-            <h4>Dashboard</h4>
-            <div class="phone-sub">Real-time · refresh 1s</div>
-            <div class="ws"><b>CPU</b><span>2,84 GHz</span><div class="bar"><i style="width:72%"></i></div></div>
-            <div class="ws"><b>GPU</b><span>680 MHz</span><div class="bar"><i style="width:48%"></i></div></div>
-            <div class="ws"><b>RAM</b><span>5,1 / 8 GB</span><div class="bar"><i style="width:64%"></i></div></div>
-            <div class="ws"><b>Suhu</b><span>39 °C</span><div class="bar"><i style="width:39%"></i></div></div>
-            <div class="ws"><b>Baterai</b><span>82%</span><div class="bar"><i style="width:82%"></i></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- CHIPS -->
-<div class="chips-section">
-  <div class="w chips">
-    <small>Dibuat untuk ekosistem kernel Android</small>
-    <span>Qualcomm Adreno</span>
-    <span>MediaTek Dimensity</span>
-    <span>Xiaomi MIUI / HyperOS</span>
-    <span>KernelSU</span>
-    <span>Shizuku</span>
-  </div>
-</div>
-
-<!-- STATS -->
-<section class="c">
-  <div class="w">
-    <span class="eyebrow reveal">Kenapa ZKM Next</span>
-    <h2 class="reveal" data-delay="1" style="margin-top:20px">Dibangun untuk Pengguna yang Ingin Kendali</h2>
-    <p class="sec-lead reveal" data-delay="2">Dari monitor real-time sampai flash kernel, semua alat dikelompokkan rapi, dan data diproses lokal di perangkatmu.</p>
-    <div class="stats reveal" data-delay="3">
-      <div><b data-count="30" data-suffix="+">0</b><span>Layar dan alat</span></div>
-      <div><b data-count="3">0</b><span>Mode kerja</span></div>
-      <div><b data-count="2">0</b><span>Platform GPU</span></div>
-      <div><b>Lokal</b><span>Data tidak dikirim ke cloud</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- FITUR -->
-<section id="fitur" style="padding-top:0">
-  <div class="w split">
+<!-- ============ HERO ============ -->
+<section class="hero" id="overview">
+  <div class="container hero-grid">
     <div class="reveal">
-      <span class="eyebrow">Tentang</span>
-      <h2 style="margin-top:20px">Apa Itu <span class="gradient-text">ZKM Next</span>?</h2>
-      <p>Aplikasi manajer kernel dan performa untuk Android. Satu tempat untuk memantau, menyetel, dan merawat perangkat, dengan tema yang seluruhnya dikendalikan lewat Wallpaper &amp; Style Studio.</p>
-      <a class="btn" href="#katalog">Jelajahi menu</a>
-    </div>
-    <div class="stack">
-      <div class="fc dk reveal" data-delay="1">
-        <h3>Dashboard Widget Kaca</h3>
-        <p>CPU, GPU, RAM, parameter VM, layar, penyimpanan, dan baterai tampil sebagai widget glass di atas wallpaper. Tambah, hapus, urutkan, dan ubah gaya lewat tombol FAB.</p>
-        <ul>
-          <li>Frekuensi dan suhu real-time</li>
-          <li>Ketuk widget untuk langsung ke alat terkait</li>
-          <li>Interval refresh bisa diatur</li>
-        </ul>
+      <span class="pill glass"><b>NEW</b> Game Space, SoC Preset Library &amp; Language Pack</span>
+      <h1>Modern Android kernel control — <span class="grad-text">open, uncompromising.</span></h1>
+      <p class="lead">Zuan Kernel Manager Next brings CPU &amp; GPU governors, ZRAM, UFS devfreq, kernel flashing, root terminal, and SetEdit together in a single Material 3 interface. Open source under GPL-3.0 — for those who want advanced system customization.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="https://github.com/ZUANVFX01/ZKM/releases/latest" target="_blank" rel="noopener"><i class="ri-download-cloud-2-line"></i> Download APK (GitHub Release)</a>
+        <a class="btn btn-ghost" href="https://github.com/ZUANVFX01/ZKM" target="_blank" rel="noopener"><i class="ri-github-fill"></i> View Source Code</a>
       </div>
-      <div class="fc reveal" data-delay="2">
-        <h3>SoC &amp; Performance</h3>
-        <p>Pusat penyetelan chipset dengan empat tab.</p>
-        <div class="k"><span>Processor</span><span>Scheduler</span><span>Memory</span><span>Network</span></div>
-      </div>
-      <div class="fc dk reveal" data-delay="3">
-        <h3>Tuning GPU Mendalam</h3>
-        <p>Adreno: Freq, Power, Bus, Thermal, Advanced. MediaTek: Freq, DRAM, Boost, PPM, CPU, Thermal, plus kontrol DVFS.</p>
-      </div>
-      <div class="fc reveal" data-delay="4">
-        <h3>Wallpaper &amp; Style Studio</h3>
-        <p>Wallpaper live, gambar atau video sendiri, efek cuaca (hujan, salju, kabut, awan, matahari, es), blur, kaca kartu, palet warna, dan font kustom.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- WHY -->
-<section class="c" style="background:var(--bg-1)">
-  <div class="w">
-    <span class="eyebrow reveal">Keunggulan</span>
-    <h2 class="reveal" data-delay="1" style="margin-top:20px">Kenapa Memilih ZKM Next</h2>
-    <p class="sec-lead reveal" data-delay="2">Fokus pada akurasi data, keamanan, dan kenyamanan pakai harian.</p>
-    <div class="grid g4">
-      <div class="card reveal" data-delay="1">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4.93 4.93a10 10 0 1 0 14.14 0"/><path d="M12 2v6"/><circle cx="12" cy="12" r="2"/></svg></div>
-        <h3>Data langsung dari kernel</h3>
-        <p>Membaca node kernel tanpa perantara, jadi angka yang tampil adalah kondisi sebenarnya.</p>
-      </div>
-      <div class="card reveal" data-delay="2">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
-        <h3>Setel dalam beberapa ketukan</h3>
-        <p>Governor, frekuensi, dan thermal bisa diubah cepat, profil favorit tersimpan.</p>
-      </div>
-      <div class="card reveal" data-delay="3">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-        <h3>Privasi lokal</h3>
-        <p>Data diproses di perangkat. Tidak ada data pribadi yang dikirim ke server cloud.</p>
-      </div>
-      <div class="card reveal" data-delay="4">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></div>
-        <h3>Tampilan milikmu</h3>
-        <p>Tema, warna, font, dan efek kaca dikontrol penuh dari wallpaper style screen.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- KATALOG -->
-<section id="katalog">
-  <div class="w">
-    <div class="c">
-      <span class="eyebrow reveal">Katalog</span>
-      <h2 class="reveal" data-delay="1" style="margin-top:20px">Katalog <span class="gradient-text">Fitur Lengkap</span></h2>
-      <p class="sec-lead reveal" data-delay="2">Semua menu yang tersedia, dikelompokkan per kategori. Menu yang tidak didukung perangkat disembunyikan otomatis.</p>
-    </div>
-
-    <div class="cat">
-      <h3 class="reveal">Monitor &amp; Statistik</h3>
-      <div class="grid g3" style="margin-top:0">
-        <div class="card reveal"><h3>Dashboard / Overall</h3><p>Ringkasan perangkat real-time dengan widget yang bisa diatur.</p></div>
-        <div class="card reveal" data-delay="1"><h3>FPS Manager</h3><p>Home (FPS live), Stats (sesi tercatat), Games (profil per game), Overlay (FPS mengambang).</p></div>
-        <div class="card reveal" data-delay="2"><h3>System, Mini &amp; Thread Monitor</h3><p>Overlay CPU, GPU, baterai, RAM, DDR, beban per core, daya, dan thread terberat.</p></div>
-        <div class="card reveal"><h3>Process Manager</h3><p>Task manager real-time dengan CPU dan memori per proses.</p></div>
-        <div class="card reveal" data-delay="1"><h3>Network Traffic</h3><p>Kecepatan unduh/unggah, kekuatan sinyal, link speed, dan data terpakai sejak boot.</p></div>
-        <div class="card reveal" data-delay="2"><h3>Screen Time</h3><p>Durasi tiap aplikasi di layar, per hari atau minggu.</p></div>
+      <div class="badges" aria-label="Project info">
+        <span class="badge"><i class="ri-scales-3-line c-blue"></i> GPL v3</span>
+        <span class="badge"><i class="ri-android-fill c-green"></i> Android 10+</span>
+        <span class="badge"><i class="ri-shield-keyhole-line c-red"></i> Root: Magisk / KernelSU / APatch</span>
+        <span class="badge"><i class="ri-code-s-slash-line c-violet"></i> Kotlin + Jetpack Compose</span>
       </div>
     </div>
 
-    <div class="cat">
-      <h3 class="reveal">Baterai &amp; Daya</h3>
-      <div class="grid g3" style="margin-top:0">
-        <div class="card reveal"><h3>Battery Controller</h3><p>Batas pengisian, fast-charge, dan arus idle/input di kernel yang mendukung.</p></div>
-        <div class="card reveal" data-delay="1"><h3>Battery Usage &amp; Charge Stats</h3><p>Konsumsi per aplikasi, arus, tegangan, watt, suhu, dan riwayat sesi pengisian.</p></div>
-        <div class="card reveal" data-delay="2"><h3>Wakelock &amp; Deep Sleep</h3><p>Berapa lama perangkat deep sleep dan siapa yang menahannya tetap bangun.</p></div>
-        <div class="card reveal"><h3>Doze Mode</h3><p>Periksa dan atur perilaku doze, deteksi gerak, dan app standby, lengkap dengan whitelist.</p></div>
-        <div class="card reveal" data-delay="1"><h3>Power Menu</h3><p>Reboot, power off, recovery, fastboot, dan restart SystemUI.</p></div>
-      </div>
-    </div>
-
-    <div class="cat">
-      <h3 class="reveal">Performa &amp; Kernel</h3>
-      <div class="grid g3" style="margin-top:0">
-        <div class="card reveal">
-          <h3>Adreno GPU</h3>
-          <p>Penyetelan GPU Qualcomm lewat lima tab.</p>
-          <div class="k"><span>Freq</span><span>Power</span><span>Bus</span><span>Thermal</span><span>Adv</span></div>
+    <div class="stage reveal" style="transition-delay:.12s">
+      <div class="device" aria-label="ZKM Next interface preview (demo)">
+        <div class="dev-top">
+          <div class="dev-title"><img src="assets/logo.png" alt="" onerror="this.style.display='none'">ZKM Next</div>
+          <span class="live">LIVE</span>
         </div>
-        <div class="card reveal" data-delay="1">
-          <h3>MediaTek GPU</h3>
-          <p>Hub Dimensity/Mali dengan kontrol DVFS dan frekuensi statis.</p>
-          <div class="k"><span>Freq</span><span>DRAM</span><span>Boost</span><span>PPM</span><span>CPU</span><span>Thermal</span></div>
-        </div>
-        <div class="card reveal" data-delay="2"><h3>Thermal Manager</h3><p>Pantau semua zona suhu (klaster CPU, GPU, baterai, modem, sensor kulit) dan atur policy yang didukung.</p></div>
-        <div class="card reveal"><h3>Kernel Flasher</h3><p>Flash kernel, boot image, dan backup partisi, dengan mode Horizon dan Capntrips.</p></div>
-        <div class="card reveal" data-delay="1"><h3>Memory &amp; VM</h3><p>RAM fisik, swap/ZRAM, swappiness, dirty ratio, watermark, VFS cache pressure.</p></div>
-        <div class="card reveal" data-delay="2"><h3>Display Manager</h3><p>Resolusi, DPI, paksa refresh rate, saturasi, font scale, dan kecepatan animasi.</p></div>
-      </div>
-    </div>
-
-    <div class="cat">
-      <h3 class="reveal">Aplikasi &amp; Sistem</h3>
-      <div class="grid g3" style="margin-top:0">
-        <div class="card reveal"><h3>SetEdit</h3><p>Editor database Settings (system, secure, global) dengan tampilan grid atau list.</p></div>
-        <div class="card reveal" data-delay="1"><h3>Dex2oat / App Compiler</h3><p>Kompilasi ulang aplikasi dengan filter speed, everything, verify, dan lainnya.</p></div>
-        <div class="card reveal" data-delay="2"><h3>DoD Manager</h3><p>Kelola aplikasi pengguna, sistem, dan yang dibekukan, dengan pencarian paket.</p></div>
-        <div class="card reveal"><h3>Debloat &amp; Freeze</h3><p>Nonaktifkan atau bekukan bloatware tanpa mencopot instalasi.</p></div>
-        <div class="card reveal" data-delay="1"><h3>App Manager</h3><p>Inventaris aplikasi dengan ikon, ukuran, versi, dan aksi cepat.</p></div>
-        <div class="card reveal" data-delay="2"><h3>MIUI Thermal</h3><p>Atur thermal engine MIUI/HyperOS, termasuk profil bawaan dan konfigurasi terenkripsi.</p></div>
-        <div class="card reveal"><h3>Activity Launcher &amp; Inspector</h3><p>Jelajahi activity internal tiap aplikasi dan pantau activity teratas.</p></div>
-        <div class="card reveal" data-delay="1"><h3>KernelSU WebUI</h3><p>Menjalankan WebUI modul KernelSU di WebView terisolasi.</p></div>
-        <div class="card reveal" data-delay="2"><h3>Storage</h3><p>Rincian pemakaian, file besar, cache, dan info kesehatan UFS. Gaya Bar, Ring, atau Tank.</p></div>
-      </div>
-    </div>
-
-    <div class="cat">
-      <h3 class="reveal">Alat &amp; Personalisasi</h3>
-      <div class="grid g3" style="margin-top:0">
-        <div class="card reveal"><h3>Terminal</h3><p>Emulator terminal penuh dengan root shell, overlay, background kustom, serta mode glass.</p></div>
-        <div class="card reveal" data-delay="1"><h3>Wallpaper &amp; Style</h3><p>Efek cuaca, blur, kaca kartu, palet warna, font kustom, dan banner appbar.</p></div>
-        <div class="card reveal" data-delay="2"><h3>Pengaturan &amp; Bantuan</h3><p>Tema, navbar, bahasa, backup, changelog, lisensi open source, dan pusat bantuan di dalam aplikasi.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROP DETECTED -->
-<section id="propdet" style="background:var(--bg-1)">
-  <div class="w split" style="align-items:start">
-    <div class="reveal">
-      <span class="eyebrow">SetEdit</span>
-      <h2 style="margin-top:20px">Prop <span class="gradient-text">Detected</span></h2>
-      <p>Fitur di dalam SetEdit yang menyimpan snapshot properti perangkat sebagai baseline, lalu memberi tahu jika ada properti hilang, berubah, atau bertambah.</p>
-      <p style="font-size:14px">Butuh izinmu dulu. Snapshot hanya disimpan di penyimpanan privat aplikasi dan tidak dikirim keluar.</p>
-    </div>
-    <div class="stack">
-      <div class="fc reveal" data-delay="1"><span class="st s1">Safe</span><p>Tidak ada beda dari baseline.</p></div>
-      <div class="fc reveal" data-delay="2"><span class="st s2">Changes found</span><p>Hanya properti non-kritis yang berbeda.</p></div>
-      <div class="fc reveal" data-delay="3">
-        <span class="st s3">Danger</span>
-        <p>Properti penting hilang atau berubah, misalnya <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg-2);padding:2px 6px;border-radius:6px">ro.build.*</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg-2);padding:2px 6px;border-radius:6px">ro.product.*</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg-2);padding:2px 6px;border-radius:6px">ro.hardware</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg-2);padding:2px 6px;border-radius:6px">ro.secure</code>, atau <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg-2);padding:2px 6px;border-radius:6px">ro.debuggable</code>.</p>
-      </div>
-      <p style="color:var(--mu);font-size:13px;line-height:1.6">Properti volatil seperti <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg-2);padding:2px 6px;border-radius:6px">sys.*</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg-2);padding:2px 6px;border-radius:6px">net.*</code>, dan <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg-2);padding:2px 6px;border-radius:6px">init.svc.*</code> diabaikan agar tidak memicu alarm palsu.</p>
-    </div>
-  </div>
-</section>
-
-<!-- MODE -->
-<section id="mode" class="c">
-  <div class="w">
-    <span class="eyebrow reveal">Akses</span>
-    <h2 class="reveal" data-delay="1" style="margin-top:20px">Tiga Mode Kerja</h2>
-    <p class="sec-lead reveal" data-delay="2">Pilih sesuai akses yang kamu punya. Semakin tinggi aksesnya, semakin banyak fitur yang terbuka.</p>
-    <div class="grid g3">
-      <div class="card reveal" data-delay="1"><span class="st s1">Basic</span><h3>Tanpa akses khusus</h3><p>Fitur yang hanya melihat data.</p></div>
-      <div class="card reveal" data-delay="2"><span class="st s2">ADB</span><h3>Shizuku / wireless debugging</h3><p>Akses level shell tanpa root.</p></div>
-      <div class="card reveal" data-delay="3"><span class="st s3">ROOT</span><h3>Akses penuh</h3><p>Semua penyetelan tingkat kernel dan sistem.</p></div>
-    </div>
-    <p style="color:var(--mu);font-size:14px;margin-top:28px;max-width:640px;margin-left:auto;margin-right:auto" class="reveal">Mode ROOT dan ADB bisa mengubah perilaku sistem. Salah konfigurasi dapat menyebabkan bootloop. Lakukan dengan risiko sendiri dan siapkan backup.</p>
-  </div>
-</section>
-
-<!-- STEPS -->
-<section class="c" style="padding-top:0">
-  <div class="w">
-    <span class="eyebrow reveal">Mulai</span>
-    <h2 class="reveal" data-delay="1" style="margin-top:20px">Mulai dalam Tiga Langkah</h2>
-    <div class="steps">
-      <div>
-        <div class="step reveal" data-delay="1"><i>1</i><div><b>Baca risiko dan setujui privasi</b><p>Layar intro menjelaskan risiko dan bahwa data diproses lokal.</p></div></div>
-        <div class="step reveal" data-delay="2"><i>2</i><div><b>Pilih mode kerja</b><p>Basic, ADB lewat Shizuku, atau ROOT.</p></div></div>
-        <div class="step reveal" data-delay="3"><i>3</i><div><b>Atur Dashboard dan mulai menyetel</b><p>Susun widget, buka SoC &amp; Performance, simpan profil favoritmu.</p></div></div>
-      </div>
-      <div class="phone-wrap reveal" data-delay="2">
-        <div class="phone-glow"></div>
-        <div class="phone" style="animation-delay:.5s">
-          <div class="phone-screen">
-            <h4>SoC</h4>
-            <div class="phone-sub">Performance hub</div>
-            <div class="ws"><b>Processor</b><span>›</span></div>
-            <div class="ws"><b>Scheduler</b><span>›</span></div>
-            <div class="ws"><b>Memory</b><span>›</span></div>
-            <div class="ws"><b>Network</b><span>›</span></div>
+        <div class="m-card">
+          <div class="root-chip">
+            <div class="ic"><i class="ri-shield-check-fill"></i></div>
+            <div><b>Root active</b><small id="rootMgr">KernelSU · Root mode</small></div>
           </div>
         </div>
+        <div class="m-card">
+          <div class="m-row"><span class="m-label"><i class="ri-cpu-line"></i> CPU Frequency</span><span class="m-val" id="cpuAvg">—</span></div>
+          <div class="bars" id="cpuBars"></div>
+        </div>
+        <div class="grid2">
+          <div class="m-card"><span class="m-label"><i class="ri-gamepad-line"></i> GPU Governor</span><span class="chip" id="gpuGov">msm-adreno-tz</span></div>
+          <div class="m-card"><span class="m-label"><i class="ri-temp-hot-line"></i> Temperature</span><div class="temp"><span id="temp">38.4</span><small> °C</small></div></div>
+        </div>
+        <div class="m-card" style="margin-top:11px;margin-bottom:0">
+          <div class="m-row"><span class="m-label"><i class="ri-database-2-line"></i> ZRAM · zstd</span><span class="m-val" id="zramTxt">—</span></div>
+          <div class="bars"><div class="bar" style="grid-template-columns:0 1fr 0"><span></span><div class="track"><div class="fill" id="zramFill"></div></div><span></span></div></div>
+        </div>
+        <div class="demo-note">Simulated preview — actual values depend on your device.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat glass reveal"><b class="grad-text" data-count="287">0</b><span>Kotlin source files in the app module</span></div>
+      <div class="stat glass reveal" style="transition-delay:.06s"><b class="grad-text">3</b><span>Root: Magisk, KernelSU, APatch</span></div>
+      <div class="stat glass reveal" style="transition-delay:.12s"><b class="grad-text">2</b><span>Rootless modes: Shizuku &amp; Axeron</span></div>
+      <div class="stat glass reveal" style="transition-delay:.18s"><b class="grad-text">GPL-3.0</b><span>Open source &amp; transparent</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section id="fitur">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Key Features</span>
+      <h2>All kernel controls, <span class="grad-text">in one app.</span></h2>
+      <p>Built for power users: automatic node detection, unsupported controls hidden, and a consistent interface across all ROMs.</p>
+    </div>
+    <div class="f-grid">
+      <article class="f-card glass reveal">
+        <div class="f-ic"><i class="ri-cpu-line"></i></div>
+        <h3>CPU &amp; GPU Governors</h3>
+        <p>Set governors, min/max frequency per CPU cluster, plus Qualcomm (KGSL) and MediaTek GPU control. Includes sched boost &amp; uclamp.</p>
+        <div class="tags"><span class="tag">cpufreq</span><span class="tag">kgsl</span><span class="tag">uclamp</span></div>
+      </article>
+      <article class="f-card glass reveal" style="transition-delay:.06s">
+        <div class="f-ic"><i class="ri-hard-drive-3-line"></i></div>
+        <h3>UFS Host Controller &amp; Devfreq</h3>
+        <p>Monitor UFS health, manage host controller clock gating, and configure devfreq nodes (DDR/DVFSRC, LLCC) on supported devices.</p>
+        <div class="tags"><span class="tag">ufshc</span><span class="tag">devfreq</span><span class="tag">storage</span></div>
+      </article>
+      <article class="f-card glass reveal" style="transition-delay:.12s">
+        <div class="f-ic"><i class="ri-stack-line"></i></div>
+        <h3>ZRAM / Swap &amp; Memory</h3>
+        <p>Configure ZRAM size, compression algorithm, swappiness, dirty ratio, and cache pressure — complete with RAM, swap, and PSI monitoring.</p>
+        <div class="tags"><span class="tag">zram0</span><span class="tag">swappiness</span><span class="tag">vm</span></div>
+      </article>
+      <article class="f-card glass reveal">
+        <div class="f-ic"><i class="ri-shield-user-line"></i></div>
+        <h3>Rootless Modes: Shizuku &amp; Axeron</h3>
+        <p>You don't always need root. Monitoring and basic features work via Shizuku or Axeron; full kernel actions require Root mode.</p>
+        <div class="tags"><span class="tag">Shizuku</span><span class="tag">Axeron</span><span class="tag">libsu</span></div>
+      </article>
+      <article class="f-card glass reveal" style="transition-delay:.06s">
+        <div class="f-ic"><i class="ri-flashlight-line"></i></div>
+        <h3>Kernel Flasher &amp; Boot Backup</h3>
+        <p>Flash kernel images with a careful workflow, including boot image backup &amp; restore utilities so you always have a way back.</p>
+        <div class="tags"><span class="tag">boot.img</span><span class="tag">backup</span><span class="tag">restore</span></div>
+      </article>
+      <article class="f-card glass reveal" style="transition-delay:.12s">
+        <div class="f-ic"><i class="ri-palette-line"></i></div>
+        <h3>Themes &amp; UI Customization</h3>
+        <p>Material 3 with Haze blur, app-controlled Light/Dark mode, custom colors, and custom backgrounds — not forced into system Dynamic Color.</p>
+        <div class="tags"><span class="tag">Material 3</span><span class="tag">Haze blur</span><span class="tag">custom color</span></div>
+      </article>
+      <article class="f-card glass wide reveal">
+        <div class="f-ic"><i class="ri-terminal-box-line"></i></div>
+        <h3>SetEdit, Root Terminal &amp; Shell Scripts</h3>
+        <p>Edit the Android settings database (SetEdit) and system properties, run commands in the built-in root terminal, and execute custom shell scripts for tuning automation — all without leaving the app.</p>
+        <div class="tags"><span class="tag">SetEdit</span><span class="tag">build.prop</span><span class="tag">root terminal</span><span class="tag">kr-script</span></div>
+      </article>
+      <article class="f-card glass reveal" style="transition-delay:.12s">
+        <div class="f-ic"><i class="ri-gamepad-line"></i></div>
+        <h3>Game Space &amp; SoC Presets</h3>
+        <p>Game overlay panel, per-cluster Custom Mode, Root Tools, plus a preset library: Battery Saver, Daily Balanced, Performance Ultra, Thermal Chiller.</p>
+        <div class="tags"><span class="tag">overlay</span><span class="tag">FPS</span><span class="tag">presets</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DOCS ============ -->
+<section id="dokumentasi">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Technical Documentation</span>
+      <h2>The <span class="grad-text">sysfs &amp; procfs</span> interfaces ZKM Next accesses.</h2>
+      <p>Every device is different. A feature appearing in the UI doesn't guarantee its node exists on your device — ZKM detects paths and hides unsupported controls.</p>
+    </div>
+
+    <div class="docs-shell glass reveal">
+      <div class="tabs" role="tablist" aria-label="Documentation">
+        <button class="tab" role="tab" id="tab-sysfs" aria-controls="panel-sysfs" aria-selected="true"><i class="ri-folder-chart-line"></i> Sysfs Overview</button>
+        <button class="tab" role="tab" id="tab-safety" aria-controls="panel-safety" aria-selected="false" tabindex="-1"><i class="ri-alert-line"></i> Safety Notes &amp; Warnings</button>
+        <button class="tab" role="tab" id="tab-req" aria-controls="panel-req" aria-selected="false" tabindex="-1"><i class="ri-settings-3-line"></i> Installation Requirements</button>
+      </div>
+
+      <!-- Sysfs -->
+      <div class="panel active" role="tabpanel" id="panel-sysfs" aria-labelledby="tab-sysfs">
+        <h3>Sysfs Overview</h3>
+        <p class="sub">List of the main paths read or written by ZKM Next. <span class="lvl rw">RW</span> = writable by the app (requires root), <span class="lvl ro">RO</span> = read-only for monitoring.</p>
+
+        <div class="sys-tools">
+          <label class="search"><i class="ri-search-line"></i><input id="pathSearch" type="search" placeholder="Search paths, e.g. scaling_governor" aria-label="Search sysfs paths" autocomplete="off" spellcheck="false"></label>
+          <div class="filters" id="pathFilters">
+            <button class="fchip on" data-f="all">All</button>
+            <button class="fchip" data-f="cpu">CPU</button>
+            <button class="fchip" data-f="gpu">GPU</button>
+            <button class="fchip" data-f="mem">Memory</button>
+            <button class="fchip" data-f="io">Storage</button>
+            <button class="fchip" data-f="therm">Thermal &amp; Power</button>
+            <button class="fchip" data-f="mtk">MediaTek</button>
+          </div>
+        </div>
+
+        <div class="paths" id="paths">
+          <div class="path" data-cat="cpu"><div><h4>CPU frequency policy <span class="lvl rw">RW</span></h4><code>/sys/devices/system/cpu/cpufreq/policy<i>N</i>/</code></div>
+            <div><p>Governor and frequency limits per cluster. Clusters (policies) are auto-detected — 2, 3, or 4 tiers.</p><div class="nodes"><span>scaling_governor</span><span>scaling_min_freq</span><span>scaling_max_freq</span><span>scaling_available_governors</span><span>scaling_available_frequencies</span></div></div></div>
+          <div class="path" data-cat="cpu"><div><h4>CPU per-core monitor <span class="lvl ro">RO</span></h4><code>/sys/devices/system/cpu/cpu<i>N</i>/cpufreq/</code></div>
+            <div><p>Real-time frequency of each core for the dashboard and monitors.</p><div class="nodes"><span>scaling_cur_freq</span></div></div></div>
+          <div class="path" data-cat="cpu"><div><h4>Kernel scheduler <span class="lvl rw">RW</span></h4><code>/proc/sys/kernel/</code></div>
+            <div><p>Scheduler parameters for performance/power-saving profiles.</p><div class="nodes"><span>sched_boost</span><span>sched_util_clamp_min</span><span>sched_util_clamp_max</span><span>sched_energy_aware</span><span>sched_child_runs_first</span></div></div></div>
+          <div class="path" data-cat="cpu"><div><h4>Qualcomm LPM <span class="lvl rw">RW</span></h4><code>/sys/devices/system/cpu/qcom_lpm/parameters/</code></div>
+            <div><p>Qualcomm CPU low-power mode control (if exposed by the kernel).</p><div class="nodes"><span>sleep_disabled</span><span>prediction_disabled</span></div></div></div>
+
+          <div class="path" data-cat="gpu"><div><h4>Adreno GPU (KGSL) <span class="lvl rw">RW</span></h4><code>/sys/class/kgsl/kgsl-3d0/</code></div>
+            <div><p>Clock, load, and behavior of the Qualcomm Adreno GPU.</p><div class="nodes"><span>gpuclk</span><span>min_gpuclk</span><span>max_gpuclk</span><span>gpubusy</span><span>gpu_busy_percentage</span><span>devfreq/</span><span>throttling</span><span>preemption</span><span>bcl</span></div></div></div>
+          <div class="path" data-cat="gpu io"><div><h4>Devfreq (GPU, DDR, bus) <span class="lvl rw">RW</span></h4><code>/sys/class/devfreq/*</code></div>
+            <div><p>Governor and frequency limits for each detected devfreq device, including UFS/DDR on supported SoCs.</p><div class="nodes"><span>governor</span><span>min_freq</span><span>max_freq</span><span>cur_freq</span><span>available_frequencies</span></div></div></div>
+
+          <div class="path" data-cat="mem"><div><h4>ZRAM <span class="lvl rw">RW</span></h4><code>/sys/block/zram0/</code></div>
+            <div><p>Size and compression algorithm of the compressed swap. Resizing requires resetting the ZRAM device.</p><div class="nodes"><span>disksize</span><span>comp_algorithm</span><span>reset</span></div></div></div>
+          <div class="path" data-cat="mem"><div><h4>Virtual memory <span class="lvl rw">RW</span></h4><code>/proc/sys/vm/</code></div>
+            <div><p>Kernel memory management tuning.</p><div class="nodes"><span>swappiness</span><span>dirty_ratio</span><span>dirty_background_ratio</span><span>vfs_cache_pressure</span></div></div></div>
+          <div class="path" data-cat="mem"><div><h4>Memory stats &amp; PSI <span class="lvl ro">RO</span></h4><code>/proc/meminfo · /proc/pressure/</code></div>
+            <div><p>Monitor RAM, swap, and pressure stall information (cpu, memory).</p><div class="nodes"><span>meminfo</span><span>pressure/memory</span><span>pressure/cpu</span></div></div></div>
+
+          <div class="path" data-cat="io"><div><h4>UFS host controller <span class="lvl rw">RW</span></h4><code>/sys/devices/platform/soc/<i>&lt;addr&gt;</i>.ufshc/</code></div>
+            <div><p>Clock gating settings on the UFS host controller. Node names and addresses vary between SoCs.</p><div class="nodes"><span>clkgate_enable</span></div></div></div>
+          <div class="path" data-cat="io"><div><h4>Block device &amp; I/O <span class="lvl rw">RW</span></h4><code>/sys/block/<i>&lt;dev&gt;</i>/queue/ · /proc/diskstats</code></div>
+            <div><p>I/O scheduler, read-ahead, and live I/O statistics for the Storage screen.</p><div class="nodes"><span>scheduler</span><span>read_ahead_kb</span><span>nr_requests</span></div></div></div>
+
+          <div class="path" data-cat="therm"><div><h4>Thermal zones <span class="lvl ro">RO</span></h4><code>/sys/class/thermal/</code></div>
+            <div><p>Temperature readings from thermal zones; some devices also expose thermal profiles.</p><div class="nodes"><span>thermal_zone*/temp</span><span>thermal_message/sconfig</span></div></div></div>
+          <div class="path" data-cat="therm"><div><h4>Power supply <span class="lvl ro">RO</span></h4><code>/sys/class/power_supply/battery/</code></div>
+            <div><p>Battery &amp; charging statistics for monitoring and Charge Stats. Advanced charging control depends on vendor nodes.</p><div class="nodes"><span>capacity</span><span>status</span><span>voltage_now</span><span>current_now</span></div></div></div>
+          <div class="path" data-cat="therm"><div><h4>LED &amp; backlight (reference) <span class="lvl ro">RO</span></h4><code>/sys/class/leds/</code></div>
+            <div><p>Standard Android nodes for LED and brightness. Part of the sysfs interface reference; ZKM doesn't rely on them for core features and their availability depends heavily on the device.</p><div class="nodes"><span>brightness</span><span>max_brightness</span></div></div></div>
+
+          <div class="path" data-cat="mtk gpu cpu"><div><h4>MediaTek PPM / CPUFreq <span class="lvl rw">RW</span></h4><code>/proc/ppm/ · /proc/cpufreq/</code></div>
+            <div><p>CPU power policy control on MediaTek SoCs (Helio / Dimensity) that expose these nodes.</p><div class="nodes"><span>ppm/enabled</span><span>ppm/policy_status</span><span>cpufreq_power_mode</span><span>cpufreq_cci_mode</span></div></div></div>
+          <div class="path" data-cat="mtk gpu"><div><h4>MediaTek GPU &amp; GED <span class="lvl rw">RW</span></h4><code>/proc/gpufreq/ · /proc/gpufreqv2/ · /sys/kernel/ged/ · /proc/mali/</code></div>
+            <div><p>Frequency and DVFS for Mali/MediaTek GPUs.</p><div class="nodes"><span>gpufreq_opp_freq</span><span>fix_target_opp_index</span><span>dcs_mode</span><span>dvfs_enable</span><span>always_on</span></div></div></div>
+        </div>
+        <p class="empty" id="pathEmpty"><i class="ri-search-eye-line"></i> No matching paths.</p>
+
+        <div class="code">
+          <div class="code-head"><span>example — read the CPU governor via root shell</span><button class="copy" data-copy="su -c 'cat /sys/devices/system/cpu/cpufreq/policy0/scaling_governor'"><i class="ri-file-copy-line"></i> Copy</button></div>
+          <pre><code><span class="c"># Read first — don't write values you don't understand</span>
+<span class="k">su</span> -c <span class="s">'cat /sys/devices/system/cpu/cpufreq/policy0/scaling_governor'</span>
+<span class="k">su</span> -c <span class="s">'cat /sys/devices/system/cpu/cpufreq/policy0/scaling_available_governors'</span></code></pre>
+        </div>
+      </div>
+
+      <!-- Safety -->
+      <div class="panel" role="tabpanel" id="panel-safety" aria-labelledby="tab-safety" hidden>
+        <h3>Safety Notes &amp; Warnings</h3>
+        <p class="sub">ZKM Next performs privileged operations. Wrong values can cause instability, boot issues, overheating, or data loss.</p>
+        <div class="note danger"><i class="ri-error-warning-fill"></i><div><b>There is no universal safe value</b><p>Kernel and thermal tuning have real hardware consequences. Don't blindly copy values from other devices.</p></div></div>
+        <div class="note warn"><i class="ri-fire-line"></i><div><b>Watch the temperature</b><p>Disabling thermal throttling or forcing maximum frequencies for extended periods can trigger overheating.</p></div></div>
+        <ol class="steps">
+          <li><div><b>Understand the parameter</b><span>Know what a node controls before changing it.</span></div></li>
+          <li><div><b>Prepare a boot image backup &amp; recovery</b><span>Keep a working boot image before flashing or heavy tuning — use the backup feature in Kernel Flasher.</span></div></li>
+          <li><div><b>Change one group of settings at a time</b><span>That way the cause of any issue is easy to trace.</span></div></li>
+          <li><div><b>Don't blindly copy values from other devices</b><span>Frequencies, governors, and nodes differ between SoCs and kernels.</span></div></li>
+          <li><div><b>Reboot and verify stability</b><span>After major changes, restart and stress-test before making them permanent.</span></div></li>
+        </ol>
+      </div>
+
+      <!-- Requirements -->
+      <div class="panel" role="tabpanel" id="panel-req" aria-labelledby="tab-req" hidden>
+        <h3>Installation Requirements</h3>
+        <p class="sub">What you need before installing and fully using ZKM Next.</p>
+        <div class="req-grid">
+          <div class="req"><i class="ri-shield-keyhole-line"></i><h4>Root</h4><p>Required for full kernel control. Compatible with:</p><ul><li>Magisk</li><li>KernelSU</li><li>APatch</li><li>Other environments that provide <code>su</code></li></ul></div>
+          <div class="req"><i class="ri-lock-unlock-line"></i><h4>Bootloader</h4><p>The bootloader generally must be unlocked to gain root and to flash kernels/boot images. The unlock process may wipe data and varies by vendor.</p></div>
+          <div class="req"><i class="ri-lock-password-line"></i><h4>SELinux</h4><p>Some nodes depend on SELinux policy. If access is denied, the related feature won't work on that device.</p></div>
+        </div>
+        <table class="arch" aria-label="Supported architectures">
+          <thead><tr><th>Architecture</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><code>arm64-v8a</code></td><td>✅ Primary</td></tr>
+            <tr><td><code>armeabi-v7a</code></td><td>✅ Supported when available</td></tr>
+            <tr><td><code>x86_64</code></td><td>⚠️ Depends on device / build</td></tr>
+          </tbody>
+        </table>
+        <div class="note info" style="margin-top:18px"><i class="ri-information-line"></i><div><b>Android 10+ (API 29)</b><p>Minimum supported Android version. Without root, some monitoring features can run through Shizuku or Axeron.</p></div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FAQ -->
-<section id="faq" style="padding-top:0">
-  <div class="w faq">
-    <div class="reveal">
-      <span class="eyebrow">FAQ</span>
-      <h2 style="margin-top:20px">Pertanyaan Umum</h2>
-      <p style="color:var(--mu);margin-top:12px;line-height:1.7">Jawaban singkat sebelum kamu mulai.</p>
+<!-- ============ FAQ ============ -->
+<section id="faq">
+  <div class="container faq-layout">
+    <div class="faq-side reveal">
+      <div class="sec-head">
+        <span class="eyebrow">Help &amp; FAQ</span>
+        <h2>Frequently asked <span class="grad-text">questions.</span></h2>
+        <p>Can't find the answer? Open a discussion or report an issue directly in the repository.</p>
+      </div>
+      <div class="help-card glass">
+        <h4><i class="ri-questionnaire-line"></i> Need more help?</h4>
+        <p>Include your device model, SoC, Android version, root manager, and logs when filing an issue.</p>
+        <a class="btn btn-ghost btn-sm" href="https://github.com/ZUANVFX01/ZKM/issues" target="_blank" rel="noopener"><i class="ri-bug-line"></i> Open GitHub Issues</a>
+      </div>
     </div>
-    <div>
-      <details open class="reveal" data-delay="1"><summary>Apa itu ZKM Next?</summary><p>Aplikasi Android untuk memantau dan menyetel kernel, GPU, thermal, baterai, aplikasi, dan tampilan dari satu tempat.</p></details>
-      <details class="reveal" data-delay="1"><summary>Apakah harus root?</summary><p>Tidak wajib. Mode Basic hanya untuk melihat data, mode ADB lewat Shizuku membuka sebagian fitur, dan mode ROOT membuka semuanya.</p></details>
-      <details class="reveal" data-delay="2"><summary>Apakah data saya dikirim ke server?</summary><p>Tidak. Data diproses lokal di perangkat dan tidak dikirim ke server cloud.</p></details>
-      <details class="reveal" data-delay="2"><summary>Apakah aman?</summary><p>Perubahan tingkat kernel punya risiko. Gunakan backup, ubah nilai bertahap, dan pahami tiap pengaturan sebelum menerapkannya.</p></details>
-      <details class="reveal" data-delay="3"><summary>Kenapa ada menu yang tidak muncul?</summary><p>Menu yang tidak didukung hardware atau kernel perangkatmu disembunyikan otomatis.</p></details>
-    </div>
-  </div>
-</section>
 
-<!-- CTA -->
-<section style="padding-top:0">
-  <div class="w">
-    <div class="cta reveal">
-      <h2>Siap Mengendalikan Perangkatmu?</h2>
-      <p>Unduh ZKM Next dan mulai dari Dashboard. Ganti tombol ini dengan tautan rilis resmimu.</p>
-      <div class="btn-row">
-        <a class="btn" href="#">
-          Unduh rilis terbaru
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        </a>
-        <a class="btn ghost" href="#">Channel &amp; diskusi</a>
+    <div class="acc reveal" id="acc">
+      <div class="acc-item open">
+        <button class="acc-q" aria-expanded="true">How do I install ZKM Next? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <ul>
+            <li>Download the latest APK from the <b>GitHub Releases</b> page.</li>
+            <li>Allow installation from unknown sources for the file manager / browser app you're using.</li>
+            <li>Open the APK, install it, then launch ZKM Next and grant root access when prompted by Magisk / KernelSU / APatch.</li>
+          </ul>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Is there a bootloop risk? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <p>Yes, there is — especially if you change kernel parameters to extremes, disable thermal controls, or flash an image that doesn't match your device.</p>
+          <ul>
+            <li>Always <b>back up the boot image</b> before flashing.</li>
+            <li>Change one group of settings at a time and test stability.</li>
+            <li>If you bootloop: enter recovery/fastboot and restore the boot image backup, or disable boot-time modules/scripts through your root manager.</li>
+          </ul>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Does it support Snapdragon and MediaTek? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <p>Yes, both are handled. On Snapdragon, ZKM reads nodes such as <code>/sys/class/kgsl/kgsl-3d0/</code> and <code>qcom_lpm</code>. On MediaTek, nodes such as <code>/proc/ppm</code>, <code>/proc/gpufreq</code>, and <code>/sys/kernel/ged</code> are available. Other platforms (Exynos, Tensor, etc.) work as far as generic nodes like cpufreq and devfreq are available.</p>
+          <p>Feature availability depends on the kernel and vendor — ZKM hides controls whose nodes aren't found.</p>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Can it be used without root? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <p>Partly. Through <b>Shizuku</b> or <b>Axeron</b>, monitoring features and some basic actions can run without root. Actions that write to kernel nodes (governor, ZRAM, flasher) require Root mode.</p>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Troubleshooting: a menu / control doesn't appear or doesn't work <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <ul>
+            <li>Make sure root access has been granted (check in your root manager app).</li>
+            <li>The node may not exist in your kernel — this is normal; ZKM will hide or disable it.</li>
+            <li>Check SELinux: <code>su -c getenforce</code>. Strict policy can deny writes to certain nodes.</li>
+            <li>For overlays (FPS / Game Space), grant the <b>display over other apps</b> and <b>Usage access</b> permissions.</li>
+            <li>Disable battery optimization for ZKM so the system doesn't kill its background services.</li>
+          </ul>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">How do I translate or change the language? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <p>Use the <b>Language Pack</b>: export a JSON file containing all strings, edit the translations, then import it back. Keep placeholders like <code>%1$s</code> and <code>%1$d</code> exactly as they are.</p>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">How do I build from source? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <p>You need Android Studio, the Android SDK, JDK 21, and the Android NDK for native components.</p>
+          <div class="code" style="margin:6px 0 0">
+            <div class="code-head"><span>bash</span><button class="copy" data-copy="git clone https://github.com/ZUANVFX01/ZKM.git&#10;cd ZKM&#10;./gradlew :app:assembleDebug"><i class="ri-file-copy-line"></i> Copy</button></div>
+            <pre><code><span class="k">git</span> clone https://github.com/ZUANVFX01/ZKM.git
+<span class="k">cd</span> ZKM
+./gradlew :app:assembleDebug</code></pre>
+          </div>
+        </div></div></div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ============ DOWNLOAD ============ -->
+<section id="download">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Download &amp; Releases</span>
+      <h2>Download official releases <span class="grad-text">from GitHub.</span></h2>
+      <p>The only official source for the APK is the Releases page in the GitHub repository. Avoid third-party mirrors.</p>
+    </div>
+    <div class="dl-grid">
+      <div class="dl-main glass reveal">
+        <div class="dl-top">
+          <div class="dl-logo"><img src="assets/logo.png" alt="" onerror="this.style.display='none'"></div>
+          <div><h3>Zuan Kernel Manager Next</h3><p>com.zuan.kernelmanager.next</p></div>
+        </div>
+        <div class="meta">
+          <div><small>Version</small><b>1.0.0 Stable</b></div>
+          <div><small>Android</small><b>10+ (API 29)</b></div>
+          <div><small>Architecture</small><b>arm64-v8a · armeabi-v7a</b></div>
+          <div><small>License</small><b>GNU GPL v3</b></div>
+        </div>
+        <div class="dl-actions">
+          <a class="btn btn-primary" href="https://github.com/ZUANVFX01/ZKM/releases/latest" target="_blank" rel="noopener"><i class="ri-download-2-line"></i> Download Latest APK</a>
+          <a class="btn btn-ghost" href="https://github.com/ZUANVFX01/ZKM/releases" target="_blank" rel="noopener"><i class="ri-price-tag-3-line"></i> All Releases</a>
+        </div>
+      </div>
+
+      <div class="dl-side">
+        <div class="box glass reveal" style="transition-delay:.08s">
+          <h4><i class="ri-fingerprint-line"></i> Verify Checksum</h4>
+          <p>The official SHA-256 value is listed in each release's notes. Match it before installing:</p>
+          <div class="code" style="margin:0">
+            <div class="code-head"><span>Linux / macOS / Termux</span><button class="copy" data-copy="sha256sum ZKM-Next.apk"><i class="ri-file-copy-line"></i> Copy</button></div>
+            <pre><code><span class="k">sha256sum</span> ZKM-Next.apk</code></pre>
+          </div>
+        </div>
+        <div class="box glass reveal" style="transition-delay:.14s">
+          <h4><i class="ri-history-line"></i> Quick Changelog · v1.0.0</h4>
+          <ul>
+            <li><i class="ri-check-line"></i>Game Space: overlay panel, per-cluster Custom Mode CPU, Root Tools</li>
+            <li><i class="ri-check-line"></i>SoC Preset Library &amp; Storage screen (health, I/O, partitions)</li>
+            <li><i class="ri-check-line"></i>Language Pack JSON &amp; settings XML export/import</li>
+            <li><i class="ri-check-line"></i>Privileged modes: Root, Shizuku, and Axeron</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="box glass reveal" style="margin-top:20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+      <div class="f-ic" style="margin:0"><i class="ri-open-source-line"></i></div>
+      <div style="flex:1;min-width:240px"><h4 style="margin:0 0 4px">Open Source · GNU GPL v3</h4><p style="margin:0">Free to study, modify, and redistribute under the terms of GPL-3.0. Third-party components follow their respective licenses.</p></div>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/ZUANVFX01/ZKM/blob/main/LICENSE" target="_blank" rel="noopener"><i class="ri-article-line"></i> Read License</a>
+    </div>
+  </div>
+</section>
 </main>
 
-<footer class="f">
-  <div class="w">
-    <div class="fg">
-      <div>
-        <a class="logo" href="#" style="color:var(--tx)">
-          <span class="logo-mark">Z</span>
-          <span>ZKM Next</span>
-        </a>
-        <p style="margin-top:16px;max-width:280px;line-height:1.7">Zuan Kernel Manager. Maintainer: ZKM Projects.</p>
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="f-grid2">
+      <div class="f-brand">
+        <a href="#overview" class="brand"><span class="brand-logo"><img src="assets/logo.png" alt="" onerror="this.replaceWith(document.createTextNode('Z'))"></span><span class="brand-name">Zuan Kernel Manager Next</span></a>
+        <p>Advanced Android kernel &amp; system management — performance, control, monitoring, customization.</p>
       </div>
-      <div>
-        <h4>Fitur</h4>
-        <a href="#katalog">Katalog</a>
-        <a href="#propdet">Prop Detected</a>
-        <a href="#mode">Mode kerja</a>
-      </div>
-      <div>
-        <h4>Komunitas</h4>
-        <a href="#">Channel</a>
-        <a href="#">Diskusi</a>
-        <a href="#">Terjemahan</a>
-      </div>
-      <div>
-        <h4>Info</h4>
-        <a href="#faq">FAQ</a>
-        <a href="#">Changelog</a>
-        <a href="#">Open source</a>
-      </div>
+      <div><h5>Navigation</h5><ul><li><a href="#overview">Overview</a></li><li><a href="#fitur">Key Features</a></li><li><a href="#dokumentasi">Docs &amp; Sysfs</a></li><li><a href="#faq">FAQ/Help</a></li></ul></div>
+      <div><h5>Project</h5><ul>
+        <li><a href="https://github.com/ZUANVFX01/ZKM" target="_blank" rel="noopener">GitHub Repository</a></li>
+        <li><a href="https://github.com/ZUANVFX01/ZKM/releases" target="_blank" rel="noopener">Releases</a></li>
+        <li><a href="https://github.com/ZUANVFX01/ZKM/issues" target="_blank" rel="noopener">Issues</a></li>
+        <li><a href="https://github.com/ZUANVFX01/ZKM/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0 License</a></li></ul></div>
+      <div><h5>Maintainer</h5><ul>
+        <li><a href="https://github.com/ZUANVFX01" target="_blank" rel="noopener">ZUAN / ZUANVFX01</a></li>
+        <li><a href="#download">Download APK</a></li></ul></div>
     </div>
-    <div class="cp">
-      <span>© 2026 ZKM Projects. Gunakan dengan risiko sendiri.</span>
-      <span>Made with care for the Android kernel community.</span>
-    </div>
+    <div class="disclaimer" role="note"><i class="ri-error-warning-fill"></i><p><b>Root risk disclaimer.</b> Rooting, changing kernel parameters, and flashing images can void your warranty and cause bootloops, overheating, or data loss. ZKM Next is provided <i>as-is</i> without any warranty; all risk lies with the user. Back up your data and boot image before proceeding.</p></div>
+    <div class="copy-row"><span>© <span id="year">2026</span> Zuan Technologies / Open Source Project. Released under GNU GPL v3.</span><span>Made with ♥ for the Android community.</span></div>
   </div>
 </footer>
 
+<button class="to-top" id="toTop" aria-label="Back to top"><i class="ri-arrow-up-line"></i></button>
+
 <script>
-// ===== REVEAL ON SCROLL =====
-(function(){
-  const els = document.querySelectorAll('.reveal');
-  if(!('IntersectionObserver' in window)){
-    els.forEach(e=>e.classList.add('in'));
-    return;
-  }
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        entry.target.classList.add('in');
-        io.unobserve(entry.target);
-      }
-    });
-  },{threshold:.12,rootMargin:'0px 0px -60px 0px'});
-  els.forEach(e=>io.observe(e));
-})();
-
-// ===== STATS COUNTER =====
-(function(){
-  const counters = document.querySelectorAll('[data-count]');
-  if(!counters.length) return;
-  const animate = (el)=>{
-    const target = parseInt(el.dataset.count,10);
-    const suffix = el.dataset.suffix || '';
-    const dur = 1400;
-    const start = performance.now();
-    const tick = (now)=>{
-      const p = Math.min((now-start)/dur,1);
-      const eased = 1-Math.pow(1-p,3);
-      el.textContent = Math.round(target*eased)+suffix;
-      if(p<1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const root = document.documentElement;
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+    set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
   };
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){animate(e.target);io.unobserve(e.target);}
-    });
-  },{threshold:.5});
-  counters.forEach(c=>io.observe(c));
-})();
 
-// ===== HEADER SHADOW ON SCROLL =====
-(function(){
-  const bar = document.querySelector('.appbar');
-  let last = 0;
-  window.addEventListener('scroll',()=>{
-    const y = window.scrollY;
-    if(y>8 && last<=8) bar.style.boxShadow='0 8px 32px -12px rgba(15,23,42,.15)';
-    else if(y<=8 && last>8) bar.style.boxShadow='none';
-    last = y;
-  },{passive:true});
+  /* ---------- Theme ---------- */
+  const toggle = $('#themeToggle'), icon = $('#themeIcon');
+  function applyTheme(t){
+    root.setAttribute('data-theme', t);
+    toggle.setAttribute('aria-checked', String(t === 'light'));
+    icon.className = t === 'light' ? 'ri-sun-fill' : 'ri-moon-fill';
+    const m = $('meta[name="theme-color"]'); if (m) m.content = t === 'light' ? '#f5f7fb' : '#000000';
+  }
+  applyTheme(store.get('zkm-theme') === 'light' ? 'light' : 'dark');
+  toggle.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next); store.set('zkm-theme', next);
+  });
+
+  /* ---------- Navbar ---------- */
+  const nav = $('#nav'), menuBtn = $('#menuBtn');
+  const onScroll = () => {
+    nav.classList.toggle('scrolled', scrollY > 10);
+    $('#toTop').classList.toggle('show', scrollY > 700);
+  };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  function setMenu(open){
+    nav.classList.toggle('open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.firstElementChild.className = open ? 'ri-close-line' : 'ri-menu-line';
+  }
+  menuBtn.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+  $$('#navLinks a, .nav-actions .btn').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+  $('#toTop').addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+  $('#year').textContent = new Date().getFullYear();
+
+  /* scroll-spy */
+  const links = $$('#navLinks a');
+  const spy = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  ['overview','fitur','dokumentasi','faq'].forEach(id => spy.observe($('#' + id)));
+
+  /* ---------- Reveal on scroll ---------- */
+  const rv = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting){ e.target.classList.add('in'); rv.unobserve(e.target); }
+  }), { threshold: .12 });
+  $$('.reveal').forEach(el => rv.observe(el));
+
+  /* counter */
+  $$('[data-count]').forEach(el => {
+    const target = +el.dataset.count; let done = false;
+    new IntersectionObserver(([e], o) => {
+      if (!e.isIntersecting || done) return; done = true; o.disconnect();
+      const t0 = performance.now();
+      const step = t => { const p = Math.min(1, (t - t0) / 1100); el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    }, { threshold: .6 }).observe(el);
+  });
+
+  /* card spotlight */
+  $$('.f-card').forEach(c => c.addEventListener('pointermove', e => {
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }));
+
+  /* ---------- Live demo mockup ---------- */
+  const clusters = [
+    { name: 'Little', min: 300, max: 1804 },
+    { name: 'Big',    min: 633, max: 2496 },
+    { name: 'Prime',  min: 806, max: 2995 }
+  ];
+  const cpuBars = $('#cpuBars');
+  cpuBars.innerHTML = clusters.map(c =>
+    `<div class="bar"><span>${c.name}</span><div class="track"><div class="fill"></div></div><span>—</span></div>`).join('');
+  const fills = $$('.fill', cpuBars), vals = $$('.bar span:last-child', cpuBars);
+  const govs = ['msm-adreno-tz', 'performance', 'simple_ondemand'];
+  const roots = ['KernelSU · Root mode', 'Magisk · Root mode', 'APatch · Root mode'];
+  let tick = 0, zr = 1.9;
+  function demo(){
+    let sum = 0;
+    clusters.forEach((c, i) => {
+      const load = .25 + Math.random() * .7;
+      const f = Math.round(c.min + (c.max - c.min) * load);
+      sum += f; fills[i].style.width = Math.round(load * 100) + '%'; vals[i].textContent = f + ' MHz';
+    });
+    $('#cpuAvg').textContent = (sum / clusters.length / 1000).toFixed(2) + ' GHz';
+    $('#temp').textContent = (36 + Math.random() * 6).toFixed(1);
+    zr = Math.min(3.6, Math.max(1.2, zr + (Math.random() - .45) * .25));
+    $('#zramTxt').textContent = zr.toFixed(1) + ' / 4.0 GB';
+    $('#zramFill').style.width = (zr / 4 * 100) + '%';
+    if (++tick % 6 === 0){
+      $('#gpuGov').textContent = govs[(tick / 6) % govs.length];
+      $('#rootMgr').textContent = roots[(tick / 6) % roots.length];
+    }
+  }
+  demo();
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(demo, 1500);
+
+  /* ---------- Tabs ---------- */
+  const tabs = $$('.tab');
+  function selectTab(t, focus){
+    tabs.forEach(x => {
+      const on = x === t;
+      x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1;
+      const p = $('#' + x.getAttribute('aria-controls')); p.classList.toggle('active', on); p.hidden = !on;
+    });
+    if (focus) t.focus();
+    t.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => selectTab(t));
+    t.addEventListener('keydown', e => {
+      const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      if (k){ e.preventDefault(); selectTab(tabs[(i + k + tabs.length) % tabs.length], true); }
+      if (e.key === 'Home'){ e.preventDefault(); selectTab(tabs[0], true); }
+      if (e.key === 'End'){ e.preventDefault(); selectTab(tabs[tabs.length - 1], true); }
+    });
+  });
+  $('#panel-sysfs').hidden = false;
+
+  /* ---------- Sysfs filter + search ---------- */
+  const rows = $$('#paths .path'), search = $('#pathSearch'), empty = $('#pathEmpty');
+  let cat = 'all';
+  function filterPaths(){
+    const q = search.value.trim().toLowerCase(); let n = 0;
+    rows.forEach(r => {
+      const okCat = cat === 'all' || r.dataset.cat.split(' ').includes(cat);
+      const okQ = !q || r.textContent.toLowerCase().includes(q);
+      r.hidden = !(okCat && okQ); if (!r.hidden) n++;
+    });
+    empty.style.display = n ? 'none' : 'block';
+  }
+  search.addEventListener('input', filterPaths);
+  $$('#pathFilters .fchip').forEach(b => b.addEventListener('click', () => {
+    $$('#pathFilters .fchip').forEach(x => x.classList.toggle('on', x === b)); cat = b.dataset.f; filterPaths();
+  }));
+
+  /* ---------- Copy ---------- */
+  $$('.copy').forEach(b => b.addEventListener('click', async () => {
+    const text = b.dataset.copy.replace(/&#10;/g, '\n'); const label = b.innerHTML;
+    try { await navigator.clipboard.writeText(text); }
+    catch(e){ const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(_){} ta.remove(); }
+    b.classList.add('ok'); b.innerHTML = '<i class="ri-check-line"></i> Copied';
+    setTimeout(() => { b.classList.remove('ok'); b.innerHTML = label; }, 1600);
+  }));
+
+  /* ---------- Accordion ---------- */
+  $$('.acc-item').forEach(item => {
+    const q = $('.acc-q', item);
+    q.addEventListener('click', () => {
+      const open = !item.classList.contains('open');
+      $$('.acc-item.open').forEach(o => { if (o !== item){ o.classList.remove('open'); $('.acc-q', o).setAttribute('aria-expanded', 'false'); } });
+      item.classList.toggle('open', open); q.setAttribute('aria-expanded', String(open));
+    });
+  });
 })();
 </script>
-
 </body>
 </html>
