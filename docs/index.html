@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en-US" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zuan Kernel Manager Next (ZKM Next) — Kernel &amp; System Utility for Rooted Android</title>
+<meta name="description" content="ZKM Next: an open-source (GPL-3.0) app for CPU/GPU governor control, ZRAM, UFS devfreq, kernel flashing, root terminal, SetEdit, and advanced Android system customization. Kotlin + Jetpack Compose, Material 3.">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Zuan Kernel Manager Next (ZKM Next)">
+<meta property="og:description" content="Modern, open-source Android kernel management and advanced system customization. Supports Magisk, KernelSU, and APatch.">
+<meta property="og:image" content="assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --blue:#2563EB; --green:#10B981; --blue-soft:#60a5fa; --green-soft:#34d399;
+  --bg:#000; --bg-2:#05080f; --surface:rgba(255,255,255,.04); --surface-2:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.09); --border-2:rgba(255,255,255,.16);
+  --text:#eef2f9; --muted:#9aa6bb; --faint:#66738a;
+  --code-bg:rgba(0,0,0,.55); --nav-bg:rgba(6,9,15,.62); --menu-bg:rgba(8,12,20,.97);
+  --shadow:0 30px 80px -30px rgba(0,0,0,.9);
+  --glow-a:rgba(37,99,235,.22); --glow-b:rgba(16,185,129,.16);
+  --grad:linear-gradient(135deg,var(--blue),var(--green));
+  --radius:22px; --ease:cubic-bezier(.2,.8,.2,1);
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+:root[data-theme="light"]{
+  --bg:#f5f7fb; --bg-2:#eef2f8; --surface:rgba(255,255,255,.72); --surface-2:rgba(255,255,255,.95);
+  --border:rgba(15,23,42,.09); --border-2:rgba(15,23,42,.18);
+  --text:#0b1220; --muted:#475569; --faint:#64748b;
+  --code-bg:rgba(15,23,42,.06); --nav-bg:rgba(255,255,255,.7); --menu-bg:rgba(255,255,255,.98);
+  --shadow:0 30px 70px -35px rgba(15,23,42,.35);
+  --glow-a:rgba(37,99,235,.14); --glow-b:rgba(16,185,129,.12);
+  --blue-soft:#2563EB; --green-soft:#059669;
+}
+
+/* ============ BASE ============ */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px;-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .35s,color .35s}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+code,pre,kbd{font-family:var(--mono)}
+:focus-visible{outline:2px solid var(--blue-soft);outline-offset:3px;border-radius:8px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--blue);color:#fff;padding:8px 14px;border-radius:10px;z-index:200}
+.skip:focus{left:12px}
+.container{width:min(1180px,100% - 40px);margin-inline:auto}
+section{position:relative;padding:96px 0}
+.bg-glow{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+   radial-gradient(900px 520px at 85% -5%,var(--glow-a),transparent 60%),
+   radial-gradient(800px 560px at 5% 35%,var(--glow-b),transparent 60%),
+   radial-gradient(700px 500px at 90% 85%,var(--glow-a),transparent 60%)}
+.bg-grid{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(ellipse at 50% 0,#000 0,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 50% 0,#000 0,transparent 70%)}
+
+.glass{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%)}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--green-soft)}
+.eyebrow::before{content:"";width:22px;height:2px;border-radius:2px;background:var(--grad)}
+.sec-head{max-width:720px;margin-bottom:48px}
+.sec-head h2{font-size:clamp(1.8rem,3.4vw,2.7rem);line-height:1.15;margin:14px 0 14px;letter-spacing:-.025em;font-weight:800}
+.sec-head p{color:var(--muted);font-size:1.05rem;margin:0}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 24px;border-radius:16px;
+  font-weight:600;font-size:.97rem;transition:transform .25s var(--ease),box-shadow .25s,background .25s,border-color .25s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 12px 34px -10px rgba(37,99,235,.65)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 40px -10px rgba(16,185,129,.55)}
+.btn-ghost{background:var(--surface);border:1px solid var(--border-2);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.btn-ghost:hover{transform:translateY(-2px);background:var(--surface-2);border-color:var(--blue-soft)}
+.btn-sm{padding:10px 18px;border-radius:14px;font-size:.9rem}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* ============ NAVBAR ============ */
+.nav{position:fixed;top:12px;left:0;right:0;z-index:100}
+.nav-inner{width:min(1180px,100% - 24px);margin-inline:auto;display:flex;align-items:center;gap:18px;
+  padding:10px 12px 10px 16px;background:var(--nav-bg);border:1px solid var(--border);border-radius:20px;
+  backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:0 10px 40px -20px rgba(0,0,0,.6);transition:border-color .3s}
+.nav.scrolled .nav-inner{border-color:var(--border-2)}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700;letter-spacing:-.01em}
+.brand-logo{width:36px;height:36px;border-radius:11px;background:#080c14;border:1px solid var(--border);display:grid;place-items:center;overflow:hidden;flex:none}
+.brand-logo img{width:30px;height:30px;object-fit:contain}
+.brand-name{font-size:1rem;white-space:nowrap}
+.badge-ver{font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:99px;color:var(--green-soft);
+  background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);white-space:nowrap}
+.nav-links{display:flex;gap:2px;margin-left:auto}
+.nav-links a{padding:8px 13px;border-radius:12px;font-size:.9rem;font-weight:500;color:var(--muted);transition:color .2s,background .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--surface-2)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.theme-toggle{width:58px;height:32px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border-2);position:relative;flex:none;transition:background .3s}
+.theme-toggle .knob{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--grad);display:grid;place-items:center;
+  color:#fff;font-size:.8rem;transition:transform .35s var(--ease)}
+:root[data-theme="light"] .theme-toggle .knob{transform:translateX(26px)}
+.nav-links .nav-dl{display:none}
+.menu-btn{display:none;width:42px;height:42px;border-radius:13px;background:var(--surface-2);border:1px solid var(--border);font-size:1.25rem;place-items:center}
+
+/* ============ HERO ============ */
+.hero{padding:150px 0 70px}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:9px;padding:7px 14px 7px 8px;border-radius:99px;font-size:.82rem;color:var(--muted)}
+.pill b{background:var(--grad);color:#fff;border-radius:99px;padding:2px 10px;font-size:.72rem;letter-spacing:.04em}
+.hero h1{font-size:clamp(2.3rem,5.4vw,4.3rem);line-height:1.04;letter-spacing:-.035em;margin:22px 0 20px;font-weight:800}
+.hero p.lead{font-size:clamp(1.02rem,1.5vw,1.2rem);color:var(--muted);max-width:590px;margin:0 0 30px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:34px}
+.badges{display:flex;flex-wrap:wrap;gap:9px}
+.badge{display:inline-flex;align-items:center;gap:8px;font-size:.8rem;font-weight:500;padding:7px 13px;border-radius:12px;
+  background:var(--surface);border:1px solid var(--border);transition:transform .25s var(--ease),border-color .25s}
+.badge:hover{transform:translateY(-2px);border-color:var(--border-2)}
+.badge i{font-size:1rem}
+.badge .c-green{color:var(--green-soft)}.badge .c-blue{color:var(--blue-soft)}.badge .c-violet{color:#a78bfa}.badge .c-red{color:#f87171}
+
+/* mockup */
+.stage{position:relative;display:grid;place-items:center}
+.stage::before{content:"";position:absolute;inset:6% 8%;border-radius:50%;background:var(--grad);filter:blur(90px);opacity:.28}
+.device{position:relative;width:min(380px,100%);padding:20px;border-radius:34px;background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.03));
+  border:1px solid var(--border-2);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);box-shadow:var(--shadow);animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-10px)}}
+.dev-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.dev-title{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.95rem}
+.dev-title img{width:26px;height:26px;object-fit:contain}
+.live{display:inline-flex;align-items:center;gap:7px;font-size:.7rem;font-weight:600;color:var(--green-soft);padding:4px 10px;border-radius:99px;background:rgba(16,185,129,.12)}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(16,185,129,.6);animation:pulse 1.8s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+.m-card{padding:14px 15px;border-radius:18px;background:var(--surface);border:1px solid var(--border);margin-bottom:11px}
+.m-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.m-label{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.m-label i{color:var(--blue-soft);font-size:.95rem}
+.m-val{font-family:var(--mono);font-weight:600;font-size:.95rem}
+.root-chip{display:flex;align-items:center;gap:10px}
+.root-chip .ic{width:38px;height:38px;border-radius:12px;background:rgba(16,185,129,.14);color:var(--green-soft);display:grid;place-items:center;font-size:1.2rem}
+.root-chip b{display:block;font-size:.92rem}.root-chip small{color:var(--muted);font-size:.74rem}
+.bars{display:grid;gap:8px;margin-top:11px}
+.bar{display:grid;grid-template-columns:62px 1fr 74px;align-items:center;gap:9px;font-size:.72rem;color:var(--muted)}
+.bar .track{height:7px;border-radius:9px;background:var(--surface-2);overflow:hidden}
+.bar .fill{height:100%;width:50%;border-radius:9px;background:var(--grad);transition:width 1s var(--ease)}
+.bar span:last-child{font-family:var(--mono);color:var(--text);text-align:right}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.grid2 .m-card{margin:0}
+.chip{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:.72rem;padding:4px 9px;border-radius:9px;background:rgba(37,99,235,.15);color:var(--blue-soft);border:1px solid rgba(37,99,235,.3)}
+.temp{font-size:1.5rem;font-weight:700;margin-top:4px;font-family:var(--mono)}
+.temp small{font-size:.8rem;color:var(--muted)}
+.demo-note{text-align:center;font-size:.68rem;color:var(--faint);margin-top:12px}
+
+/* trust strip */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:70px}
+.stat{padding:22px;text-align:left}
+.stat b{display:block;font-size:2rem;letter-spacing:-.03em;font-weight:800}
+.stat span{color:var(--muted);font-size:.88rem}
+
+/* ============ FEATURES ============ */
+.f-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.f-card{padding:28px;position:relative;overflow:hidden;transition:transform .35s var(--ease),border-color .35s,background .35s}
+.f-card::after{content:"";position:absolute;inset:0;background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(37,99,235,.16),transparent 45%);opacity:0;transition:opacity .35s;pointer-events:none}
+.f-card:hover{transform:translateY(-6px);border-color:var(--border-2);background:var(--surface-2)}
+.f-card:hover::after{opacity:1}
+.f-ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:1.5rem;margin-bottom:20px;
+  color:#fff;background:var(--grad);box-shadow:0 12px 28px -12px rgba(37,99,235,.8)}
+.f-card h3{margin:0 0 9px;font-size:1.15rem;letter-spacing:-.01em}
+.f-card p{margin:0 0 16px;color:var(--muted);font-size:.94rem}
+.tags{display:flex;flex-wrap:wrap;gap:7px}
+.tag{font-size:.72rem;padding:4px 10px;border-radius:99px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted);font-family:var(--mono)}
+.f-card.wide{grid-column:span 2}
+
+/* ============ DOCS ============ */
+.docs-shell{overflow:hidden}
+.tabs{display:flex;gap:6px;padding:10px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:inline-flex;align-items:center;gap:9px;padding:11px 18px;border-radius:14px;font-weight:600;font-size:.92rem;color:var(--muted);white-space:nowrap;transition:all .25s var(--ease)}
+.tab:hover{color:var(--text);background:var(--surface-2)}
+.tab[aria-selected="true"]{color:#fff;background:var(--grad);box-shadow:0 10px 26px -12px rgba(37,99,235,.8)}
+.panel{padding:30px;display:none;animation:fadeUp .45s var(--ease)}
+.panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}}
+.panel h3{margin:0 0 8px;font-size:1.35rem;letter-spacing:-.02em}
+.panel > p.sub{color:var(--muted);margin:0 0 22px;max-width:760px}
+
+.sys-tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:18px}
+.search{flex:1;min-width:220px;display:flex;align-items:center;gap:10px;padding:0 14px;border-radius:14px;background:var(--code-bg);border:1px solid var(--border)}
+.search input{flex:1;background:none;border:0;outline:0;color:var(--text);font:inherit;font-family:var(--mono);font-size:.88rem;padding:12px 0}
+.search i{color:var(--faint)}
+.filters{display:flex;flex-wrap:wrap;gap:7px}
+.fchip{padding:7px 14px;border-radius:99px;font-size:.8rem;font-weight:600;border:1px solid var(--border);color:var(--muted);background:var(--surface);transition:all .2s}
+.fchip:hover{border-color:var(--border-2);color:var(--text)}
+.fchip.on{background:rgba(37,99,235,.18);border-color:rgba(96,165,250,.55);color:var(--blue-soft)}
+.paths{display:grid;gap:11px}
+.path{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;padding:16px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--border);transition:border-color .25s,transform .25s var(--ease)}
+.path:hover{border-color:var(--border-2);transform:translateX(3px)}
+.path[hidden]{display:none}
+.path code{font-size:.84rem;color:var(--green-soft);word-break:break-all;display:block}
+.path .nodes{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.path .nodes span{font-family:var(--mono);font-size:.72rem;padding:3px 8px;border-radius:8px;background:var(--code-bg);color:var(--muted);border:1px solid var(--border)}
+.path h4{margin:0 0 4px;font-size:.95rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.path p{margin:0;color:var(--muted);font-size:.86rem}
+.lvl{font-size:.65rem;font-weight:700;letter-spacing:.06em;padding:2px 8px;border-radius:99px;text-transform:uppercase}
+.lvl.rw{background:rgba(251,146,60,.15);color:#fb923c}.lvl.ro{background:rgba(96,165,250,.15);color:var(--blue-soft)}
+.empty{text-align:center;color:var(--faint);padding:30px;display:none}
+
+.code{position:relative;margin:22px 0 0;border-radius:16px;background:var(--code-bg);border:1px solid var(--border);overflow:hidden}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--border);font-size:.74rem;color:var(--faint);font-family:var(--mono)}
+.copy{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;color:var(--muted);padding:4px 10px;border-radius:9px;border:1px solid var(--border);transition:all .2s}
+.copy:hover{color:var(--text);border-color:var(--blue-soft)}
+.copy.ok{color:var(--green-soft);border-color:var(--green)}
+.code pre{margin:0;padding:16px 18px;overflow-x:auto;font-size:.84rem;line-height:1.75;color:var(--text)}
+.code .c{color:var(--faint)}.code .k{color:var(--blue-soft)}.code .s{color:var(--green-soft)}
+
+.note{display:flex;gap:14px;padding:16px 18px;border-radius:16px;margin-bottom:14px;border:1px solid}
+.note i{font-size:1.4rem;flex:none;margin-top:1px}
+.note b{display:block;margin-bottom:2px}.note p{margin:0;font-size:.9rem;color:var(--muted)}
+.note.warn{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.35)}.note.warn i{color:#fbbf24}
+.note.danger{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.35)}.note.danger i{color:#f87171}
+.note.info{background:rgba(37,99,235,.08);border-color:rgba(96,165,250,.35)}.note.info i{color:var(--blue-soft)}
+.steps{counter-reset:s;display:grid;gap:12px;margin:18px 0 0;padding:0;list-style:none}
+.steps li{counter-increment:s;display:flex;gap:16px;padding:16px 18px;border-radius:16px;background:var(--surface);border:1px solid var(--border)}
+.steps li::before{content:counter(s);flex:none;width:32px;height:32px;border-radius:10px;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem}
+.steps b{display:block}.steps span{color:var(--muted);font-size:.9rem}
+.req-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.req{padding:20px;border-radius:18px;background:var(--surface);border:1px solid var(--border)}
+.req i{font-size:1.5rem;color:var(--blue-soft)}.req h4{margin:10px 0 6px}.req p,.req li{color:var(--muted);font-size:.88rem;margin:0}
+.req ul{padding-left:18px;margin:8px 0 0;display:grid;gap:4px}
+table.arch{width:100%;border-collapse:collapse;margin-top:18px;font-size:.9rem;border-radius:14px;overflow:hidden}
+.arch th,.arch td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--border)}
+.arch th{color:var(--faint);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;background:var(--surface)}
+.arch tr:last-child td{border-bottom:0}
+.arch code{color:var(--green-soft)}
+
+/* ============ FAQ ============ */
+.faq-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:start}
+.faq-side{position:sticky;top:110px}
+.faq-side .sec-head{margin-bottom:24px}
+.help-card{padding:22px}
+.help-card h4{margin:0 0 6px}.help-card p{margin:0 0 14px;color:var(--muted);font-size:.9rem}
+.acc{display:grid;gap:12px}
+.acc-item{border-radius:18px;background:var(--surface);border:1px solid var(--border);transition:border-color .3s,background .3s}
+.acc-item.open{border-color:rgba(96,165,250,.5);background:var(--surface-2)}
+.acc-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:20px 22px;text-align:left;font-weight:600;font-size:1rem}
+.acc-q i{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2);transition:transform .35s var(--ease),background .3s}
+.acc-item.open .acc-q i{transform:rotate(45deg);background:var(--grad);color:#fff}
+.acc-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease)}
+.acc-item.open .acc-a{grid-template-rows:1fr}
+.acc-a > div{overflow:hidden}
+.acc-a .in{padding:0 22px 22px;color:var(--muted);font-size:.94rem}
+.acc-a .in p{margin:0 0 10px}.acc-a .in ul{margin:6px 0 0;padding-left:20px;display:grid;gap:5px}
+.acc-a code{font-size:.82rem;padding:2px 7px;border-radius:7px;background:var(--code-bg);color:var(--green-soft)}
+
+/* ============ DOWNLOAD ============ */
+.dl-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:20px}
+.dl-main{padding:36px;position:relative;overflow:hidden}
+.dl-main::before{content:"";position:absolute;width:420px;height:420px;right:-140px;top:-160px;background:var(--grad);filter:blur(100px);opacity:.22;border-radius:50%}
+.dl-top{display:flex;align-items:center;gap:18px;margin-bottom:22px;position:relative}
+.dl-logo{width:72px;height:72px;border-radius:22px;background:#080c14;border:1px solid var(--border-2);display:grid;place-items:center;flex:none}
+.dl-logo img{width:56px;height:56px;object-fit:contain}
+.dl-top h3{margin:0;font-size:1.5rem;letter-spacing:-.02em}.dl-top p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+.meta{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:0 0 26px;position:relative}
+.meta div{padding:12px 14px;border-radius:14px;background:var(--code-bg);border:1px solid var(--border)}
+.meta small{display:block;color:var(--faint);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em}
+.meta b{font-size:.92rem}
+.dl-actions{display:flex;flex-wrap:wrap;gap:12px;position:relative}
+.dl-side{display:grid;gap:20px}
+.box{padding:26px}
+.box h4{margin:0 0 12px;font-size:1.02rem;display:flex;align-items:center;gap:10px}
+.box h4 i{color:var(--blue-soft)}
+.box ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.box li{display:flex;gap:10px;color:var(--muted);font-size:.9rem}
+.box li i{color:var(--green-soft);margin-top:3px;flex:none}
+.box p{margin:0 0 12px;color:var(--muted);font-size:.9rem}
+
+/* ============ FOOTER ============ */
+footer{border-top:1px solid var(--border);padding:64px 0 36px;background:linear-gradient(to bottom,transparent,var(--bg-2))}
+.f-grid2{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px}
+.f-brand p{color:var(--muted);font-size:.9rem;max-width:340px;margin:14px 0 0}
+footer h5{margin:0 0 16px;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+footer ul a{color:var(--muted);font-size:.92rem;transition:color .2s}
+footer ul a:hover{color:var(--text)}
+.disclaimer{margin-top:46px;padding:18px 20px;border-radius:16px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.3);display:flex;gap:14px;color:var(--muted);font-size:.86rem}
+.disclaimer i{color:#f87171;font-size:1.3rem;flex:none}
+.disclaimer b{color:var(--text)}
+.copy-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:30px;color:var(--faint);font-size:.84rem}
+.to-top{position:fixed;right:18px;bottom:18px;width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:1.2rem;z-index:90;
+  background:var(--nav-bg);border:1px solid var(--border-2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  opacity:0;transform:translateY(14px);pointer-events:none;transition:all .3s var(--ease)}
+.to-top.show{opacity:1;transform:none;pointer-events:auto}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1020px){
+  .hero-grid,.faq-layout,.dl-grid{grid-template-columns:1fr}
+  .faq-side{position:static}
+  .f-grid{grid-template-columns:repeat(2,1fr)}.f-card.wide{grid-column:span 2}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .req-grid{grid-template-columns:1fr}
+  .f-grid2{grid-template-columns:1fr 1fr}
+  .hero{padding-top:130px}
+}
+@media (max-width:860px){
+  .nav-links{position:absolute;top:calc(100% + 10px);left:0;right:0;flex-direction:column;padding:12px;margin:0;
+    background:var(--menu-bg);border:1px solid var(--border-2);border-radius:20px;box-shadow:0 24px 60px -20px rgba(0,0,0,.7);
+    opacity:0;transform:translateY(-8px);pointer-events:none;transition:all .3s var(--ease)}
+  .nav.open .nav-links{opacity:1;transform:none;pointer-events:auto}
+  .nav-links a{padding:13px 14px}
+  .nav-links .nav-dl{display:block;margin-top:6px;text-align:center;color:#fff;background:var(--grad);font-weight:600}
+  .nav-links .nav-dl:hover{color:#fff}
+  .nav-inner{position:relative}
+  .menu-btn{display:grid}
+  .nav-actions{margin-left:auto}
+  .nav-actions .btn{display:none}
+  .badge-ver{display:none}
+}
+@media (max-width:640px){
+  section{padding:70px 0}
+  .container{width:min(1180px,100% - 32px)}
+  .f-grid{grid-template-columns:1fr}.f-card.wide{grid-column:auto}
+  .path{grid-template-columns:1fr;gap:8px}
+  .panel{padding:22px 16px}
+  .hero-cta .btn{width:100%}
+  .dl-main{padding:24px}.meta{grid-template-columns:1fr}
+  .dl-actions .btn{width:100%}
+  .f-grid2{grid-template-columns:1fr}
+  .brand-name{font-size:.92rem}
+  .stats{gap:10px}.stat{padding:16px}.stat b{font-size:1.6rem}
+  .bar{grid-template-columns:54px 1fr 64px}
+  .to-top{right:12px;bottom:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="bg-grid" aria-hidden="true"></div>
+
+<!-- ============ NAVBAR ============ -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#overview" class="brand" aria-label="ZKM Next — home">
+      <span class="brand-logo"><img src="assets/logo.png" alt="" onerror="this.replaceWith(document.createTextNode('Z'))"></span>
+      <span class="brand-name">ZKM Next</span>
+      <span class="badge-ver">v1.0.0 Stable</span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="#overview">Overview</a>
+      <a href="#fitur">Key Features</a>
+      <a href="#dokumentasi">Docs &amp; Sysfs</a>
+      <a href="#faq">FAQ/Help</a>
+      <a href="#download" class="nav-dl">Download APK</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Toggle Dark / Light theme" title="Dark / Light">
+        <span class="knob"><i class="ri-moon-fill" id="themeIcon"></i></span>
+      </button>
+      <a href="#download" class="btn btn-primary btn-sm"><i class="ri-download-2-line"></i> Download APK</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><i class="ri-menu-line"></i></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="overview">
+  <div class="container hero-grid">
+    <div class="reveal">
+      <span class="pill glass"><b>NEW</b> Game Space, SoC Preset Library &amp; Language Pack</span>
+      <h1>Modern Android kernel control — <span class="grad-text">open, uncompromising.</span></h1>
+      <p class="lead">Zuan Kernel Manager Next brings CPU &amp; GPU governors, ZRAM, UFS devfreq, kernel flashing, root terminal, and SetEdit together in a single Material 3 interface. Open source under GPL-3.0 — for those who want advanced system customization.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="https://github.com/zuanvfx02/zuan-kernel-manager-next/releases/latest" target="_blank" rel="noopener"><i class="ri-download-cloud-2-line"></i> Download APK (GitHub Release)</a>
+        <a class="btn btn-ghost" href="https://github.com/zuanvfx02/zuan-kernel-manager-next" target="_blank" rel="noopener"><i class="ri-github-fill"></i> View Source Code</a>
+      </div>
+      <div class="badges" aria-label="Project info">
+        <span class="badge"><i class="ri-scales-3-line c-blue"></i> GPL v3</span>
+        <span class="badge"><i class="ri-android-fill c-green"></i> Android 10+</span>
+        <span class="badge"><i class="ri-shield-keyhole-line c-red"></i> Root: Magisk / KernelSU / APatch</span>
+        <span class="badge"><i class="ri-code-s-slash-line c-violet"></i> Kotlin + Jetpack Compose</span>
+      </div>
+    </div>
+
+    <div class="stage reveal" style="transition-delay:.12s">
+      <div class="device" aria-label="ZKM Next interface preview (demo)">
+        <div class="dev-top">
+          <div class="dev-title"><img src="assets/logo.png" alt="" onerror="this.style.display='none'">ZKM Next</div>
+          <span class="live">LIVE</span>
+        </div>
+        <div class="m-card">
+          <div class="root-chip">
+            <div class="ic"><i class="ri-shield-check-fill"></i></div>
+            <div><b>Root active</b><small id="rootMgr">KernelSU · Root mode</small></div>
+          </div>
+        </div>
+        <div class="m-card">
+          <div class="m-row"><span class="m-label"><i class="ri-cpu-line"></i> CPU Frequency</span><span class="m-val" id="cpuAvg">—</span></div>
+          <div class="bars" id="cpuBars"></div>
+        </div>
+        <div class="grid2">
+          <div class="m-card"><span class="m-label"><i class="ri-gamepad-line"></i> GPU Governor</span><span class="chip" id="gpuGov">msm-adreno-tz</span></div>
+          <div class="m-card"><span class="m-label"><i class="ri-temp-hot-line"></i> Temperature</span><div class="temp"><span id="temp">38.4</span><small> °C</small></div></div>
+        </div>
+        <div class="m-card" style="margin-top:11px;margin-bottom:0">
+          <div class="m-row"><span class="m-label"><i class="ri-database-2-line"></i> ZRAM · zstd</span><span class="m-val" id="zramTxt">—</span></div>
+          <div class="bars"><div class="bar" style="grid-template-columns:0 1fr 0"><span></span><div class="track"><div class="fill" id="zramFill"></div></div><span></span></div></div>
+        </div>
+        <div class="demo-note">Simulated preview — actual values depend on your device.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat glass reveal"><b class="grad-text" data-count="287">0</b><span>Kotlin source files in the app module</span></div>
+      <div class="stat glass reveal" style="transition-delay:.06s"><b class="grad-text">3</b><span>Root: Magisk, KernelSU, APatch</span></div>
+      <div class="stat glass reveal" style="transition-delay:.12s"><b class="grad-text">2</b><span>Rootless modes: Shizuku &amp; Axeron</span></div>
+      <div class="stat glass reveal" style="transition-delay:.18s"><b class="grad-text">GPL-3.0</b><span>Open source &amp; transparent</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section id="fitur">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Key Features</span>
+      <h2>All kernel controls, <span class="grad-text">in one app.</span></h2>
+      <p>Built for power users: automatic node detection, unsupported controls hidden, and a consistent interface across all ROMs.</p>
+    </div>
+    <div class="f-grid">
+      <article class="f-card glass reveal">
+        <div class="f-ic"><i class="ri-cpu-line"></i></div>
+        <h3>CPU &amp; GPU Governors</h3>
+        <p>Set governors, min/max frequency per CPU cluster, plus Qualcomm (KGSL) and MediaTek GPU control. Includes sched boost &amp; uclamp.</p>
+        <div class="tags"><span class="tag">cpufreq</span><span class="tag">kgsl</span><span class="tag">uclamp</span></div>
+      </article>
+      <article class="f-card glass reveal" style="transition-delay:.06s">
+        <div class="f-ic"><i class="ri-hard-drive-3-line"></i></div>
+        <h3>UFS Host Controller &amp; Devfreq</h3>
+        <p>Monitor UFS health, manage host controller clock gating, and configure devfreq nodes (DDR/DVFSRC, LLCC) on supported devices.</p>
+        <div class="tags"><span class="tag">ufshc</span><span class="tag">devfreq</span><span class="tag">storage</span></div>
+      </article>
+      <article class="f-card glass reveal" style="transition-delay:.12s">
+        <div class="f-ic"><i class="ri-stack-line"></i></div>
+        <h3>ZRAM / Swap &amp; Memory</h3>
+        <p>Configure ZRAM size, compression algorithm, swappiness, dirty ratio, and cache pressure — complete with RAM, swap, and PSI monitoring.</p>
+        <div class="tags"><span class="tag">zram0</span><span class="tag">swappiness</span><span class="tag">vm</span></div>
+      </article>
+      <article class="f-card glass reveal">
+        <div class="f-ic"><i class="ri-shield-user-line"></i></div>
+        <h3>Rootless Modes: Shizuku &amp; Axeron</h3>
+        <p>You don't always need root. Monitoring and basic features work via Shizuku or Axeron; full kernel actions require Root mode.</p>
+        <div class="tags"><span class="tag">Shizuku</span><span class="tag">Axeron</span><span class="tag">libsu</span></div>
+      </article>
+      <article class="f-card glass reveal" style="transition-delay:.06s">
+        <div class="f-ic"><i class="ri-flashlight-line"></i></div>
+        <h3>Kernel Flasher &amp; Boot Backup</h3>
+        <p>Flash kernel images with a careful workflow, including boot image backup &amp; restore utilities so you always have a way back.</p>
+        <div class="tags"><span class="tag">boot.img</span><span class="tag">backup</span><span class="tag">restore</span></div>
+      </article>
+      <article class="f-card glass reveal" style="transition-delay:.12s">
+        <div class="f-ic"><i class="ri-palette-line"></i></div>
+        <h3>Themes &amp; UI Customization</h3>
+        <p>Material 3 with Haze blur, app-controlled Light/Dark mode, custom colors, and custom backgrounds — not forced into system Dynamic Color.</p>
+        <div class="tags"><span class="tag">Material 3</span><span class="tag">Haze blur</span><span class="tag">custom color</span></div>
+      </article>
+      <article class="f-card glass wide reveal">
+        <div class="f-ic"><i class="ri-terminal-box-line"></i></div>
+        <h3>SetEdit, Root Terminal &amp; Shell Scripts</h3>
+        <p>Edit the Android settings database (SetEdit) and system properties, run commands in the built-in root terminal, and execute custom shell scripts for tuning automation — all without leaving the app.</p>
+        <div class="tags"><span class="tag">SetEdit</span><span class="tag">build.prop</span><span class="tag">root terminal</span><span class="tag">kr-script</span></div>
+      </article>
+      <article class="f-card glass reveal" style="transition-delay:.12s">
+        <div class="f-ic"><i class="ri-gamepad-line"></i></div>
+        <h3>Game Space &amp; SoC Presets</h3>
+        <p>Game overlay panel, per-cluster Custom Mode, Root Tools, plus a preset library: Battery Saver, Daily Balanced, Performance Ultra, Thermal Chiller.</p>
+        <div class="tags"><span class="tag">overlay</span><span class="tag">FPS</span><span class="tag">presets</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DOCS ============ -->
+<section id="dokumentasi">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Technical Documentation</span>
+      <h2>The <span class="grad-text">sysfs &amp; procfs</span> interfaces ZKM Next accesses.</h2>
+      <p>Every device is different. A feature appearing in the UI doesn't guarantee its node exists on your device — ZKM detects paths and hides unsupported controls.</p>
+    </div>
+
+    <div class="docs-shell glass reveal">
+      <div class="tabs" role="tablist" aria-label="Documentation">
+        <button class="tab" role="tab" id="tab-sysfs" aria-controls="panel-sysfs" aria-selected="true"><i class="ri-folder-chart-line"></i> Sysfs Overview</button>
+        <button class="tab" role="tab" id="tab-safety" aria-controls="panel-safety" aria-selected="false" tabindex="-1"><i class="ri-alert-line"></i> Safety Notes &amp; Warnings</button>
+        <button class="tab" role="tab" id="tab-req" aria-controls="panel-req" aria-selected="false" tabindex="-1"><i class="ri-settings-3-line"></i> Installation Requirements</button>
+      </div>
+
+      <!-- Sysfs -->
+      <div class="panel active" role="tabpanel" id="panel-sysfs" aria-labelledby="tab-sysfs">
+        <h3>Sysfs Overview</h3>
+        <p class="sub">List of the main paths read or written by ZKM Next. <span class="lvl rw">RW</span> = writable by the app (requires root), <span class="lvl ro">RO</span> = read-only for monitoring.</p>
+
+        <div class="sys-tools">
+          <label class="search"><i class="ri-search-line"></i><input id="pathSearch" type="search" placeholder="Search paths, e.g. scaling_governor" aria-label="Search sysfs paths" autocomplete="off" spellcheck="false"></label>
+          <div class="filters" id="pathFilters">
+            <button class="fchip on" data-f="all">All</button>
+            <button class="fchip" data-f="cpu">CPU</button>
+            <button class="fchip" data-f="gpu">GPU</button>
+            <button class="fchip" data-f="mem">Memory</button>
+            <button class="fchip" data-f="io">Storage</button>
+            <button class="fchip" data-f="therm">Thermal &amp; Power</button>
+            <button class="fchip" data-f="mtk">MediaTek</button>
+          </div>
+        </div>
+
+        <div class="paths" id="paths">
+          <div class="path" data-cat="cpu"><div><h4>CPU frequency policy <span class="lvl rw">RW</span></h4><code>/sys/devices/system/cpu/cpufreq/policy<i>N</i>/</code></div>
+            <div><p>Governor and frequency limits per cluster. Clusters (policies) are auto-detected — 2, 3, or 4 tiers.</p><div class="nodes"><span>scaling_governor</span><span>scaling_min_freq</span><span>scaling_max_freq</span><span>scaling_available_governors</span><span>scaling_available_frequencies</span></div></div></div>
+          <div class="path" data-cat="cpu"><div><h4>CPU per-core monitor <span class="lvl ro">RO</span></h4><code>/sys/devices/system/cpu/cpu<i>N</i>/cpufreq/</code></div>
+            <div><p>Real-time frequency of each core for the dashboard and monitors.</p><div class="nodes"><span>scaling_cur_freq</span></div></div></div>
+          <div class="path" data-cat="cpu"><div><h4>Kernel scheduler <span class="lvl rw">RW</span></h4><code>/proc/sys/kernel/</code></div>
+            <div><p>Scheduler parameters for performance/power-saving profiles.</p><div class="nodes"><span>sched_boost</span><span>sched_util_clamp_min</span><span>sched_util_clamp_max</span><span>sched_energy_aware</span><span>sched_child_runs_first</span></div></div></div>
+          <div class="path" data-cat="cpu"><div><h4>Qualcomm LPM <span class="lvl rw">RW</span></h4><code>/sys/devices/system/cpu/qcom_lpm/parameters/</code></div>
+            <div><p>Qualcomm CPU low-power mode control (if exposed by the kernel).</p><div class="nodes"><span>sleep_disabled</span><span>prediction_disabled</span></div></div></div>
+
+          <div class="path" data-cat="gpu"><div><h4>Adreno GPU (KGSL) <span class="lvl rw">RW</span></h4><code>/sys/class/kgsl/kgsl-3d0/</code></div>
+            <div><p>Clock, load, and behavior of the Qualcomm Adreno GPU.</p><div class="nodes"><span>gpuclk</span><span>min_gpuclk</span><span>max_gpuclk</span><span>gpubusy</span><span>gpu_busy_percentage</span><span>devfreq/</span><span>throttling</span><span>preemption</span><span>bcl</span></div></div></div>
+          <div class="path" data-cat="gpu io"><div><h4>Devfreq (GPU, DDR, bus) <span class="lvl rw">RW</span></h4><code>/sys/class/devfreq/*</code></div>
+            <div><p>Governor and frequency limits for each detected devfreq device, including UFS/DDR on supported SoCs.</p><div class="nodes"><span>governor</span><span>min_freq</span><span>max_freq</span><span>cur_freq</span><span>available_frequencies</span></div></div></div>
+
+          <div class="path" data-cat="mem"><div><h4>ZRAM <span class="lvl rw">RW</span></h4><code>/sys/block/zram0/</code></div>
+            <div><p>Size and compression algorithm of the compressed swap. Resizing requires resetting the ZRAM device.</p><div class="nodes"><span>disksize</span><span>comp_algorithm</span><span>reset</span></div></div></div>
+          <div class="path" data-cat="mem"><div><h4>Virtual memory <span class="lvl rw">RW</span></h4><code>/proc/sys/vm/</code></div>
+            <div><p>Kernel memory management tuning.</p><div class="nodes"><span>swappiness</span><span>dirty_ratio</span><span>dirty_background_ratio</span><span>vfs_cache_pressure</span></div></div></div>
+          <div class="path" data-cat="mem"><div><h4>Memory stats &amp; PSI <span class="lvl ro">RO</span></h4><code>/proc/meminfo · /proc/pressure/</code></div>
+            <div><p>Monitor RAM, swap, and pressure stall information (cpu, memory).</p><div class="nodes"><span>meminfo</span><span>pressure/memory</span><span>pressure/cpu</span></div></div></div>
+
+          <div class="path" data-cat="io"><div><h4>UFS host controller <span class="lvl rw">RW</span></h4><code>/sys/devices/platform/soc/<i>&lt;addr&gt;</i>.ufshc/</code></div>
+            <div><p>Clock gating settings on the UFS host controller. Node names and addresses vary between SoCs.</p><div class="nodes"><span>clkgate_enable</span></div></div></div>
+          <div class="path" data-cat="io"><div><h4>Block device &amp; I/O <span class="lvl rw">RW</span></h4><code>/sys/block/<i>&lt;dev&gt;</i>/queue/ · /proc/diskstats</code></div>
+            <div><p>I/O scheduler, read-ahead, and live I/O statistics for the Storage screen.</p><div class="nodes"><span>scheduler</span><span>read_ahead_kb</span><span>nr_requests</span></div></div></div>
+
+          <div class="path" data-cat="therm"><div><h4>Thermal zones <span class="lvl ro">RO</span></h4><code>/sys/class/thermal/</code></div>
+            <div><p>Temperature readings from thermal zones; some devices also expose thermal profiles.</p><div class="nodes"><span>thermal_zone*/temp</span><span>thermal_message/sconfig</span></div></div></div>
+          <div class="path" data-cat="therm"><div><h4>Power supply <span class="lvl ro">RO</span></h4><code>/sys/class/power_supply/battery/</code></div>
+            <div><p>Battery &amp; charging statistics for monitoring and Charge Stats. Advanced charging control depends on vendor nodes.</p><div class="nodes"><span>capacity</span><span>status</span><span>voltage_now</span><span>current_now</span></div></div></div>
+          <div class="path" data-cat="therm"><div><h4>LED &amp; backlight (reference) <span class="lvl ro">RO</span></h4><code>/sys/class/leds/</code></div>
+            <div><p>Standard Android nodes for LED and brightness. Part of the sysfs interface reference; ZKM doesn't rely on them for core features and their availability depends heavily on the device.</p><div class="nodes"><span>brightness</span><span>max_brightness</span></div></div></div>
+
+          <div class="path" data-cat="mtk gpu cpu"><div><h4>MediaTek PPM / CPUFreq <span class="lvl rw">RW</span></h4><code>/proc/ppm/ · /proc/cpufreq/</code></div>
+            <div><p>CPU power policy control on MediaTek SoCs (Helio / Dimensity) that expose these nodes.</p><div class="nodes"><span>ppm/enabled</span><span>ppm/policy_status</span><span>cpufreq_power_mode</span><span>cpufreq_cci_mode</span></div></div></div>
+          <div class="path" data-cat="mtk gpu"><div><h4>MediaTek GPU &amp; GED <span class="lvl rw">RW</span></h4><code>/proc/gpufreq/ · /proc/gpufreqv2/ · /sys/kernel/ged/ · /proc/mali/</code></div>
+            <div><p>Frequency and DVFS for Mali/MediaTek GPUs.</p><div class="nodes"><span>gpufreq_opp_freq</span><span>fix_target_opp_index</span><span>dcs_mode</span><span>dvfs_enable</span><span>always_on</span></div></div></div>
+        </div>
+        <p class="empty" id="pathEmpty"><i class="ri-search-eye-line"></i> No matching paths.</p>
+
+        <div class="code">
+          <div class="code-head"><span>example — read the CPU governor via root shell</span><button class="copy" data-copy="su -c 'cat /sys/devices/system/cpu/cpufreq/policy0/scaling_governor'"><i class="ri-file-copy-line"></i> Copy</button></div>
+          <pre><code><span class="c"># Read first — don't write values you don't understand</span>
+<span class="k">su</span> -c <span class="s">'cat /sys/devices/system/cpu/cpufreq/policy0/scaling_governor'</span>
+<span class="k">su</span> -c <span class="s">'cat /sys/devices/system/cpu/cpufreq/policy0/scaling_available_governors'</span></code></pre>
+        </div>
+      </div>
+
+      <!-- Safety -->
+      <div class="panel" role="tabpanel" id="panel-safety" aria-labelledby="tab-safety" hidden>
+        <h3>Safety Notes &amp; Warnings</h3>
+        <p class="sub">ZKM Next performs privileged operations. Wrong values can cause instability, boot issues, overheating, or data loss.</p>
+        <div class="note danger"><i class="ri-error-warning-fill"></i><div><b>There is no universal safe value</b><p>Kernel and thermal tuning have real hardware consequences. Don't blindly copy values from other devices.</p></div></div>
+        <div class="note warn"><i class="ri-fire-line"></i><div><b>Watch the temperature</b><p>Disabling thermal throttling or forcing maximum frequencies for extended periods can trigger overheating.</p></div></div>
+        <ol class="steps">
+          <li><div><b>Understand the parameter</b><span>Know what a node controls before changing it.</span></div></li>
+          <li><div><b>Prepare a boot image backup &amp; recovery</b><span>Keep a working boot image before flashing or heavy tuning — use the backup feature in Kernel Flasher.</span></div></li>
+          <li><div><b>Change one group of settings at a time</b><span>That way the cause of any issue is easy to trace.</span></div></li>
+          <li><div><b>Don't blindly copy values from other devices</b><span>Frequencies, governors, and nodes differ between SoCs and kernels.</span></div></li>
+          <li><div><b>Reboot and verify stability</b><span>After major changes, restart and stress-test before making them permanent.</span></div></li>
+        </ol>
+      </div>
+
+      <!-- Requirements -->
+      <div class="panel" role="tabpanel" id="panel-req" aria-labelledby="tab-req" hidden>
+        <h3>Installation Requirements</h3>
+        <p class="sub">What you need before installing and fully using ZKM Next.</p>
+        <div class="req-grid">
+          <div class="req"><i class="ri-shield-keyhole-line"></i><h4>Root</h4><p>Required for full kernel control. Compatible with:</p><ul><li>Magisk</li><li>KernelSU</li><li>APatch</li><li>Other environments that provide <code>su</code></li></ul></div>
+          <div class="req"><i class="ri-lock-unlock-line"></i><h4>Bootloader</h4><p>The bootloader generally must be unlocked to gain root and to flash kernels/boot images. The unlock process may wipe data and varies by vendor.</p></div>
+          <div class="req"><i class="ri-lock-password-line"></i><h4>SELinux</h4><p>Some nodes depend on SELinux policy. If access is denied, the related feature won't work on that device.</p></div>
+        </div>
+        <table class="arch" aria-label="Supported architectures">
+          <thead><tr><th>Architecture</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><code>arm64-v8a</code></td><td>✅ Primary</td></tr>
+            <tr><td><code>armeabi-v7a</code></td><td>✅ Supported when available</td></tr>
+            <tr><td><code>x86_64</code></td><td>⚠️ Depends on device / build</td></tr>
+          </tbody>
+        </table>
+        <div class="note info" style="margin-top:18px"><i class="ri-information-line"></i><div><b>Android 10+ (API 29)</b><p>Minimum supported Android version. Without root, some monitoring features can run through Shizuku or Axeron.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq">
+  <div class="container faq-layout">
+    <div class="faq-side reveal">
+      <div class="sec-head">
+        <span class="eyebrow">Help &amp; FAQ</span>
+        <h2>Frequently asked <span class="grad-text">questions.</span></h2>
+        <p>Can't find the answer? Open a discussion or report an issue directly in the repository.</p>
+      </div>
+      <div class="help-card glass">
+        <h4><i class="ri-questionnaire-line"></i> Need more help?</h4>
+        <p>Include your device model, SoC, Android version, root manager, and logs when filing an issue.</p>
+        <a class="btn btn-ghost btn-sm" href="https://github.com/zuanvfx02/zuan-kernel-manager-next/issues" target="_blank" rel="noopener"><i class="ri-bug-line"></i> Open GitHub Issues</a>
+      </div>
+    </div>
+
+    <div class="acc reveal" id="acc">
+      <div class="acc-item open">
+        <button class="acc-q" aria-expanded="true">How do I install ZKM Next? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <ul>
+            <li>Download the latest APK from the <b>GitHub Releases</b> page.</li>
+            <li>Allow installation from unknown sources for the file manager / browser app you're using.</li>
+            <li>Open the APK, install it, then launch ZKM Next and grant root access when prompted by Magisk / KernelSU / APatch.</li>
+          </ul>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Is there a bootloop risk? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <p>Yes, there is — especially if you change kernel parameters to extremes, disable thermal controls, or flash an image that doesn't match your device.</p>
+          <ul>
+            <li>Always <b>back up the boot image</b> before flashing.</li>
+            <li>Change one group of settings at a time and test stability.</li>
+            <li>If you bootloop: enter recovery/fastboot and restore the boot image backup, or disable boot-time modules/scripts through your root manager.</li>
+          </ul>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Does it support Snapdragon and MediaTek? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <p>Yes, both are handled. On Snapdragon, ZKM reads nodes such as <code>/sys/class/kgsl/kgsl-3d0/</code> and <code>qcom_lpm</code>. On MediaTek, nodes such as <code>/proc/ppm</code>, <code>/proc/gpufreq</code>, and <code>/sys/kernel/ged</code> are available. Other platforms (Exynos, Tensor, etc.) work as far as generic nodes like cpufreq and devfreq are available.</p>
+          <p>Feature availability depends on the kernel and vendor — ZKM hides controls whose nodes aren't found.</p>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Can it be used without root? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <p>Partly. Through <b>Shizuku</b> or <b>Axeron</b>, monitoring features and some basic actions can run without root. Actions that write to kernel nodes (governor, ZRAM, flasher) require Root mode.</p>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Troubleshooting: a menu / control doesn't appear or doesn't work <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <ul>
+            <li>Make sure root access has been granted (check in your root manager app).</li>
+            <li>The node may not exist in your kernel — this is normal; ZKM will hide or disable it.</li>
+            <li>Check SELinux: <code>su -c getenforce</code>. Strict policy can deny writes to certain nodes.</li>
+            <li>For overlays (FPS / Game Space), grant the <b>display over other apps</b> and <b>Usage access</b> permissions.</li>
+            <li>Disable battery optimization for ZKM so the system doesn't kill its background services.</li>
+          </ul>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">How do I translate or change the language? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <p>Use the <b>Language Pack</b>: export a JSON file containing all strings, edit the translations, then import it back. Keep placeholders like <code>%1$s</code> and <code>%1$d</code> exactly as they are.</p>
+        </div></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">How do I build from source? <i class="ri-add-line"></i></button>
+        <div class="acc-a"><div><div class="in">
+          <p>You need Android Studio, the Android SDK, JDK 21, and the Android NDK for native components.</p>
+          <div class="code" style="margin:6px 0 0">
+            <div class="code-head"><span>bash</span><button class="copy" data-copy="git clone https://github.com/zuanvfx02/zuan-kernel-manager-next.git&#10;cd zuan-kernel-manager-next&#10;./gradlew :app:assembleDebug"><i class="ri-file-copy-line"></i> Copy</button></div>
+            <pre><code><span class="k">git</span> clone https://github.com/zuanvfx02/zuan-kernel-manager-next.git
+<span class="k">cd</span> zuan-kernel-manager-next
+./gradlew :app:assembleDebug</code></pre>
+          </div>
+        </div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DOWNLOAD ============ -->
+<section id="download">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Download &amp; Releases</span>
+      <h2>Download official releases <span class="grad-text">from GitHub.</span></h2>
+      <p>The only official source for the APK is the Releases page in the GitHub repository. Avoid third-party mirrors.</p>
+    </div>
+    <div class="dl-grid">
+      <div class="dl-main glass reveal">
+        <div class="dl-top">
+          <div class="dl-logo"><img src="assets/logo.png" alt="" onerror="this.style.display='none'"></div>
+          <div><h3>Zuan Kernel Manager Next</h3><p>com.zuan.kernelmanager.next</p></div>
+        </div>
+        <div class="meta">
+          <div><small>Version</small><b id="dlVersion">1.0.0 Stable</b></div>
+          <div><small>Android</small><b>10+ (API 29)</b></div>
+          <div><small>Architecture</small><b>arm64-v8a · armeabi-v7a</b></div>
+          <div><small>License</small><b>GNU GPL v3</b></div>
+        </div>
+        <div class="dl-actions">
+          <a class="btn btn-primary" id="dlApk" href="https://github.com/zuanvfx02/zuan-kernel-manager-next/releases/latest" target="_blank" rel="noopener"><i class="ri-download-2-line"></i> Download Latest APK</a>
+          <a class="btn btn-ghost" href="https://github.com/zuanvfx02/zuan-kernel-manager-next/releases" target="_blank" rel="noopener"><i class="ri-price-tag-3-line"></i> All Releases</a>
+          <a class="btn btn-ghost" href="https://t.me/zuankernelmanagernext" target="_blank" rel="noopener"><i class="ri-telegram-fill"></i> Official Channel</a>
+        </div>
+        <p id="dlBeta" class="sub" style="margin:14px 0 0;display:none"></p>
+      </div>
+
+      <div class="dl-side">
+        <div class="box glass reveal" style="transition-delay:.08s">
+          <h4><i class="ri-fingerprint-line"></i> Verify Checksum</h4>
+          <p>The official SHA-256 value is listed in each release's notes. Match it before installing:</p>
+          <div class="code" style="margin:0">
+            <div class="code-head"><span>Linux / macOS / Termux</span><button class="copy" data-copy="sha256sum ZKM-Next.apk"><i class="ri-file-copy-line"></i> Copy</button></div>
+            <pre><code><span class="k">sha256sum</span> ZKM-Next.apk</code></pre>
+          </div>
+        </div>
+        <div class="box glass reveal" style="transition-delay:.14s">
+          <h4><i class="ri-history-line"></i> Quick Changelog · <span id="clVersion">v1.0.0</span></h4>
+          <ul id="clList">
+            <li><i class="ri-check-line"></i>Game Space: overlay panel, per-cluster Custom Mode CPU, Root Tools</li>
+            <li><i class="ri-check-line"></i>SoC Preset Library &amp; Storage screen (health, I/O, partitions)</li>
+            <li><i class="ri-check-line"></i>Language Pack JSON &amp; settings XML export/import</li>
+            <li><i class="ri-check-line"></i>Privileged modes: Root, Shizuku, and Axeron</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="box glass reveal" style="margin-top:20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+      <div class="f-ic" style="margin:0"><i class="ri-open-source-line"></i></div>
+      <div style="flex:1;min-width:240px"><h4 style="margin:0 0 4px">Open Source · GNU GPL v3</h4><p style="margin:0">Free to study, modify, and redistribute under the terms of GPL-3.0. Third-party components follow their respective licenses.</p></div>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/zuanvfx02/zuan-kernel-manager-next/blob/main/LICENSE" target="_blank" rel="noopener"><i class="ri-article-line"></i> Read License</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="f-grid2">
+      <div class="f-brand">
+        <a href="#overview" class="brand"><span class="brand-logo"><img src="assets/logo.png" alt="" onerror="this.replaceWith(document.createTextNode('Z'))"></span><span class="brand-name">Zuan Kernel Manager Next</span></a>
+        <p>Advanced Android kernel &amp; system management — performance, control, monitoring, customization.</p>
+      </div>
+      <div><h5>Navigation</h5><ul><li><a href="#overview">Overview</a></li><li><a href="#fitur">Key Features</a></li><li><a href="#dokumentasi">Docs &amp; Sysfs</a></li><li><a href="#faq">FAQ/Help</a></li></ul></div>
+      <div><h5>Project</h5><ul>
+        <li><a href="https://github.com/zuanvfx02/zuan-kernel-manager-next" target="_blank" rel="noopener">GitHub Repository</a></li>
+        <li><a href="https://github.com/zuanvfx02/zuan-kernel-manager-next/releases" target="_blank" rel="noopener">Releases</a></li>
+        <li><a href="https://github.com/zuanvfx02/zuan-kernel-manager-next/issues" target="_blank" rel="noopener">Issues</a></li>
+        <li><a href="https://t.me/zuankernelmanagernext" target="_blank" rel="noopener">Official Telegram Channel</a></li>
+        <li><a href="https://github.com/zuanvfx02/zuan-kernel-manager-next/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0 License</a></li></ul></div>
+      <div><h5>Maintainer</h5><ul>
+        <li><a href="https://github.com/zuanvfx02" target="_blank" rel="noopener">Zuanvfx02</a></li>
+        <li><a href="https://github.com/zuanvfx01" target="_blank" rel="noopener">Zuanvfx01</a></li>
+        <li><a href="#download">Download APK</a></li></ul></div>
+    </div>
+    <div class="disclaimer" role="note"><i class="ri-error-warning-fill"></i><p><b>Root risk disclaimer.</b> Rooting, changing kernel parameters, and flashing images can void your warranty and cause bootloops, overheating, or data loss. ZKM Next is provided <i>as-is</i> without any warranty; all risk lies with the user. Back up your data and boot image before proceeding.</p></div>
+    <div class="copy-row"><span>© <span id="year">2026</span> Zuan Technologies / Open Source Project. Released under GNU GPL v3.</span><span>Made with ♥ for the Android community.</span></div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" aria-label="Back to top"><i class="ri-arrow-up-line"></i></button>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const root = document.documentElement;
+  const store = {
+    get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+    set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+  };
+
+  /* ---------- Theme ---------- */
+  const toggle = $('#themeToggle'), icon = $('#themeIcon');
+  function applyTheme(t){
+    root.setAttribute('data-theme', t);
+    toggle.setAttribute('aria-checked', String(t === 'light'));
+    icon.className = t === 'light' ? 'ri-sun-fill' : 'ri-moon-fill';
+    const m = $('meta[name="theme-color"]'); if (m) m.content = t === 'light' ? '#f5f7fb' : '#000000';
+  }
+  applyTheme(store.get('zkm-theme') === 'light' ? 'light' : 'dark');
+  toggle.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next); store.set('zkm-theme', next);
+  });
+
+  /* ---------- Navbar ---------- */
+  const nav = $('#nav'), menuBtn = $('#menuBtn');
+  const onScroll = () => {
+    nav.classList.toggle('scrolled', scrollY > 10);
+    $('#toTop').classList.toggle('show', scrollY > 700);
+  };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  function setMenu(open){
+    nav.classList.toggle('open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.firstElementChild.className = open ? 'ri-close-line' : 'ri-menu-line';
+  }
+  menuBtn.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+  $$('#navLinks a, .nav-actions .btn').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+  $('#toTop').addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+  $('#year').textContent = new Date().getFullYear();
+
+
+  /* ---------- Live release info (GitHub Releases API) ---------- */
+  (function liveRelease(){
+    const REPO = 'zuanvfx02/zuan-kernel-manager-next';
+    const ver = $('#dlVersion'), apk = $('#dlApk'), clV = $('#clVersion'), clL = $('#clList'), beta = $('#dlBeta');
+    if (!ver || !window.fetch) return;
+    const num = v => String(v).replace(/^v/i,'').split('-')[0].split('.').map(n => parseInt(n,10) || 0);
+    const newer = (a,b) => { const x = num(a), y = num(b); for (let i=0;i<Math.max(x.length,y.length);i++){ const d=(x[i]||0)-(y[i]||0); if (d) return d>0; } return false; };
+    fetch('https://api.github.com/repos/' + REPO + '/releases?per_page=20', { headers: { 'Accept': 'application/vnd.github+json' } })
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(list => {
+        const rel = list.filter(r => !r.draft);
+        const stable = rel.find(r => !r.prerelease);
+        const pre = rel.find(r => r.prerelease && (!stable || newer(r.tag_name, stable.tag_name)));
+        if (stable) {
+          ver.textContent = stable.tag_name.replace(/^v/i,'') + ' Stable';
+          const a = (stable.assets || []).find(x => /\.apk$/i.test(x.name));
+          if (a && apk) apk.href = a.browser_download_url;
+          if (clV) clV.textContent = stable.tag_name;
+          const lines = String(stable.body || '').split(/\r?\n/)
+            .map(s => s.replace(/^\s*[-*+]\s+/, '').trim())
+            .filter(s => s && !/^#/.test(s) && !/^[A-Fa-f0-9]{64}\b/.test(s)).slice(0, 5);
+          if (clL && lines.length) {
+            clL.textContent = '';
+            lines.forEach(s => {
+              const li = document.createElement('li'), i = document.createElement('i');
+              i.className = 'ri-check-line';
+              li.appendChild(i); li.appendChild(document.createTextNode(s));
+              clL.appendChild(li);
+            });
+          }
+        }
+        if (pre && beta) {
+          const link = document.createElement('a');
+          link.href = pre.html_url; link.target = '_blank'; link.rel = 'noopener';
+          link.textContent = pre.tag_name;
+          beta.textContent = 'Beta build available: ';
+          beta.appendChild(link);
+          beta.style.display = '';
+        }
+      })
+      .catch(() => { /* keep the static fallback values */ });
+  })();
+
+  /* scroll-spy */
+  const links = $$('#navLinks a');
+  const spy = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  ['overview','fitur','dokumentasi','faq'].forEach(id => spy.observe($('#' + id)));
+
+  /* ---------- Reveal on scroll ---------- */
+  const rv = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting){ e.target.classList.add('in'); rv.unobserve(e.target); }
+  }), { threshold: .12 });
+  $$('.reveal').forEach(el => rv.observe(el));
+
+  /* counter */
+  $$('[data-count]').forEach(el => {
+    const target = +el.dataset.count; let done = false;
+    new IntersectionObserver(([e], o) => {
+      if (!e.isIntersecting || done) return; done = true; o.disconnect();
+      const t0 = performance.now();
+      const step = t => { const p = Math.min(1, (t - t0) / 1100); el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    }, { threshold: .6 }).observe(el);
+  });
+
+  /* card spotlight */
+  $$('.f-card').forEach(c => c.addEventListener('pointermove', e => {
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }));
+
+  /* ---------- Live demo mockup ---------- */
+  const clusters = [
+    { name: 'Little', min: 300, max: 1804 },
+    { name: 'Big',    min: 633, max: 2496 },
+    { name: 'Prime',  min: 806, max: 2995 }
+  ];
+  const cpuBars = $('#cpuBars');
+  cpuBars.innerHTML = clusters.map(c =>
+    `<div class="bar"><span>${c.name}</span><div class="track"><div class="fill"></div></div><span>—</span></div>`).join('');
+  const fills = $$('.fill', cpuBars), vals = $$('.bar span:last-child', cpuBars);
+  const govs = ['msm-adreno-tz', 'performance', 'simple_ondemand'];
+  const roots = ['KernelSU · Root mode', 'Magisk · Root mode', 'APatch · Root mode'];
+  let tick = 0, zr = 1.9;
+  function demo(){
+    let sum = 0;
+    clusters.forEach((c, i) => {
+      const load = .25 + Math.random() * .7;
+      const f = Math.round(c.min + (c.max - c.min) * load);
+      sum += f; fills[i].style.width = Math.round(load * 100) + '%'; vals[i].textContent = f + ' MHz';
+    });
+    $('#cpuAvg').textContent = (sum / clusters.length / 1000).toFixed(2) + ' GHz';
+    $('#temp').textContent = (36 + Math.random() * 6).toFixed(1);
+    zr = Math.min(3.6, Math.max(1.2, zr + (Math.random() - .45) * .25));
+    $('#zramTxt').textContent = zr.toFixed(1) + ' / 4.0 GB';
+    $('#zramFill').style.width = (zr / 4 * 100) + '%';
+    if (++tick % 6 === 0){
+      $('#gpuGov').textContent = govs[(tick / 6) % govs.length];
+      $('#rootMgr').textContent = roots[(tick / 6) % roots.length];
+    }
+  }
+  demo();
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(demo, 1500);
+
+  /* ---------- Tabs ---------- */
+  const tabs = $$('.tab');
+  function selectTab(t, focus){
+    tabs.forEach(x => {
+      const on = x === t;
+      x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1;
+      const p = $('#' + x.getAttribute('aria-controls')); p.classList.toggle('active', on); p.hidden = !on;
+    });
+    if (focus) t.focus();
+    t.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => selectTab(t));
+    t.addEventListener('keydown', e => {
+      const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+      if (k){ e.preventDefault(); selectTab(tabs[(i + k + tabs.length) % tabs.length], true); }
+      if (e.key === 'Home'){ e.preventDefault(); selectTab(tabs[0], true); }
+      if (e.key === 'End'){ e.preventDefault(); selectTab(tabs[tabs.length - 1], true); }
+    });
+  });
+  $('#panel-sysfs').hidden = false;
+
+  /* ---------- Sysfs filter + search ---------- */
+  const rows = $$('#paths .path'), search = $('#pathSearch'), empty = $('#pathEmpty');
+  let cat = 'all';
+  function filterPaths(){
+    const q = search.value.trim().toLowerCase(); let n = 0;
+    rows.forEach(r => {
+      const okCat = cat === 'all' || r.dataset.cat.split(' ').includes(cat);
+      const okQ = !q || r.textContent.toLowerCase().includes(q);
+      r.hidden = !(okCat && okQ); if (!r.hidden) n++;
+    });
+    empty.style.display = n ? 'none' : 'block';
+  }
+  search.addEventListener('input', filterPaths);
+  $$('#pathFilters .fchip').forEach(b => b.addEventListener('click', () => {
+    $$('#pathFilters .fchip').forEach(x => x.classList.toggle('on', x === b)); cat = b.dataset.f; filterPaths();
+  }));
+
+  /* ---------- Copy ---------- */
+  $$('.copy').forEach(b => b.addEventListener('click', async () => {
+    const text = b.dataset.copy.replace(/&#10;/g, '\n'); const label = b.innerHTML;
+    try { await navigator.clipboard.writeText(text); }
+    catch(e){ const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(_){} ta.remove(); }
+    b.classList.add('ok'); b.innerHTML = '<i class="ri-check-line"></i> Copied';
+    setTimeout(() => { b.classList.remove('ok'); b.innerHTML = label; }, 1600);
+  }));
+
+  /* ---------- Accordion ---------- */
+  $$('.acc-item').forEach(item => {
+    const q = $('.acc-q', item);
+    q.addEventListener('click', () => {
+      const open = !item.classList.contains('open');
+      $$('.acc-item.open').forEach(o => { if (o !== item){ o.classList.remove('open'); $('.acc-q', o).setAttribute('aria-expanded', 'false'); } });
+      item.classList.toggle('open', open); q.setAttribute('aria-expanded', String(open));
+    });
+  });
+})();
+</script>
+</body>
+</html>
