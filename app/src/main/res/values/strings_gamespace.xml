@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Game Space (ZKM original implementation) -->
+<resources>
+    <string name="ext_gamespace">Game Space</string>
+    <string name="desc_gamespace">Game mode, side panel overlay, live stats, crosshair and per-game profiles</string>
+
+    <!-- notification -->
+    <string name="gs_notif_channel">Game Space</string>
+    <string name="gs_notif_idle">Waiting for a game to launch</string>
+    <string name="gs_notif_playing">Playing %1$s</string>
+
+    <!-- status card -->
+    <string name="gs_master_title">Game Space</string>
+    <string name="gs_status_off">Off</string>
+    <string name="gs_status_starting">Starting…</string>
+    <string name="gs_status_watching">Watching for your games</string>
+    <string name="gs_status_playing">Playing %1$s</string>
+    <string name="gs_preview_open">Preview panel</string>
+    <string name="gs_preview_close">Close preview</string>
+    <string name="gs_preview">Preview</string>
+    <string name="gs_preview_hint">Not in a game</string>
+
+    <!-- permissions -->
+    <string name="gs_perm_title">Requirements</string>
+    <string name="gs_perm_overlay">Display over other apps</string>
+    <string name="gs_perm_overlay_desc">Needed to show the side panel and crosshair</string>
+    <string name="gs_perm_usage">Usage access</string>
+    <string name="gs_perm_usage_desc">Detects which game is in the foreground</string>
+    <string name="gs_perm_dnd">Do Not Disturb access</string>
+    <string name="gs_perm_dnd_desc">Optional. Lets Game Space silence interruptions</string>
+    <string name="gs_perm_shell">Privileged shell (%1$s)</string>
+    <string name="gs_perm_shell_desc">Needed for screenshot, recording, heads-up, brightness mode, game mode and refresh rate. Set the working mode in Settings</string>
+    <string name="gs_grant">Grant</string>
+
+    <!-- games -->
+    <string name="gs_games_title">My games</string>
+    <string name="gs_add_game">Add game</string>
+    <string name="gs_games_empty">No games yet. Add one and Game Space starts automatically when it opens.</string>
+    <string name="gs_default_profile">Default profile</string>
+    <string name="gs_custom_profile">Custom profile</string>
+    <string name="gs_search">Search apps</string>
+    <string name="gs_tag_game">Game</string>
+    <string name="gs_remove">Remove</string>
+    <string name="gs_use_custom">Custom profile</string>
+    <string name="gs_use_custom_desc">Override the default profile for this game only</string>
+
+    <!-- options -->
+    <string name="gs_defaults_title">Default profile</string>
+    <string name="gs_defaults_desc">Applied to every game that has no custom profile. Everything is restored when you leave the game.</string>
+    <string name="gs_opt_panel">Side panel</string>
+    <string name="gs_opt_panel_desc">Show the edge handle with stats and quick tiles</string>
+    <string name="gs_opt_dnd">Do Not Disturb</string>
+    <string name="gs_opt_dnd_desc">Priority-only interruptions while playing</string>
+    <string name="gs_opt_heads">Block heads-up notifications</string>
+    <string name="gs_opt_heads_desc">Stops banners from covering the screen</string>
+    <string name="gs_opt_bright">Lock brightness mode</string>
+    <string name="gs_opt_bright_desc">Turns adaptive brightness off so the screen does not dim</string>
+    <string name="gs_opt_perf">Performance game mode</string>
+    <string name="gs_opt_perf_desc">Requests the system performance game mode for this app</string>
+    <string name="gs_opt_ram">Clear RAM on launch</string>
+    <string name="gs_opt_ram_desc">Kills cached background processes when the game opens</string>
+    <string name="gs_opt_hz">Refresh rate</string>
+    <string name="gs_opt_hz_desc">Experimental. Depends on the ROM and display</string>
+    <string name="gs_hz_auto">Auto</string>
+    <string name="gs_opt_cross">Crosshair</string>
+    <string name="gs_opt_cross_desc">Touch-through crosshair in the screen centre</string>
+    <string name="gs_cross_size">Size</string>
+    <string name="gs_cross_opacity">Opacity</string>
+
+    <!-- look -->
+    <string name="gs_look_title">Panel look</string>
+    <string name="gs_look_edge">Dock edge</string>
+    <string name="gs_edge_left">Left</string>
+    <string name="gs_edge_right">Right</string>
+    <string name="gs_look_accent">Accent</string>
+    <string name="gs_look_autohide">Auto-close panel</string>
+    <string name="gs_never">Never</string>
+
+    <!-- panel tiles & messages -->
+    <string name="gs_tile_shot">Shot</string>
+    <string name="gs_tile_rec">Record</string>
+    <string name="gs_tile_stop">Stop</string>
+    <string name="gs_tile_dnd">DND</string>
+    <string name="gs_tile_heads">No banner</string>
+    <string name="gs_tile_bright">Bright</string>
+    <string name="gs_tile_perf">Perf</string>
+    <string name="gs_tile_ram">Clean</string>
+    <string name="gs_tile_cross">Aim</string>
+    <string name="gs_saved">Saved %1$s</string>
+    <string name="gs_rec_started">Recording started (max 3 min)</string>
+    <string name="gs_rec_stopped">Recording saved</string>
+    <string name="gs_ram_cleared">Background processes cleared</string>
+    <string name="gs_need_privileged">Needs Root or Shizuku mode</string>
+    <string name="gs_no_game">No game is running. Open a game from your list to use Performance mode</string>
+    <string name="gs_shizuku_not_ready">Shizuku is not running or ZKM has no permission yet. Start Shizuku and grant access</string>
+    <string name="gs_root_denied">Root access was denied. Grant ZKM in your root manager</string>
+    <string name="gs_cmd_failed">Command failed: %1$s</string>
+    <string name="gs_need_dnd">Grant Do Not Disturb access first</string>
+    <!-- Energy Cube hub -->
+    <string name="gs_look_style">Overlay style</string>
+    <string name="gs_style_cube">Energy Cube</string>
+    <string name="gs_style_compact">Compact panel</string>
+    <string name="gs_hub_title">ENERGY CUBE</string>
+    <string name="gs_hub_rise">Rise</string>
+    <string name="gs_hub_mode_balance">Balance</string>
+    <string name="gs_hub_mode_dynamic">Dynamic</string>
+    <string name="gs_hub_mode_performance">Performance</string>
+    <string name="gs_mode_saved_nonroot">Mode saved</string>
+    <string name="gs_mode_failed">CPU mode failed: %1$s</string>
+    <string name="gs_hub_normal">Normal</string>
+    <string name="gs_hub_cool">Cool</string>
+    <string name="gs_hub_warm">Warm</string>
+    <string name="gs_hub_hot">Hot</string>
+    <string name="gs_hub_line_perf_on">Performance enhancement enabled</string>
+    <string name="gs_hub_line_perf_off">Standard performance</string>
+    <string name="gs_hub_line_quiet">Interruptions blocked</string>
+    <string name="gs_hub_line_notif">Notifications active</string>
+    <string name="gs_hub_line_rec">Recording in progress</string>
+    <string name="gs_hub_line_cross">Crosshair active</string>
+    <string name="gs_hub_line_ready">Game Space active</string>
+    <string name="gs_hub_card_perf">Performance</string>
+    <string name="gs_hub_card_counter">Counter</string>
+    <string name="gs_hub_card_cross">Crosshair</string>
+    <string name="gs_hub_card_dock">Dock side</string>
+    <string name="gs_hub_wifi">WiFi</string>
+    <string name="gs_hub_dnd">DND</string>
+    <string name="gs_hub_hz_default">Default</string>
+    <string name="gs_hub_info">Info</string>
+    <string name="gs_hub_rotation">Rotation Lock</string>
+    <string name="gs_hub_screen_rec">Screen Rec</string>
+    <string name="gs_hub_optimize">Optimize</string>
+    <string name="gs_hub_shot">Screenshot</string>
+    <string name="gs_hub_heads">No banner</string>
+    <string name="gs_hub_bright">Bright lock</string>
+
+    <!-- screen mode -->
+    <string name="gs_screen_mode_title">Screen mode</string>
+    <string name="gs_screen_mode_desc">Choose how the app is displayed while you use Game Space.</string>
+    <string name="gs_mode_explore">Explore</string>
+    <string name="gs_mode_explore_desc">Free rotation. Portrait or landscape, however you hold the phone.</string>
+    <string name="gs_mode_handheld">Handheld</string>
+    <string name="gs_mode_handheld_desc">Locks the app to 16:9 landscape and opens the full-screen Game Space console.</string>
+
+    <!-- handheld console -->
+    <string name="gs_hh_brand">GAME SPACE</string>
+    <string name="gs_hh_lobby">Game Lobby</string>
+    <string name="gs_hh_arsenal">Arsenal</string>
+    <string name="gs_hh_arsenal_title">ARSENAL</string>
+    <string name="gs_hh_arsenal_sub">Quick loadout applied to every game</string>
+    <string name="gs_hh_selected">NOW SELECTED</string>
+    <string name="gs_hh_start">START GAME</string>
+    <string name="gs_hh_played">Played %1$s</string>
+    <string name="gs_hh_never_played">Not played yet</string>
+    <string name="gs_hh_no_games">Your lobby is empty</string>
+    <string name="gs_hh_no_games_desc">Add your games and they will line up here, ready to launch.</string>
+    <string name="gs_hh_open_settings">Settings</string>
+    <string name="gs_hh_cannot_launch">Can\'t open this game</string>
+    <string name="gs_hh_cpu">CPU mode</string>
+    <string name="gs_hh_edit_game">Game profile</string>
+    <!-- Handheld: dialog Mecha -->
+    <string name="gs_hh_picker_sub">Pick an app to deploy into your lobby</string>
+    <string name="gs_hh_games_only">Games</string>
+    <string name="gs_hh_scanning">SCANNING APPS</string>
+    <string name="gs_hh_no_apps">No apps found</string>
+    <string name="gs_hh_apps_count">%1$d apps</string>
+    <string name="gs_hh_close">Close</string>
+    <string name="gs_hh_done">Done</string>
+    <string name="gs_hh_profile_sub">Per-game loadout</string>
+    <string name="gs_hh_confirm_remove">Tap again to remove</string>
+    <string name="gs_hh_settings_sub">Control center</string>
+    <string name="gs_hh_tab_system">System</string>
+    <string name="gs_hh_tab_defaults">Defaults</string>
+    <string name="gs_hh_tab_look">Look</string>
+    <string name="gs_hh_grant">Grant</string>
+    <string name="gs_hh_switch_explore">Switch to Explore</string>
+    <string name="gs_hh_section_loadout">Loadout</string>
+    <string name="gs_hh_section_refresh">Refresh rate</string>
+    <string name="gs_hh_section_cross">Crosshair</string>
+</resources>

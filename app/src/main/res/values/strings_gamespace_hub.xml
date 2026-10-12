@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Game Space Hub (Super Base, Plugin Library, Game Center, Control Panel, Atmosphere).
+  Original ZKM UI. Banyak bagian baru kerangka UI: nilai tersimpan tapi belum diterapkan ke sistem.
+-->
+<resources>
+    <!-- tab & Super Base -->
+    <string name="gsx_tab_superbase">Super Base</string>
+    <string name="gsx_sb_title">SUPER BASE</string>
+    <string name="gsx_sb_sub">Command deck for plugins, stats and atmosphere</string>
+    <string name="gsx_sb_core">Core Reactor</string>
+    <string name="gsx_sb_core_hint">Tap to switch CPU mode</string>
+    <string name="gsx_sb_plugins">Plugin Library</string>
+    <string name="gsx_sb_plugins_sub">Helpers for in-game play</string>
+    <string name="gsx_sb_library">Game Library</string>
+    <string name="gsx_sb_library_sub">Add games to the console</string>
+    <string name="gsx_sb_center">Game Center</string>
+    <string name="gsx_sb_center_sub">Playtime, rank and settings</string>
+    <string name="gsx_sb_atmos">Atmosphere</string>
+    <string name="gsx_sb_atmos_sub">Backdrop and LED lighting</string>
+    <string name="gsx_sb_control">Control Panel</string>
+    <string name="gsx_sb_control_global">Global profile</string>
+    <string name="gsx_tag_preview">Preview</string>
+    <string name="gsx_tag_ready">Ready</string>
+    <string name="gsx_ui_only_note">UI preview - settings are saved, but not applied to the system yet.</string>
+
+    <!-- Plugin Library -->
+    <string name="gsx_pl_title">Plugin Library</string>
+    <string name="gsx_pl_sub">IN-GAME HELPERS</string>
+    <string name="gsx_pl_supported">Supported games</string>
+    <string name="gsx_pl_enable">Enable plugin</string>
+    <string name="gsx_pl_enable_ready">Applied when the game starts</string>
+    <string name="gsx_pl_enable_preview">UI preview - the logic arrives in a later update</string>
+    <string name="gsx_genre_moba">MOBA</string>
+    <string name="gsx_genre_act">ACT</string>
+    <string name="gsx_genre_fps">FPS</string>
+    <string name="gsx_genre_all">All games</string>
+
+    <string name="gsx_pn_aux">Auxiliary Line</string>
+    <string name="gsx_pd_aux">Place a crosshair watermark on the screen to help judge distance during gameplay.</string>
+    <string name="gsx_pn_stopwatch">Fast Stopwatch</string>
+    <string name="gsx_pd_stopwatch">A draggable stopwatch floats over your game so you can time cooldowns and respawns.</string>
+    <string name="gsx_pn_keypos">Touch Indicator</string>
+    <string name="gsx_pd_keypos">Shows a dot where you touch the screen while you play. Needs Root or Shizuku.</string>
+    <string name="gsx_pn_equalizer">Sound Equalizer</string>
+    <string name="gsx_pd_equalizer">Footsteps and gunshots sit at different frequencies, so you can tune each one freely.</string>
+    <string name="gsx_pn_investigate">Investigate Mode</string>
+    <string name="gsx_pd_investigate">Zoom into the area around the crosshair to spot distant targets.</string>
+    <string name="gsx_pn_hold">Press and Hold Assist</string>
+    <string name="gsx_pd_hold">Tap once to trigger a pressing and holding effect.</string>
+    <string name="gsx_pn_double">Double Tap Assist</string>
+    <string name="gsx_pd_double">Press once to trigger a double tap effect.</string>
+    <string name="gsx_pn_chat">Chat Assist</string>
+    <string name="gsx_pd_chat">Quick preset phrases that you can send with one tap.</string>
+    <string name="gsx_pn_aim">Aiming Assist</string>
+    <string name="gsx_pd_aim">Smooths small aim movements while the fire button is held.</string>
+    <string name="gsx_pn_vibrate">4D Vibrate</string>
+    <string name="gsx_pd_vibrate">Adds haptic feedback that follows what happens on screen.</string>
+    <string name="gsx_pn_hunt">Hunt Mode</string>
+    <string name="gsx_pd_hunt">Highlights key areas of the screen so you can find targets faster.</string>
+
+    <!-- Game Center -->
+    <string name="gsx_ct_title">Game Center</string>
+    <string name="gsx_ct_sub">PLAYTIME - RANK - SETTINGS</string>
+    <string name="gsx_ct_playtime">Playtime</string>
+    <string name="gsx_ct_cooling">Cooling</string>
+    <string name="gsx_ct_network">Network</string>
+    <string name="gsx_ct_general">General</string>
+    <string name="gsx_ct_atmos">Atmosphere</string>
+    <string name="gsx_ct_help">Help</string>
+    <string name="gsx_ct_total">Total</string>
+    <string name="gsx_ct_rank">Rank</string>
+    <string name="gsx_ct_detail">Most played</string>
+    <string name="gsx_ct_nogames">No games yet</string>
+    <string name="gsx_ct_tip">Keep body and mind healthy - play in moderation.</string>
+    <string name="gsx_ct_to_next">%1$d h to next rank</string>
+    <string name="gsx_ct_max_rank">Top rank reached</string>
+    <string name="gsx_ct_breakdown">Playtime by game</string>
+    <string name="gsx_rank_0">Rookie</string>
+    <string name="gsx_rank_1">Veteran</string>
+    <string name="gsx_rank_2">Elite</string>
+    <string name="gsx_rank_3">Master</string>
+    <string name="gsx_rank_4">Legend</string>
+
+    <string name="gsx_cool_auto">Thermal guard</string>
+    <string name="gsx_cool_auto_desc">Drop CPU mode to Balance when the phone gets hot</string>
+    <string name="gsx_cool_level">Sensitivity</string>
+    <string name="gsx_cool_off">Off</string>
+    <string name="gsx_cool_low">Low</string>
+    <string name="gsx_cool_mid">Mid</string>
+    <string name="gsx_cool_high">High</string>
+    <string name="gsx_cool_note">External fans cannot be controlled from an app. Thermal guard is no longer on by default.</string>
+
+    <string name="gsx_net_dual">Keep mobile data ready</string>
+    <string name="gsx_net_dual_desc">Keep mobile data connected while on Wi-Fi for instant fallback. Needs Root or Shizuku.</string>
+    <string name="gsx_net_5g">Prefer 5 GHz Wi-Fi</string>
+    <string name="gsx_net_5g_desc">Choose the faster band when available</string>
+    <string name="gsx_net_prio">Wi-Fi low-latency lock</string>
+    <string name="gsx_net_prio_desc">Stops Wi-Fi from power-saving while you play (best effort, depends on the device)</string>
+    <string name="gsx_net_note">Applied when the game starts. Merging Wi-Fi and mobile bandwidth, choosing the 5 GHz band and per-game traffic priority are not possible from an app.</string>
+
+    <string name="gsx_gen_bright">Lock brightness</string>
+    <string name="gsx_gen_bright_desc">Disable auto brightness adjustment</string>
+    <string name="gsx_gen_hide">Hide game icons on the home screen</string>
+    <string name="gsx_gen_hide_desc">Games added to Game Space will not show on the home screen</string>
+    <string name="gsx_gen_saver">Screen energy saving mode</string>
+    <string name="gsx_gen_saver_desc">Lower power use while the screen is on</string>
+    <string name="gsx_gen_open">Game Space opening animation</string>
+    <string name="gsx_gen_wellbeing">Play-time reminder</string>
+    <string name="gsx_gen_start">Game assistant start animation</string>
+
+    <string name="gsx_at_backdrop">Backdrop</string>
+    <string name="gsx_at_led">LED</string>
+    <string name="gsx_bd_reactor">Reactor</string>
+    <string name="gsx_bd_grid">Grid</string>
+    <string name="gsx_bd_neon">Neon</string>
+    <string name="gsx_bd_hex">Hex</string>
+    <string name="gsx_bd_circuit">Circuit</string>
+    <string name="gsx_bd_vortex">Vortex</string>
+    <string name="gsx_bd_matrix">Matrix</string>
+    <string name="gsx_bd_carbon">Carbon</string>
+    <string name="gsx_bd_aurora">Aurora</string>
+    <string name="gsx_bd_stars">Starfield</string>
+    <string name="gsx_bd_image">Your own image</string>
+    <string name="gsx_bd_image_desc">Pick any picture from your gallery as the console background. It is copied privately into the app (resized to 1920 px).</string>
+    <string name="gsx_bd_pick">Pick from gallery</string>
+    <string name="gsx_bd_remove">Remove</string>
+    <string name="gsx_bd_dim">Darken for readability</string>
+    <string name="gsx_bd_img_ok">Background applied.</string>
+    <string name="gsx_bd_img_fail">Could not read that image.</string>
+    <string name="gsx_at_particles">Atmosphere particles</string>
+    <string name="gsx_at_particles_desc">Dynamic floating cyber embers and motes</string>
+    <string name="gsx_at_vignette">Deep vignette</string>
+    <string name="gsx_at_vignette_desc">Dark peripheral edge focus for immersive gaming</string>
+    <string name="gsx_led_on">Atmosphere LED</string>
+    <string name="gsx_led_on_desc">Edge light on the console</string>
+    <string name="gsx_led_fx">LED effect</string>
+    <string name="gsx_led_steady">Steady</string>
+    <string name="gsx_led_breathe">Breathe</string>
+    <string name="gsx_led_flash">Flashing</string>
+    <string name="gsx_led_flow">Flow</string>
+    <string name="gsx_led_rainbow">Rainbow</string>
+    <string name="gsx_led_aurora">Aurora</string>
+    <string name="gsx_led_pulse">Pulse</string>
+    <string name="gsx_led_color">LED color</string>
+    <string name="gsx_led_auto">Auto</string>
+
+    <string name="gsx_help_1_t">What is Game Space?</string>
+    <string name="gsx_help_1_d">A console that launches your games with a tuned loadout: do not disturb, brightness lock, refresh rate and CPU mode.</string>
+    <string name="gsx_help_2_t">Real and preview items</string>
+    <string name="gsx_help_2_d">Items tagged Ready work now. Items tagged Preview only save your choice until their logic is added.</string>
+    <string name="gsx_help_3_t">Per-game profiles</string>
+    <string name="gsx_help_3_d">Open the Control Panel from Super Base to keep a separate set of options for each game.</string>
+
+    <!-- Control Panel -->
+    <string name="gsx_cp_title">Control Panel</string>
+    <string name="gsx_cp_global">Global profile</string>
+    <string name="gsx_cp_mode">Game Mode</string>
+    <string name="gsx_cp_gpu">GPU</string>
+    <string name="gsx_cp_touch">Touch</string>
+    <string name="gsx_cp_show">Display</string>
+    <string name="gsx_cp_audio">Audio</string>
+    <string name="gsx_cp_net">Network</string>
+    <string name="gsx_cp_func">Functions</string>
+    <string name="gsx_cp_hz_title">Screen Refresh Rate</string>
+    <string name="gsx_cp_hz_desc">Match display frequency with in-game framerate</string>
+    <string name="gsx_cp_touch_boost">Touch Response Boost</string>
+    <string name="gsx_cp_touch_boost_desc">Prioritize screen digitizer latency for competitive reflexes</string>
+    <string name="gsx_cp_audio_mode">Gaming Sound Profile</string>
+    <string name="gsx_cp_audio_footstep">Footstep Clarity</string>
+    <string name="gsx_cp_audio_bass">Bass Explosive</string>
+    <string name="gsx_cp_audio_voice">Voice Priority</string>
+    <string name="gsx_cp_audio_standard">Standard Balance</string>
+    <string name="gsx_cp_reset">Restore defaults</string>
+    <string name="gsx_g_ram">RAM</string>
+    <string name="gsx_g_bat">BAT</string>
+    <string name="gsx_g_temp">TEMP</string>
+    <string name="gsx_g_rom">ROM</string>
+    <string name="gsx_g_cpu">CPU</string>
+    <string name="gsx_rd_perf">Performance</string>
+    <string name="gsx_rd_batt">Battery life</string>
+    <string name="gsx_rd_temp">Heat</string>
+    <string name="gsx_rd_video">Video quality</string>
+    <string name="gsx_rd_ctrl">Control</string>
+    <string name="gsx_md_balance">Balance keeps everyday speed with steady heat and good battery life. A fine pick for casual games.</string>
+    <string name="gsx_md_dynamic">Dynamic raises speed when the game needs it and relaxes when it does not. Good for most games.</string>
+    <string name="gsx_md_performance">Performance pushes the processor hard for competitive play. Image quality is higher, but power use and heat go up. Best in a cool room.</string>
+
+    <string name="gsx_gpu_aniso">Anisotropic filtering</string>
+    <string name="gsx_gpu_off">Off</string>
+    <string name="gsx_gpu_tex">Texture filter</string>
+    <string name="gsx_gpu_speed">Speed first</string>
+    <string name="gsx_gpu_equal">Balanced</string>
+    <string name="gsx_gpu_quality">Quality first</string>
+
+    <string name="gsx_tc_rate">Touch sampling rate</string>
+    <string name="gsx_tc_rate_hi">High sampling rate</string>
+    <string name="gsx_tc_rate_max">High rate, more power</string>
+    <string name="gsx_tc_sens">Sensitivity</string>
+    <string name="gsx_tc_sens_l">Reduce false touch</string>
+    <string name="gsx_tc_sens_r">Improve response speed</string>
+    <string name="gsx_tc_smooth">Smoothness</string>
+    <string name="gsx_tc_smooth_l">Steadier image when sliding</string>
+    <string name="gsx_tc_smooth_r">Faster sliding response</string>
+    <string name="gsx_tc_stab">Stabilization</string>
+    <string name="gsx_tc_stab_l">Catch minor slips</string>
+    <string name="gsx_tc_stab_r">Reduce screen jitter</string>
+
+    <string name="gsx_sh_effect">Display effect</string>
+    <string name="gsx_sh_default">Default</string>
+    <string name="gsx_sh_car">Car</string>
+    <string name="gsx_sh_shoot">Shoot</string>
+    <string name="gsx_sh_moba">MOBA</string>
+    <string name="gsx_sh_auto">Auto</string>
+    <string name="gsx_sh_desc">Tunes color and contrast for the game type. Leave on Default to use the system look.</string>
+
+    <string name="gsx_fn_rec">On-demand recording</string>
+    <string name="gsx_fn_quality">Video recording quality</string>
+    <string name="gsx_fn_back">Back recording duration</string>
+    <string name="gsx_fn_post">Post recording duration</string>
+    <string name="gsx_fn_shortcuts">Panel shortcuts</string>
+    <string name="gsx_fn_sc_cross">Crosshair</string>
+    <string name="gsx_fn_sc_ram">Clear RAM</string>
+    <string name="gsx_fn_sc_cpu">CPU mode</string>
+    <string name="gsx_fn_sc_rec">Recording</string>
+
+    <string name="gsx_gpu_boost">GPU frequency floor</string>
+    <string name="gsx_gpu_b_mid">Raised</string>
+    <string name="gsx_gpu_b_max">Max</string>
+    <string name="gsx_gpu_note">Root only. Raises the GPU minimum clock while the game runs and restores it afterwards. Uses more power and heat. Anisotropic and texture filtering are set inside each game; Android has no system-wide switch.</string>
+    <string name="gsx_fn_note">Recording quality sets the bitrate (SD 6 Mbps, HD 16 Mbps). Shortcuts show or hide tiles in the Energy Cube panel. Back/post recording needs a rolling buffer and is not supported.</string>
+    <string name="gsx_gen_note">Hide icons and Screen energy saving are preview only.</string>
+    <string name="gs_alert_channel">Game Space alerts</string>
+    <string name="gs_guard_hot">Phone is hot (%1$d°C) - CPU mode dropped to Balance</string>
+    <string name="gs_guard_cool">Cooled down - CPU mode back to %1$s</string>
+    <string name="gs_wellbeing_msg">You have been playing %1$s for %2$d h. Time for a break?</string>
+</resources>

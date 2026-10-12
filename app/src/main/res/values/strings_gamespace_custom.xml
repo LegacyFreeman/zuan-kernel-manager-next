@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Game Space: Custom Mode, Root Tools, sub-overlay, splash Energy Cube.
+-->
+<resources>
+    <!-- entry points -->
+    <string name="gsx_sb_control_short">Control</string>
+    <string name="gsx_sb_custom">Custom Mode</string>
+    <string name="gsx_sb_root">Root Tools</string>
+    <string name="gsx_cp_customize">Customize modes</string>
+    <string name="gsx_hub_card_custom">Custom Mode</string>
+    <string name="gsx_hub_card_root">Root Tools</string>
+    <string name="gsx_sub_close">Close</string>
+
+    <!-- thermal moved note (Game Center > Cooling) -->
+    <string name="gsx_cool_moved_title">Thermal guard moved</string>
+    <string name="gsx_cool_moved_desc">Open Super Base → Custom Mode → pick a mode → Thermal. It is now set per mode and is off by default.</string>
+
+    <!-- Custom Mode -->
+    <string name="gsx_cm_title">Custom Mode</string>
+    <string name="gsx_cm_sub">CPU · GPU · thermal for each mode</string>
+    <string name="gsx_cm_legend">Dot = active mode. Pick a mode to edit it.</string>
+    <string name="gsx_cm_use">Use custom values</string>
+    <string name="gsx_cm_use_desc">Off = built-in behaviour of this mode</string>
+    <string name="gsx_cm_builtin">This mode uses its built-in behaviour. Turn on custom values to set your own CPU / GPU limits, governor and thermal guard.</string>
+    <string name="gsx_cm_need_root">Frequency limits and governors are written to the kernel, which needs Root. Without Root the values are only saved.</string>
+    <string name="gsx_cm_cpu">CPU</string>
+    <string name="gsx_cm_gpu">GPU</string>
+    <string name="gsx_cm_thermal">Thermal</string>
+    <string name="gsx_cm_max">Max frequency</string>
+    <string name="gsx_cm_min">Min frequency</string>
+    <string name="gsx_cm_governor">Governor</string>
+    <string name="gsx_cm_auto">Auto</string>
+    <string name="gsx_cm_t_guard">Thermal guard</string>
+    <string name="gsx_cm_t_guard_desc">Drop to Balance when the phone gets too hot</string>
+    <string name="gsx_cm_t_limit">Trigger temperature</string>
+    <string name="gsx_cm_t_note">Uses the battery sensor and returns to this mode once it cools by 3 °C. Not used while Balance is active.</string>
+    <string name="gsx_cm_apply">Apply &amp; activate</string>
+    <string name="gsx_cm_reset">Reset mode</string>
+    <string name="gsx_cm_applied">%1$s mode applied</string>
+    <string name="gsx_cm_was_reset">Mode reset to built-in behaviour</string>
+
+    <!-- Root Tools -->
+    <string name="gsx_rt_title">Root Tools</string>
+    <string name="gsx_rt_sub">System-level boosts, restored when the game ends</string>
+    <string name="gsx_rt_splash">Energy Cube splash</string>
+    <string name="gsx_rt_splash_desc">5-second optimisation screen when a game starts</string>
+    <string name="gsx_rt_section">Applied on game start</string>
+    <string name="gsx_rt_need_root">These boosts need Root. They stay off in Shizuku / Basic mode.</string>
+    <string name="gsx_rt_ram">Clean memory</string>
+    <string name="gsx_rt_ram_d">Close cached background apps and drop the page cache</string>
+    <string name="gsx_rt_prio">Game priority</string>
+    <string name="gsx_rt_prio_d">Raise CPU / I/O priority of the game and protect it from the memory killer</string>
+    <string name="gsx_rt_sched">Scheduler boost</string>
+    <string name="gsx_rt_sched_d">Enable sched_boost while playing (kernel must support it)</string>
+    <string name="gsx_rt_io">Storage read-ahead</string>
+    <string name="gsx_rt_io_d">Larger read-ahead to cut level loading time</string>
+    <string name="gsx_rt_swap">Lower swap pressure</string>
+    <string name="gsx_rt_swap_d">Set swappiness to 20 so the game stays in RAM</string>
+    <string name="gsx_rt_clean_now">Clean memory now</string>
+    <string name="gsx_rt_cleaned">Done — %1$d MB freed</string>
+    <string name="gsx_rt_failed">Could not clean memory</string>
+    <string name="gsx_rt_note">Every change is recorded and restored when the session ends. Fan, touch sampling and similar hardware features depend on the device and are not controlled here.</string>
+
+    <!-- Energy Cube splash -->
+    <string name="gsx_sp_title">ENERGY CUBE</string>
+    <string name="gsx_sp_mode_on">%1$s mode on</string>
+    <string name="gsx_sp_l_prep">Preparing the game</string>
+    <string name="gsx_sp_l_clean">Cleaned up and accelerated</string>
+    <string name="gsx_sp_l_prio">Game priority raised</string>
+    <string name="gsx_sp_l_perf">Performance enhancement on</string>
+    <string name="gsx_sp_l_sched">Scheduler boost on</string>
+    <string name="gsx_sp_m_mem">Memory cleared</string>
+    <string name="gsx_sp_m_mem_mb">%1$d MB memory cleared</string>
+    <string name="gsx_sp_m_bg">Background apps closed</string>
+    <string name="gsx_sp_m_prio">Game process prioritised</string>
+    <string name="gsx_sp_m_sched">Scheduler boost enabled</string>
+    <string name="gsx_sp_m_io">Storage read-ahead boosted</string>
+    <string name="gsx_sp_m_swap">Swap pressure lowered</string>
+    <string name="gsx_sp_m_mode">%1$s mode ready</string>
+    <string name="gsx_sp_m_ready">Now optimized for gaming</string>
+    <string name="gsx_cm_cluster_scope">CPU scope</string>
+    <string name="gsx_cm_cluster_all">All clusters</string>
+    <string name="gsx_cm_cluster_each">Per cluster</string>
+    <!-- Dynamic engine -->
+    <string name="gsx_dyn_title">Dynamic engine</string>
+    <string name="gsx_dyn_live">LIVE</string>
+    <string name="gsx_dyn_idle">Starts working when a game is running in Dynamic mode. Everything shown here is measured, not a preset.</string>
+    <string name="gsx_dyn_stat1">CPU load %1$d%% · %2$.1f°C · freq cap %3$d%%</string>
+    <string name="gsx_dyn_stat2">RAM %1$d / %2$d MB free · storage %3$d%% free</string>
+    <string name="gsx_dyn_stat3">CPU writes %1$d · RAM cleans %2$d · cache trims %3$d</string>
+    <string name="gsx_dyn_last">Last action: %1$s</string>
+    <string name="gsx_dyn_cpu">Adaptive CPU</string>
+    <string name="gsx_dyn_cpu_d">Raises and lowers min/max per cluster from live load and temperature. Respects your Custom Mode limits.</string>
+    <string name="gsx_dyn_cpu_lock">Needs Root or Shizuku running as root. Locked on Shizuku (ADB) and Basic.</string>
+    <string name="gsx_dyn_ram">Smart RAM</string>
+    <string name="gsx_dyn_ram_d">Clears cached background apps when free RAM drops low (2 min cooldown).</string>
+    <string name="gsx_dyn_sto">Smart storage</string>
+    <string name="gsx_dyn_sto_d">Trims app caches when internal storage is almost full. Never touches your files.</string>
+    <string name="gsx_dyn_locked">LOCKED</string>
+    <string name="gsx_dyn_strip">DYNAMIC %1$s · load %2$d%% · cap %3$d%%</string>
+    <string name="gsx_tile_trim">Trim cache</string>
+    <string name="gsx_trim_done">App caches trimmed</string>
+    <string name="gsx_tile_dyn">Dynamic</string>
+    <string name="gsx_dyn_on">Dynamic mode on</string>
+</resources>

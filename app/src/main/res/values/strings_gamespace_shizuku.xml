@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Game Space - mode Shizuku / no-root + dokumentasi Help. Semua klaim di sini sudah dicocokkan dengan kode NonRootBoost. -->
+<resources>
+    <!-- level akses -->
+    <string name="gsx_nr_lvl_root">Root mode - every Game Space feature is available.</string>
+    <string name="gsx_nr_lvl_shizuku_root">Shizuku is running as root - every Game Space feature is available, including CPU and GPU control.</string>
+    <string name="gsx_nr_lvl_adb">Shizuku (ADB, no root). Works: Game Mode, memory clean, background limiter, refresh rate lock, screenshot and recording, Battery Saver off. Needs root: CPU and GPU frequency, governor, process priority.</string>
+    <string name="gsx_nr_lvl_basic">Basic mode - nothing privileged runs. Start Shizuku, then switch to ADB mode in Settings to unlock these tools.</string>
+
+    <!-- hasil ganti mode -->
+    <string name="gsx_nr_mode_saved">Mode saved</string>
+    <string name="gsx_nr_mode_waiting">Mode saved - it is applied when a game starts</string>
+    <string name="gsx_nr_mode_failed">Android did not accept the Game Mode command for this app</string>
+    <string name="gsx_nr_mode_note">Without root each mode maps to Android Game Mode: Balance leaves it alone, Dynamic and Performance request Performance Game Mode. Dynamic steps back to Standard when the phone reports thermal throttling and returns when it cools.</string>
+
+    <!-- kartu Shizuku Tools -->
+    <string name="gsx_nr_title">Shizuku Tools</string>
+    <string name="gsx_nr_sub">Real no-root boosts, restored when the game ends</string>
+    <string name="gsx_hub_card_shizuku">Shizuku Tools</string>
+    <string name="gsx_nr_gm">Performance Game Mode</string>
+    <string name="gsx_nr_gm_d">Ask Android to run the game in Performance Game Mode (Android 12+). Applies to Dynamic and Performance. The effect depends on the ROM and on the game.</string>
+    <string name="gsx_nr_ram">Clean memory</string>
+    <string name="gsx_nr_ram_d">Close cached background apps. The game in front is never touched.</string>
+    <string name="gsx_nr_bg">Background limiter</string>
+    <string name="gsx_nr_bg_d">While you play, stop other installed apps that are running from working in the background. Original settings are restored when the game ends. Messages from limited apps can arrive late.</string>
+    <string name="gsx_nr_keep">Always allowed</string>
+    <string name="gsx_nr_keep_d">Launcher, keyboard, SMS and dialer apps are always kept. Add any other app you do not want limited.</string>
+    <string name="gsx_nr_keep_add">Add app</string>
+    <string name="gsx_nr_keep_hint">Choose the apps the limiter must never touch in Explore mode, under Shizuku Tools.</string>
+    <string name="gsx_nr_bat">Turn off Battery Saver</string>
+    <string name="gsx_nr_bat_d">Battery Saver slows the CPU. It is turned off when a game starts and is not turned back on automatically.</string>
+    <string name="gsx_nr_fixed">Fixed performance mode (experimental)</string>
+    <string name="gsx_nr_fixed_d">Asks the vendor power service for sustained performance in Performance mode. Many ROMs ignore it. Turned off again when the game ends.</string>
+    <string name="gsx_nr_modes_title">What the modes do without root</string>
+    <string name="gsx_nr_modes_body">Balance: leaves system Game Mode untouched. Dynamic: Performance Game Mode, drops to Standard when the phone reports moderate thermal throttling, returns when it cools. Performance: Performance Game Mode, plus fixed performance mode if you enabled it.</string>
+    <string name="gsx_nr_rootonly_title">Needs root (not possible here)</string>
+    <string name="gsx_nr_rootonly_body">CPU and GPU frequency limits, governor, process priority, scheduler boost, storage read-ahead and swap pressure write to kernel files that the Shizuku ADB shell cannot change. They are not faked. If Shizuku itself runs as root they work too.</string>
+    <string name="gsx_nr_note">Only changes that Android really accepts are applied, and every one is restored when the session ends, even if ZKM was closed in the middle of a game.</string>
+
+    <!-- splash -->
+    <string name="gsx_sp_l_gm">Performance Game Mode requested</string>
+    <string name="gsx_sp_l_bg">Background apps limited</string>
+    <string name="gsx_sp_m_gm">Game Mode set to Performance</string>
+    <string name="gsx_sp_m_fixed">Fixed performance requested</string>
+    <string name="gsx_sp_m_bglimit">Background apps limited</string>
+    <string name="gsx_sp_m_bat">Battery Saver turned off</string>
+
+    <!-- Help di dalam Game Space (Handheld + Explore) -->
+    <string name="gsx_help_4_t">Working modes</string>
+    <string name="gsx_help_4_d">Root: every feature. Shizuku running as root: same as Root. Shizuku ADB: Game Mode, memory clean, background limiter, refresh rate, screenshot and recording, Battery Saver off. Basic: nothing privileged. Items that your mode cannot do are shown disabled, never faked.</string>
+    <string name="gsx_help_5_t">CPU modes: Balance, Dynamic, Performance</string>
+    <string name="gsx_help_5_d">With root they set the governor and frequency limits of each CPU cluster. Without root they map to Android Game Mode: Balance leaves it alone, Dynamic and Performance request Performance Game Mode, and Dynamic backs off when the phone gets hot.</string>
+    <string name="gsx_help_6_t">Custom Mode and Tools</string>
+    <string name="gsx_help_6_d">Custom Mode edits CPU and GPU limits per mode and needs root to write them. Root Tools (root) and Shizuku Tools (no root) hold the system boosts that run when a game starts and are restored when it ends. The thermal guard works in both.</string>
+    <string name="gsx_help_7_t">Handheld or Explore</string>
+    <string name="gsx_help_7_d">Handheld is the landscape console with the Mecha look. Explore is one scrolling screen that follows your Wallpaper Style. Both share the same settings, so switching never loses anything. Use the switch at the top to change.</string>
+
+    <!-- Help Center: topik Game Space -->
+    <string name="help_gamespace_title">Game Space</string>
+    <string name="help_gamespace_desc">Launches your games with a tuned loadout and gives an in-game panel with live stats, quick toggles and performance modes. It works in Root mode and in Shizuku (no root) mode.</string>
+    <string name="help_gamespace_b1">Master switch: turns detection on. Add games with Add game; each game can keep its own profile or follow the global defaults.</string>
+    <string name="help_gamespace_b2">Permissions: Usage Access finds the game in front, Display over other apps shows the panel. Both are requested only here.</string>
+    <string name="help_gamespace_b3">Per session ZKM can set Do Not Disturb, block heads-up notifications, lock brightness mode and refresh rate, and request Game Mode. Every value is saved first and put back when you leave the game.</string>
+    <string name="help_gamespace_b4">Modes: Balance, Dynamic and Performance. With root they control CPU governor and frequency per cluster. In Shizuku ADB mode they map to Android Game Mode, and Dynamic steps down when the phone reports thermal throttling.</string>
+    <string name="help_gamespace_b5">Shizuku Tools (no root): Performance Game Mode, memory clean, background limiter with an always-allowed list, Battery Saver off, and an experimental fixed performance mode. Root Tools adds process priority, scheduler boost, read-ahead and swap pressure.</string>
+    <string name="help_gamespace_b6">Panel styles: Energy Cube (landscape hub with left and right menus) or Compact. Handheld is the Mecha console; Explore is the scrolling screen. Both use the same settings.</string>
+    <string name="help_gamespace_b7">The Energy Cube splash only lists what really happened in this session. If your mode cannot do something, it is simply not listed.</string>
+    <string name="help_gamespace_warn">Game Mode and fixed performance depend on the ROM and on each game; some ignore them. CPU and GPU frequency control needs root. The background limiter can delay messages from limited apps while you play.</string>
+
+    <string name="help_faq_gs_shizuku_title">Game Space with Shizuku (no root)</string>
+    <string name="help_faq_gs_shizuku_body">Start Shizuku (wireless debugging or adb), grant ZKM access, then choose ADB mode in Settings. Game Space then uses only commands the shell user may run: Game Mode, memory clean, appops, settings and power commands. Kernel files such as CPU governor or GPU clocks cannot be written from that shell, so those controls stay disabled instead of pretending. If your Shizuku runs as root, ZKM detects it and unlocks the root features automatically.</string>
+    <string name="help_faq_gs_modes_title">Why is there no CPU frequency slider in Shizuku mode?</string>
+    <string name="help_faq_gs_modes_body">Android only lets root change CPU and GPU frequency. A no-root app that shows such a slider would be doing nothing. ZKM instead uses what Android officially allows: Game Mode, thermal-aware stepping and background limiting. Custom Mode values are still saved and used the moment you switch to Root.</string>
+</resources>

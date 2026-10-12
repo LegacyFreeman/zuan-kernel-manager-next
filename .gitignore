@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Gradle files
 .gradle/
 build/
@@ -33,3 +34,21 @@ google-services.json
 
 # Android Profiling
 *.hprof
+=======
+build/
+app/build/
+.gradle/
+terminal-emulator/build/
+terminal-view/build/
+kernel-flasher/build/
+.acside/
+.kotlin/
+.idea/
+captures/
+*.iml
+local.properties
+workspace.json
+*.jks
+*.keystore
+*.apk
+>>>>>>> 32b7198 (Upload)

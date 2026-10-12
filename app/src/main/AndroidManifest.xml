@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- NETWORK & UPDATE -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    
+    <!-- INSTALL APK (Auto-update) -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    
+    <!-- STORAGE (Download APK) -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    
+    <!-- NOTIFICATION -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Screen Time & Battery Usage (Usage access, bisa diberi lewat Settings atau root) -->
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+    
+    <permission android:name="${applicationId}.permission.BIND_ZKM_ROOT" android:protectionLevel="signature" />
+    <uses-permission android:name="${applicationId}.permission.BIND_ZKM_ROOT" />
+
+    <!-- PRIVILEGED SHELL PROVIDERS (Shizuku & Axeron / AXM) -->
+    <uses-permission android:name="moe.shizuku.manager.permission.API_V23" />
+    <uses-permission android:name="frb.axeron.manager.permission.MANAGER" />
+
+    <!-- SYSTEM -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
+    <!-- FOREGROUND SERVICES -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    
+    <!-- PACKAGES QUERY -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <application 
+        android:name=".ZkmApp"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher" 
+        android:label="@string/app_name" 
+        android:supportsRtl="true" 
+        android:windowSoftInputMode="adjustResize"
+        android:enableOnBackInvokedCallback="true"
+        android:theme="@style/ZuanTheme">
+
+        <!-- FileProvider untuk Install APK (Update System) -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- Shizuku Provider -->
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:multiprocess="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+        <!-- Axeron Provider (AxManager / AXM No-Root ADB) -->
+        <provider
+            android:name="frb.axeron.provider.AxeronProvider"
+            android:authorities="${applicationId}.axeron"
+            android:multiprocess="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+        <!-- RECEIVER BOOT TERPUSAT (PENGGANTI THERMAL & CPU RECEIVER) -->
+        <!-- PATCH: exported=false — broadcast sistem (BOOT_COMPLETED) tetap
+             diterima karena dikirim oleh system, sementara app lain tidak
+             bisa memicu receiver ini secara explicit. Hardening gratis. -->
+        <receiver
+            android:name=".platform.receiver.KernelAutomationReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name=".platform.receiver.ZkmBootReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:directBootAware="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <activity 
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ZuanTheme.SplashScreen"
+            android:windowSoftInputMode="adjustResize"> 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name="com.canhub.cropper.CropImageActivity"
+            android:theme="@style/Theme.AppCompat.DayNight" />
+
+        <activity
+            android:name=".feature.settings.SettingsActivity"
+            android:exported="false" />
+<service 
+            android:name=".service.FpsOverlayService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="fps_overlay" />
+        </service>
+            
+        <service
+            android:name=".service.SmartCutoffService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="smart_charge_cutoff" />
+        </service>
+
+        <service 
+            android:name=".service.BatteryMonitorService" 
+            android:foregroundServiceType="specialUse|dataSync"
+            android:exported="false" 
+            android:enabled="true">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="battery_monitor" />
+        </service>
+
+        <!-- ZKM privileged kernel runtime. libsu launches this in root daemon mode. -->
+        <service
+            android:name=".service.ZkmRootService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="${applicationId}.permission.BIND_ZKM_ROOT"
+            tools:ignore="Instantiatable" />
+
+        <service
+            android:name=".feature.ksuweb.core.FileSystemService"
+            android:process=":ksu_web_service"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+
+        <service
+            android:name=".feature.terminal.FloatingTerminalService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!-- Game Space: detector + side panel + crosshair -->
+        <service
+            android:name=".feature.gamespace.GameDetectorService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="game_space_detector" />
+        </service>
+
+        <service
+            android:name=".feature.gamespace.GameBarService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="game_space_panel" />
+        </service>
+
+        <service
+            android:name=".feature.gamespace.CrosshairService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="game_space_crosshair" />
+        </service>
+
+        <service
+            android:name=".feature.gamespace.EnergyCubeSplashService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="gamespace_energy_cube_splash" />
+        </service>
+
+        <service
+            android:name=".feature.gamespace.GameSubOverlayService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="gamespace_sub_overlay" />
+        </service>
+
+        <service
+            android:name=".feature.gamespace.StopwatchService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="game_space_stopwatch" />
+        </service>
+
+        <service 
+            android:name=".feature.process.FloatingProcessService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="floating_process_monitor" />
+        </service>
+            
+        <service
+            android:name=".feature.activitylauncher.FloatingActivityService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="floating_activity_launcher" />
+        </service>
+            
+        <service
+            android:name=".feature.overlay.LiveStatsNotificationService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="live_stats_notification" />
+        </service>
+
+        <service
+            android:name=".feature.overlay.SystemMonitorService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="floating_system_monitor" />
+        </service>
+
+        <service
+            android:name=".feature.overlay.MiniMonitorService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="floating_mini_monitor" />
+        </service>
+
+        <service
+            android:name=".feature.overlay.ThreadMonitorService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="floating_thread_monitor" />
+        </service>
+
+        <service
+            android:name=".feature.overlay.TemperatureMonitorService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="floating_temperature_monitor" />
+        </service>
+
+    </application>
+</manifest>
