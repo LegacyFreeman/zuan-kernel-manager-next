@@ -103,8 +103,8 @@ import com.zuan.kernelmanager.next.library.shell.su
 import com.zuan.kernelmanager.next.library.shell.suBlocking
 
 // --- IMPORT HAZE ---
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
@@ -345,7 +345,7 @@ fun KernelFlasherScreen(
                 val saturationMatrix = ColorMatrix().apply { setToSaturation(bgSaturation) }
                 val colorFilter = ColorFilter.colorMatrix(saturationMatrix)
                 val uri = Uri.parse(bgUriString)
-                Box(modifier = Modifier.fillMaxSize().hazeSource(state = localHazeState, zIndex = 0f)) {
+                Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = localHazeState, zIndex = 0f)) {
                     if (isVideo) {
                         VideoWallpaperPlayer(uri = uri, modifier = Modifier.fillMaxSize().then(blurModifier))
                     } else {
@@ -362,7 +362,7 @@ fun KernelFlasherScreen(
                     }
                 }
             } else {
-                Box(modifier = Modifier.fillMaxSize().hazeSource(state = localHazeState, zIndex = 0f))
+                Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = localHazeState, zIndex = 0f))
             }
 
             WeatherEffectOverlay(effect = weatherEffect, intensity = weatherIntensity, modifier = Modifier.fillMaxSize())
@@ -371,7 +371,7 @@ fun KernelFlasherScreen(
             AnimatedContent(
                 targetState = currentMode,
                 label = "FlasherModeSwitch",
-                modifier = Modifier.fillMaxSize().hazeSource(state = localHazeState, zIndex = 1f)
+                modifier = Modifier.fillMaxSize().zkmHazeSource(state = localHazeState, zIndex = 1f)
             ) { mode ->
                 when (mode) {
                     FlasherMode.HORIZON -> {
@@ -503,7 +503,7 @@ fun KernelFlasherScreen(
                             headerHeightPx = coordinates.size.height 
                         }
                     }
-                    .hazeEffect(state = localHazeState, style = appBarHazeStyle) {
+                    .zkmHazeEffect(state = localHazeState, style = appBarHazeStyle) {
                         progressive = dev.chrisbanes.haze.HazeProgressive.verticalGradient(startIntensity = 1f, endIntensity = 0f)
                     }
                     .zIndex(2f)
@@ -679,18 +679,25 @@ fun HorizonFlasherContent(
     ) { uri: Uri? ->
         if (uri != null) {
             isFlashing = true
-            logs = context.getString(R.string.flasher_init_process) + "\nTarget: $uri\n"
+            // Log Batching (ZKM Perf - Adopsi ACSIDE Compiler Stream):
+            // Mencegah Recomposition Storm saat script unpacking/flashing mencetak ratusan log.
+            val logBatcher = com.zuan.kernelmanager.next.core.util.ZkmLogBatcher(scope, intervalMs = 150L) { batchedText ->
+                logs = batchedText
+            }
+            logBatcher.append(context.getString(R.string.flasher_init_process) + "\nTarget: $uri")
             scope.launch {
                 val worker = com.zuan.kernelmanager.next.feature.kernel.flasher.FlasherWorker(context, uri) { newLog ->
-                    logs += "$newLog\n"
+                    logBatcher.append(newLog)
                 }
                 val success = worker.startFlashing()
                 isFlashing = false
                 if (success) {
-                    logs += "\n" + context.getString(R.string.flasher_success)
+                    logBatcher.append("\n" + context.getString(R.string.flasher_success))
+                    logBatcher.flush()
                     showRebootDialog = true
                 } else {
-                    logs += "\n" + context.getString(R.string.flasher_failed)
+                    logBatcher.append("\n" + context.getString(R.string.flasher_failed))
+                    logBatcher.flush()
                     Toast.makeText(context, context.getString(R.string.flasher_toast_failed), Toast.LENGTH_SHORT).show()
                 }
             }

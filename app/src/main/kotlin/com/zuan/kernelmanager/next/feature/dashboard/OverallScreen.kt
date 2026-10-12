@@ -11,6 +11,7 @@
 
 package com.zuan.kernelmanager.next.feature.dashboard
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.adaptive.zkmLargeAppBarExpandedHeight
 import com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
@@ -113,8 +114,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import java.util.Calendar
 
@@ -298,7 +299,7 @@ fun OverallScreen(
     var userName by remember { mutableStateOf(sharedPrefs.getString("user_name", "Your Name") ?: "Your Name") }
     var profileMedia by remember { mutableStateOf(ProfileMediaStore.load(context)) }
     // [BARU] Bingkai avatar (avatar decoration ala Discord), diatur dari Wallpaper Style > Personalize
-    val avatarDeco by remember { SettingsPreference.getInstance(context) }.avatarDecoration.collectAsState()
+    val avatarDeco by remember { SettingsPreference.getInstance(context) }.avatarDecoration.collectAsStateWithLifecycle()
     val profileScope = rememberCoroutineScope()
     var pendingMedia by remember { mutableStateOf<ProfileMedia?>(null) }
 
@@ -390,7 +391,7 @@ fun OverallScreen(
             hazeState = hazeState,
             onUpdate = { url ->
                 updateDialogState.visible = false
-                val fileName = "ZKM_${release.tag_name}.apk"
+                val fileName = "ZKMNext_${release.tag_name}.apk"
                 Utils.downloadAndInstallApk(context, url, fileName)
             }
         )
@@ -408,7 +409,7 @@ fun OverallScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(mainBackgroundColor) 
-                    .hazeSource(state = hazeState, zIndex = 0f)
+                    .zkmHazeSource(state = hazeState, zIndex = 0f)
             ) {
                 if (isCustomBg && bgUriString != null) {
                     val blurModifier = if (isBgBlur && blurStrength > 0f) {
@@ -461,7 +462,7 @@ fun OverallScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 1f)
+                    .zkmHazeSource(state = hazeState, zIndex = 1f)
             ) {
                 DashboardContent(
                     widgets = visibleWidgets,
@@ -474,7 +475,7 @@ fun OverallScreen(
                     headerContent = state.updateRelease?.let { release ->
                         {
                             val updateCardColor = if (isGlassActive || isCustomBg)
-                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                                MaterialTheme.colorScheme.primaryContainer.zkmLiteAlpha(0.5f)
                             else
                                 MaterialTheme.colorScheme.primaryContainer
                             UpdateCard(release, baseWidgetModifier, updateCardColor, { updateDialogState.visible = true }, customOnSurface)
@@ -622,7 +623,7 @@ fun OverallScreen(
                     .align(Alignment.TopCenter)
                     .fillMaxWidth()
                     .onGloballyPositioned { headerHeightPx = it.size.height }
-                    .hazeEffect(
+                    .zkmHazeEffect(
                         state = hazeState,
                         style = headerHazeStyle
                     ) {

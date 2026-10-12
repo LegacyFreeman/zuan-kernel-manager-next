@@ -37,7 +37,7 @@ import com.zuan.kernelmanager.next.R
 import com.zuan.kernelmanager.next.feature.settings.SettingsViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import com.zuan.kernelmanager.next.ui.theme.zkmIsDarkTheme
 import com.zuan.kernelmanager.next.ui.components.ZkmHazeStyleCache

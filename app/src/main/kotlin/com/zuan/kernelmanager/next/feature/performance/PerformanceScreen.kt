@@ -7,6 +7,7 @@
  */
 @file:OptIn(ExperimentalMaterial3Api::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.performance
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.R
 import androidx.compose.ui.res.stringResource
 
@@ -94,7 +95,7 @@ fun PerformanceCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.5f)
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {

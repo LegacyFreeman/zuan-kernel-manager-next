@@ -31,7 +31,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     // --- STATES ---
     val themeMode: StateFlow<ThemeMode> = settingsPreference.themeMode
-    val pollingInterval: StateFlow<Long> = settingsPreference.pollingInterval
+    val checkManagerUpdates: StateFlow<Boolean> = settingsPreference.checkManagerUpdates
+    val checkBetaUpdates: StateFlow<Boolean> = settingsPreference.checkBetaUpdates
+    val showUpdateDialog: StateFlow<Boolean> = settingsPreference.showUpdateDialog
+    val lastUpdateCheck: StateFlow<Long> = settingsPreference.lastUpdateCheck
     val isDynamicColor: StateFlow<Boolean> = settingsPreference.isDynamicColor
     val appDpi: StateFlow<Int> = settingsPreference.appDpi
 
@@ -78,6 +81,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     val customTertiaryColor = settingsPreference.customTertiaryColor
 
     val adaptiveEcoMode = settingsPreference.adaptiveEcoMode
+    val liteMode = settingsPreference.liteMode
 
     // --- UI CONFIG COMBINED ---
     private val visualConfigFlow = combine(
@@ -135,7 +139,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun setThemeMode(mode: ThemeMode) { viewModelScope.launch { settingsPreference.setThemeMode(mode) } }
     fun setThemeColor(color: AppThemeColor) { viewModelScope.launch { settingsPreference.setThemeColor(color.name) } }
     fun setDynamicColor(enabled: Boolean) { viewModelScope.launch { settingsPreference.setDynamicColorEnabled(enabled) } }
-    fun setPollingInterval(interval: Long) { viewModelScope.launch { settingsPreference.setPollingInterval(interval) } }
+    fun setCheckManagerUpdates(enabled: Boolean) { viewModelScope.launch { settingsPreference.setCheckManagerUpdates(enabled) } }
+    fun setShowUpdateDialog(enabled: Boolean) { viewModelScope.launch { settingsPreference.setShowUpdateDialog(enabled) } }
+    fun setCheckBetaUpdates(enabled: Boolean) { viewModelScope.launch { settingsPreference.setCheckBetaUpdates(enabled) } }
     fun setAppDpi(dpi: Int) { viewModelScope.launch { settingsPreference.setAppDpi(dpi) } }
     
     fun setHazeEnabled(enabled: Boolean) { viewModelScope.launch { settingsPreference.setHazeEnabled(enabled) } }
@@ -209,6 +215,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun setCustomTertiaryColor(color: Int) { viewModelScope.launch { settingsPreference.setCustomTertiaryColor(color) } }
     
     fun setAdaptiveEcoMode(enabled: Boolean) { viewModelScope.launch { settingsPreference.setAdaptiveEcoMode(enabled) } }
+    fun setLiteMode(enabled: Boolean) { viewModelScope.launch { settingsPreference.setLiteMode(enabled) } }
 }
 
 // Helper Classes

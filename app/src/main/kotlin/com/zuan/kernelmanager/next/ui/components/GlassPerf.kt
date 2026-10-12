@@ -56,13 +56,14 @@ object ZkmHazeStyleCache {
         blurRadius: Dp = 20.dp,
         noiseFactor: Float = 0.15f,
     ): HazeStyle {
+        val effectiveBlur = ZkmQualityGovernor.effectiveBlurRadius(blurRadius)
         val effectiveTints = tint?.let { listOf(it) } ?: tints
-        val key = listOf<Any?>(backgroundColor, effectiveTints, blurRadius, noiseFactor)
+        val key = listOf<Any?>(backgroundColor, effectiveTints, effectiveBlur.value.toInt(), noiseFactor)
         generalCache.get(key)?.let { return it }
         val style = HazeStyle(
             backgroundColor = backgroundColor,
             tints = effectiveTints,
-            blurRadius = blurRadius,
+            blurRadius = effectiveBlur,
             noiseFactor = noiseFactor,
         )
         generalCache.put(key, style)
@@ -72,13 +73,17 @@ object ZkmHazeStyleCache {
     /**
      * Style glass kartu standar (background transparan, tint digambar terpisah
      * di atas haze — lihat [zkmGlassCard]).
+     *
+     * Otomatis menyesuaikan radius blur dengan [ZkmQualityGovernor.effectiveBlurRadius]
+     * sehingga saat beban tinggi atau scroll cepat, biaya GPU turun seketika.
      */
     fun cardStyle(
         blurRadius: Dp,
         noiseFactor: Float = 0.08f,
     ): HazeStyle {
+        val effectiveBlur = ZkmQualityGovernor.effectiveBlurRadius(blurRadius)
         val key = Key(
-            blurDp = blurRadius.value.toInt(),
+            blurDp = effectiveBlur.value.toInt(),
             noiseBits = noiseFactor.toBits(),
             backgroundBits = 0L,
             tintBits = 0L,
@@ -86,7 +91,7 @@ object ZkmHazeStyleCache {
         cache.get(key)?.let { return it }
         val style = HazeStyle(
             backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
-            blurRadius = blurRadius,
+            blurRadius = effectiveBlur,
             noiseFactor = noiseFactor,
             tints = emptyList(),
         )

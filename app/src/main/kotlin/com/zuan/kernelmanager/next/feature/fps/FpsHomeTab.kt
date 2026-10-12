@@ -8,6 +8,7 @@
 @file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.fps
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.core.mode.WorkingMode
 import com.zuan.kernelmanager.next.core.mode.WorkingModeManager
 import com.zuan.kernelmanager.next.library.shell.AxeronShell
@@ -191,7 +192,7 @@ fun FpsManagerHomeContent(
                         }
                     )
 
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.5f))
 
                     ReaderModeOption(
                         title = stringResource(R.string.fps_mode_universal_android),
@@ -204,7 +205,7 @@ fun FpsManagerHomeContent(
                         }
                     )
                     
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.5f))
 
                     ReaderModeOption(
                         title = stringResource(R.string.fps_mode_universal_gpu),
@@ -217,7 +218,7 @@ fun FpsManagerHomeContent(
                         }
                     )
 
-                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                    HorizontalDivider(Modifier.padding(horizontal = 16.dp), color = MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.5f))
 
                     ReaderModeOption(
                         title = stringResource(R.string.fps_mode_universal_devices),
@@ -545,9 +546,9 @@ fun DeviceInfoCard(
     ) {
         Column {
             PixelInfoRow(stringResource(R.string.fps_manufacturer), Build.MANUFACTURER.uppercase(), Icons.Default.PhoneAndroid)
-            HorizontalDivider(modifier = Modifier.padding(start = 56.dp), color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+            HorizontalDivider(modifier = Modifier.padding(start = 56.dp), color = MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.5f))
             PixelInfoRow(stringResource(R.string.fps_model), Build.MODEL, Icons.Default.PhoneAndroid)
-            HorizontalDivider(modifier = Modifier.padding(start = 56.dp), color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+            HorizontalDivider(modifier = Modifier.padding(start = 56.dp), color = MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.5f))
             PixelInfoRow(stringResource(R.string.fps_android_ver), "Android ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})", Icons.Default.Memory)
         }
     }

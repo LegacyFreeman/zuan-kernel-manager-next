@@ -36,7 +36,7 @@ import androidx.compose.ui.zIndex
 import com.zuan.kernelmanager.next.feature.dashboard.components.ExpressiveEntrance
 import com.zuan.kernelmanager.next.feature.dashboard.components.ExpressiveMotion
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -70,7 +70,7 @@ fun DashboardContent(
         state = lazyListState,
         modifier = modifier
             .fillMaxSize()
-            .hazeSource(state = hazeState, zIndex = 1f),
+            .zkmHazeSource(state = hazeState, zIndex = 1f),
         contentPadding = PaddingValues(
             start = sidePadding,
             end = sidePadding,

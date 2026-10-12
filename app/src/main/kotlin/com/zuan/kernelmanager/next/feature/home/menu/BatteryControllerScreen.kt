@@ -9,6 +9,7 @@
 
 package com.zuan.kernelmanager.next.feature.home.menu
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
 import com.zuan.kernelmanager.next.ui.components.zkmCardFill
@@ -85,8 +86,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.rememberHazeState
 import java.text.SimpleDateFormat
@@ -186,7 +187,7 @@ fun BatteryControllerScreen(
             val colorFilter = ColorFilter.colorMatrix(saturationMatrix)
             val uri = Uri.parse(bgUriString)
 
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 if (isVideo) {
                     VideoWallpaperPlayer(uri = uri, modifier = Modifier.fillMaxSize().then(blurModifier))
                 } else {
@@ -205,7 +206,7 @@ fun BatteryControllerScreen(
         } else {
             // Background digambar sebagai child di dalam hazeSource agar terekam
             // ke buffer haze (fix progressive blur appbar di mode non-custom).
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 Box(modifier = Modifier.fillMaxSize().background(mainBackgroundColor))
             }
         }
@@ -225,7 +226,7 @@ fun BatteryControllerScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .hazeSource(state = hazeState, zIndex = 1f)
+                        .zkmHazeSource(state = hazeState, zIndex = 1f)
                 ) {
                     when (selectedTab) {
                         0 -> BatteryDashboardTab(
@@ -256,7 +257,7 @@ fun BatteryControllerScreen(
                         .onGloballyPositioned { coordinates ->
                             headerHeightPx = coordinates.size.height
                         }
-                        .hazeEffect(
+                        .zkmHazeEffect(
                             state = hazeState,
                             style = headerHazeStyle
                         ) {
@@ -570,7 +571,7 @@ fun BatteryPillTabs(
     isCustomBg: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val trackColor = if (isCustomBg) Color.White.copy(alpha = 0.14f) else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.75f)
+    val trackColor = if (isCustomBg) Color.White.copy(alpha = 0.14f) else MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(0.75f)
     val onPrimary = if (primaryColor.luminance() > 0.55f) Color.Black else Color.White
     Row(
         modifier = modifier

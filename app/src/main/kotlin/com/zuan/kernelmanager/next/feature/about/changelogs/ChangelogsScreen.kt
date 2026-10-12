@@ -7,6 +7,7 @@
  */
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class, ExperimentalLayoutApi::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.about.changelogs
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.adaptive.zkmLargeAppBarExpandedHeight
 import com.zuan.kernelmanager.next.ui.components.zkmGlassFallbackTint
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
@@ -60,8 +61,8 @@ import com.zuan.kernelmanager.next.feature.settings.SettingsViewModel
 import com.zuan.kernelmanager.next.ui.theme.ThemeMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import com.zuan.kernelmanager.next.ui.theme.zkmIsDarkTheme
@@ -181,7 +182,7 @@ fun ChangelogsScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier
                     .zIndex(2f)
-                    .hazeEffect(state = hazeState, style = appBarHazeStyle) {
+                    .zkmHazeEffect(state = hazeState, style = appBarHazeStyle) {
                         progressive = dev.chrisbanes.haze.HazeProgressive.verticalGradient(startIntensity = 1f, endIntensity = 0f)
                     }
             )
@@ -196,7 +197,7 @@ fun ChangelogsScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 1f)
+                    .zkmHazeSource(state = hazeState, zIndex = 1f)
                     .padding(horizontal = 16.dp)
             ) {
                 // Latest Version Card dengan Toggle Source
@@ -234,6 +235,18 @@ fun ChangelogsScreen(
                     
                     Spacer(modifier = Modifier.height(16.dp))
                 }
+
+                // Link ke semua rilis resmi ZKM Next di GitHub
+                UpdateCheckCard(
+                    onCheckClick = { openUrl(context, ChangelogsUtils.RELEASES_URL) },
+                    hazeState = hazeState,
+                    isGlassActive = isHazeEnabled && isCustomBg,
+                    accentColor = finalPrimary,
+                    text = "All releases on GitHub",
+                    icon = Icons.Outlined.Code
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
                 
                 // Loading indicator
                 if (uiState.isCheckingUpdate) {
@@ -299,7 +312,7 @@ private fun LatestVersionCard(
             .zkmCardHazeEffect(shape = shape,
                 state = hazeState,
                 style = ZkmHazeStyleCache.of(
-                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
+                    backgroundColor = MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.2f),
                     blurRadius = 20.dp,
                     noiseFactor = 0.05f,
                     tints = emptyList()
@@ -323,12 +336,12 @@ private fun LatestVersionCard(
         colors = if (release.isNewer) {
             listOf(
                 accentColor.copy(alpha = 0.15f),
-                MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+                MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.8f)
             )
         } else {
             listOf(
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+                MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.5f),
+                MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.8f)
             )
         }
     )
@@ -381,7 +394,7 @@ private fun LatestVersionCard(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Zuan Kernel Manager",
+                            text = "Zuan Kernel Manager Next",
                             style = MaterialTheme.typography.titleSmall.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -577,7 +590,9 @@ private fun UpdateCheckCard(
     onCheckClick: () -> Unit,
     hazeState: HazeState,
     isGlassActive: Boolean,
-    accentColor: Color
+    accentColor: Color,
+    text: String = "Check for Updates",
+    icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Outlined.CloudDownload
 ) {
     val shape = RoundedCornerShape(ExpressiveCornerRadius)
     
@@ -586,7 +601,7 @@ private fun UpdateCheckCard(
             .zkmCardHazeEffect(shape = shape,
                 state = hazeState,
                 style = ZkmHazeStyleCache.of(
-                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
+                    backgroundColor = MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.2f),
                     blurRadius = 20.dp,
                     noiseFactor = 0.05f,
                     tints = emptyList()
@@ -612,7 +627,7 @@ private fun UpdateCheckCard(
             .then(cardModifier)
             .clickable(onClick = onCheckClick),
         shape = shape,
-        color = if (isGlassActive) zkmGlassFallbackTint(zkmIsDarkTheme()) else MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+        color = if (isGlassActive) zkmGlassFallbackTint(zkmIsDarkTheme()) else MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.7f)
     ) {
         Row(
             modifier = Modifier
@@ -622,14 +637,14 @@ private fun UpdateCheckCard(
             horizontalArrangement = Arrangement.Center
         ) {
             Icon(
-                imageVector = Icons.Outlined.CloudDownload,
+                imageVector = icon,
                 contentDescription = null,
                 tint = accentColor,
                 modifier = Modifier.size(28.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                text = "Check for Updates",
+                text = text,
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.SemiBold,
                     color = accentColor
@@ -708,7 +723,7 @@ private fun ChangelogCard(
             .zkmCardHazeEffect(shape = shape,
                 state = hazeState,
                 style = ZkmHazeStyleCache.of(
-                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
+                    backgroundColor = MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.2f),
                     blurRadius = 20.dp,
                     noiseFactor = 0.05f,
                     tints = emptyList()
@@ -731,7 +746,7 @@ private fun ChangelogCard(
     val headerColor = when {
         entry.isImportant -> accentColor.copy(alpha = 0.15f)
         entry.isBeta -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f)
-        else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        else -> MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.5f)
     }
     
     Surface(
@@ -740,7 +755,7 @@ private fun ChangelogCard(
             .then(cardModifier)
             .clickable(onClick = onToggleExpand),
         shape = shape,
-        color = if (isGlassActive) zkmGlassFallbackTint(zkmIsDarkTheme()) else MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+        color = if (isGlassActive) zkmGlassFallbackTint(zkmIsDarkTheme()) else MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.7f),
         tonalElevation = if (!isGlassActive) 2.dp else 0.dp
     ) {
         Column {

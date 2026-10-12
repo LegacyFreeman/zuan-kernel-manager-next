@@ -7,6 +7,7 @@
  */
 @file:OptIn(ExperimentalHazeMaterialsApi::class, ExperimentalMaterial3Api::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.tuning
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.ConfigureSheetWindowBlur
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
 import com.zuan.kernelmanager.next.ui.components.zkmReferenceGlassSurface
@@ -53,7 +54,7 @@ import com.zuan.kernelmanager.next.feature.settings.SettingsViewModel
 import com.zuan.kernelmanager.next.ui.theme.ThemeMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import com.zuan.kernelmanager.next.ui.theme.zkmIsDarkTheme
@@ -83,15 +84,15 @@ fun CpuGpuScreen(
     val gpuState by viewModel.gpuState.collectAsStateWithLifecycle()
     val cpusets by viewModel.cpusetList.collectAsStateWithLifecycle()
     
-    val themeMode by settingsViewModel.themeMode.collectAsState()
-    val isCustomBg by settingsViewModel.isCustomBackground.collectAsState()
-    val cardDarkness by settingsViewModel.cardDarkness.collectAsState()
-    val isHazeEnabled by settingsViewModel.isHazeEnabled.collectAsState()
+    val themeMode by settingsViewModel.themeMode.collectAsStateWithLifecycle()
+    val isCustomBg by settingsViewModel.isCustomBackground.collectAsStateWithLifecycle()
+    val cardDarkness by settingsViewModel.cardDarkness.collectAsStateWithLifecycle()
+    val isHazeEnabled by settingsViewModel.isHazeEnabled.collectAsStateWithLifecycle()
     
-    val isDynamic by settingsViewModel.isDynamicColor.collectAsState()
-    val themeColorName by settingsViewModel.currentThemeColor.collectAsState()
-    val isCustomColor by settingsViewModel.isCustomColor.collectAsState()
-    val customPrimary by settingsViewModel.customPrimaryColor.collectAsState()
+    val isDynamic by settingsViewModel.isDynamicColor.collectAsStateWithLifecycle()
+    val themeColorName by settingsViewModel.currentThemeColor.collectAsStateWithLifecycle()
+    val isCustomColor by settingsViewModel.isCustomColor.collectAsStateWithLifecycle()
+    val customPrimary by settingsViewModel.customPrimaryColor.collectAsStateWithLifecycle()
     
     val useDarkTheme = when (themeMode) {
         ThemeMode.LIGHT -> false
@@ -515,8 +516,8 @@ ConfigureSheetWindowBlur()
                 .fillMaxHeight(0.7f) 
                 .then(
                     if (isGlassActive) {
-                        Modifier.hazeEffect(state = hazeState, style = HazeMaterials.ultraThin())
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.2f))
+                        Modifier.zkmHazeEffect(state = hazeState, style = HazeMaterials.ultraThin())
+                        .background(MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.2f))
                     } else Modifier
                 )
         ) {
@@ -539,7 +540,7 @@ ConfigureSheetWindowBlur()
                 Spacer(modifier = Modifier.height(24.dp))
                 
                 Surface(
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = if(isGlassActive) 0.5f else 1f),
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh.zkmLiteAlpha(if(isGlassActive) 0.5f else 1f),
                     shape = CircleShape,
                     modifier = Modifier.fillMaxWidth().height(56.dp)
                 ) {
@@ -585,7 +586,7 @@ ConfigureSheetWindowBlur()
                                     label = "CPU Governor",
                                     value = cluster.gov,
                                     icon = Icons.Rounded.Speed,
-                                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = if(isGlassActive) 0.6f else 1f),
+                                    color = MaterialTheme.colorScheme.primaryContainer.zkmLiteAlpha(if(isGlassActive) 0.6f else 1f),
                                     onClick = { }
                                 ) {
                                     SelectionDialogButton(currentVal = cluster.gov, title = "Select Governor", options = cluster.availableGov, onSelected = { viewModel.updateGov(it, cluster.policyPath) })
@@ -594,12 +595,12 @@ ConfigureSheetWindowBlur()
                             item {
                                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                                     Box(modifier = Modifier.weight(1f)) {
-                                        PixelControlTile(label = "Min Freq", value = "${cluster.minFreq} MHz", icon = Icons.Rounded.ArrowDownward, color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = if(isGlassActive) 0.6f else 1f), onClick = {}) {
+                                        PixelControlTile(label = "Min Freq", value = "${cluster.minFreq} MHz", icon = Icons.Rounded.ArrowDownward, color = MaterialTheme.colorScheme.secondaryContainer.zkmLiteAlpha(if(isGlassActive) 0.6f else 1f), onClick = {}) {
                                             SelectionDialogButton(currentVal = cluster.minFreq, title = "Min Frequency", options = cluster.availableFreq, transformLabel = { "$it MHz" }, onSelected = { viewModel.updateFreq("min", it, cluster.policyPath) })
                                         }
                                     }
                                     Box(modifier = Modifier.weight(1f)) {
-                                        PixelControlTile(label = "Max Freq", value = "${cluster.maxFreq} MHz", icon = Icons.Rounded.ArrowUpward, color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = if(isGlassActive) 0.6f else 1f), onClick = {}) {
+                                        PixelControlTile(label = "Max Freq", value = "${cluster.maxFreq} MHz", icon = Icons.Rounded.ArrowUpward, color = MaterialTheme.colorScheme.tertiaryContainer.zkmLiteAlpha(if(isGlassActive) 0.6f else 1f), onClick = {}) {
                                             SelectionDialogButton(currentVal = cluster.maxFreq, title = "Max Frequency", options = cluster.availableFreq, transformLabel = { "$it MHz" }, onSelected = { viewModel.updateFreq("max", it, cluster.policyPath) })
                                         }
                                     }

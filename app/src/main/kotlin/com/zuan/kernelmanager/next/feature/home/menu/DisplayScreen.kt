@@ -79,8 +79,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -201,7 +201,7 @@ fun DisplayScreen(
             val colorFilter = ColorFilter.colorMatrix(saturationMatrix)
             val uri = Uri.parse(bgUriString)
 
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 if (isVideo) {
                     VideoWallpaperPlayer(
                         uri = uri, 
@@ -225,7 +225,7 @@ fun DisplayScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(themeBgColor)
-                    .hazeSource(state = hazeState, zIndex = 0f)
+                    .zkmHazeSource(state = hazeState, zIndex = 0f)
             )
         }
         
@@ -244,7 +244,7 @@ fun DisplayScreen(
             Box(modifier = Modifier.fillMaxSize()) {
                 
                 // LAYER 1: SCROLLABLE CONTENT
-                Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 1f)) {
+                Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 1f)) {
                     if (isLoading) {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             CircularProgressIndicator(color = effectivePrimary)
@@ -275,7 +275,7 @@ fun DisplayScreen(
                         .onGloballyPositioned { coordinates ->
                             headerHeightPx = coordinates.size.height
                         }
-                        .hazeEffect(
+                        .zkmHazeEffect(
                             state = hazeState,
                             style = headerHazeStyle
                         ) {

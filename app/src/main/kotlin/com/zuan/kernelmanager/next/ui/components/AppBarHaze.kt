@@ -16,7 +16,7 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 
 /**
  * Shared app-bar haze style. The app bar blur is intentionally independent
@@ -100,7 +100,8 @@ fun zkmOnCustomBackgroundSubContentColor(isDark: Boolean): Color =
  * into light themes.
  */
 fun zkmCustomBackgroundCardColor(isDark: Boolean, opacity: Float): Color =
-    (if (isDark) Color.Black else Color.White).copy(alpha = opacity.coerceIn(0f, 1f))
+    if (ZkmLite.active) zkmLiteSolid(isDark)
+    else (if (isDark) Color.Black else Color.White).copy(alpha = opacity.coerceIn(0f, 1f))
 
 /**
  * Fallback tint used *under* frosted-glass cards. Glass cards were fully
@@ -118,7 +119,8 @@ fun zkmCardFill(color: Color): Color =
     if (ZkmLiquidFlags.cardsLiquid) Color.Transparent else color
 
 fun zkmGlassFallbackTint(isDark: Boolean): Color =
-    if (ZkmLiquidFlags.cardsLiquid) Color.Transparent else zkmRawGlassScrim(isDark)
+    if (ZkmLite.active) zkmLiteSolid(isDark)
+    else if (ZkmLiquidFlags.cardsLiquid) Color.Transparent else zkmRawGlassScrim(isDark)
 
 private fun zkmRawGlassScrim(isDark: Boolean): Color =
     if (isDark) Color.Black.copy(alpha = 0.25f) else Color.White.copy(alpha = 0.30f)
@@ -136,6 +138,12 @@ private fun zkmRawGlassScrim(isDark: Boolean): Color =
  * jadi warna card tetap terbaca walau blur haze gagal/terlambat render.
  */
 fun zkmGlassTint(base: Color, isDark: Boolean, strength: Float = 0.5f): Color {
+    // Versi Lite: warna PEKAT (semantic color dicampur ke alas solid), tidak ada transparansi.
+    if (ZkmLite.active) {
+        val solid = zkmLiteSolid(isDark)
+        if (base == Color.Unspecified || base.alpha == 0f) return solid
+        return base.copy(alpha = strength.coerceIn(0.12f, 0.5f)).compositeOver(solid)
+    }
     // Mode Android Liquid Glass (Kyant): kartu sudah punya tint tipis sendiri dan refraksi
     // harus terlihat. Tint tebal (base di atas scrim hitam/putih -> alpha efektif ~0.6) membuat
     // kartu tampak buram/gelap dan beda dari kartu Home. Di mode liquid cukup warna tipis.
@@ -169,6 +177,11 @@ fun Modifier.zkmGlassCard(
     blurRadius: Dp = ZkmGlassCardBlurRadius,
     borderColor: Color = Color.White.copy(alpha = 0.18f),
 ): Modifier {
+    if (ZkmLite.active) {
+        // Versi Lite: kartu solid penuh tanpa blur / tanpa tembus pandang.
+        val solid = tint.compositeOver(zkmLiteSolid(zkmIsDarkTheme()))
+        return this.clip(shape).background(solid, shape)
+    }
     val liquidRequest = resolveLiquidGlassCardRequest(isGlassActive)
     if (liquidRequest != null) {
         val (backdrop, spec) = liquidRequest
@@ -182,8 +195,19 @@ fun Modifier.zkmGlassCard(
     }
     val clipped = this.clip(shape)
     if (!isGlassActive || hazeState == null) return clipped.background(tint, shape)
+
+    // Fast-scroll freeze (Zkm Perf Tahap 2): Saat user scroll kencang,
+    // bekukan pipeline blur berat dan tampilkan scrim solid transparan sementara.
+    // Menghilangkan 100% frame drops/jank selama interaksi scroll.
+    val scrollFrozen = LocalZkmScrollInProgress.current || ZkmQualityGovernor.isScrollFrozen
+    if (scrollFrozen) {
+        val isDark = zkmIsDarkTheme()
+        val scrim = tint.compositeOver(if (isDark) Color.Black.copy(alpha = 0.35f) else Color.White.copy(alpha = 0.45f))
+        return clipped.background(scrim, shape).border(1.dp, borderColor.copy(alpha = 0.12f), shape)
+    }
+
     return clipped
-        .hazeEffect(
+        .zkmHazeEffect(
             state = hazeState,
             // Style di-cache global (ZkmHazeStyleCache): instance yang sama
             // dipakai ulang di semua kartu, jadi recomposition saat scroll

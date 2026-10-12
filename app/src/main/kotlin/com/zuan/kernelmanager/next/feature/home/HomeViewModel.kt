@@ -43,14 +43,6 @@ data class ExtensionItem(
     val isSupported: Boolean = true
 )
 
-data class GithubRelease(
-    val tag_name: String,
-    val body: String,
-    val assets: List<GithubAsset>
-)
-
-data class GithubAsset(val browser_download_url: String)
-
 data class DeviceInfo(
     val deviceName: String = "Xiaomi",
     val manufacturer: String = "Xiaomi",
@@ -73,9 +65,6 @@ class HomeViewModel : ViewModel() {
         if (category == "All") available else available.filter { it.type.equals(category, ignoreCase = true) }
     }
 
-    var updateRelease by mutableStateOf<GithubRelease?>(null)
-    private val repoOwner = "ZUANVFX01"
-    private val repoName = "ZKM"
 
     init {
         loadExtensions()
@@ -277,31 +266,6 @@ class HomeViewModel : ViewModel() {
                 androidVersion = Utils.getAndroidVersion()
             )
             _deviceInfo.value = info
-            
-            val currentVersion = Utils.getAppVersionName(context)
-            checkForUpdate(currentVersion)
-        }
-    }
-
-    fun checkForUpdate(currentVersionName: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val url = URL("https://api.github.com/repos/$repoOwner/$repoName/releases/latest")
-                val connection = url.openConnection() as HttpURLConnection
-                if (connection.responseCode == 200) {
-                    val json = JSONObject(connection.inputStream.bufferedReader().readText())
-                    val tagName = json.getString("tag_name")
-                    val body = json.getString("body")
-                    val assets = json.getJSONArray("assets")
-                    val downloadUrl = if (assets.length() > 0) assets.getJSONObject(0).getString("browser_download_url") else ""
-
-                    if (isNewerVersion(tagName, currentVersionName) && downloadUrl.isNotEmpty()) {
-                        withContext(Dispatchers.Main) {
-                            updateRelease = GithubRelease(tagName, body, listOf(GithubAsset(downloadUrl)))
-                        }
-                    }
-                }
-            } catch (e: Exception) { android.util.Log.e("ZKM", "Unhandled operation failure", e) }
         }
     }
 }

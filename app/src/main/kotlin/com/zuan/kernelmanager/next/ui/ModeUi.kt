@@ -4,6 +4,7 @@
  */
 package com.zuan.kernelmanager.next.ui
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -76,7 +77,7 @@ fun NavGraphBuilder.gatedComposable(
 
 @Composable
 fun ModeGate(route: String, navController: NavController, content: @Composable () -> Unit) {
-    val mode by WorkingModeManager.mode.collectAsState()
+    val mode by WorkingModeManager.mode.collectAsStateWithLifecycle()
     if (WorkingModeManager.allows(route, mode)) {
         content()
     } else {

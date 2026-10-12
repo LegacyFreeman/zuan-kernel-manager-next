@@ -7,6 +7,7 @@
  */
 package com.zuan.kernelmanager.next.ui.components
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -92,7 +93,7 @@ fun ZkmSwitch(
 ) {
     val context = LocalContext.current
     val prefs = remember { SettingsPreference.getInstance(context) }
-    val style by prefs.toggleStyle.collectAsState()
+    val style by prefs.toggleStyle.collectAsStateWithLifecycle()
 
     when (style) {
         ToggleStyle.MATERIAL_EXPRESSIVE -> androidx.compose.material3.Switch(
@@ -358,8 +359,8 @@ private fun ZkmCustomImageSwitch(
 ) {
     val context = LocalContext.current
     val prefs = remember { SettingsPreference.getInstance(context) }
-    val onPath by prefs.customToggleOnImagePath.collectAsState()
-    val offPath by prefs.customToggleOffImagePath.collectAsState()
+    val onPath by prefs.customToggleOnImagePath.collectAsStateWithLifecycle()
+    val offPath by prefs.customToggleOffImagePath.collectAsStateWithLifecycle()
 
     ZkmSwitchFrame(checked, onCheckedChange, modifier, enabled, glass = false) { progress, size ->
         val imagePath = if (progress >= 0.5f) onPath else offPath

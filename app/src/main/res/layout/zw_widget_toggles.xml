@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/zw_root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="10dp" android:background="@drawable/zw_bg">
+    <LinearLayout android:id="@+id/zw_header" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/zw_ic_tune"
+            android:tint="@color/zw_accent" android:contentDescription="@null" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp"
+            android:text="Quick Actions" android:textColor="@color/zw_text" android:textSize="14sp" android:textStyle="bold" />
+        <TextView android:id="@+id/zw_tog_status" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginStart="8dp" android:textColor="@color/zw_text_dim" android:textSize="11sp"
+            android:maxLines="1" android:ellipsize="end" />
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:orientation="horizontal">
+        <LinearLayout android:id="@+id/zw_t_hz" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_t_hz_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_refresh" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_t_hz_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="Refresh" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        <TextView android:id="@+id/zw_t_hz_value" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="@color/zw_text_dim" android:textSize="10sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_t_ram" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_t_ram_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_clean" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_t_ram_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="Clear RAM" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        <TextView android:id="@+id/zw_t_ram_value" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="@color/zw_text_dim" android:textSize="10sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_t_dnd" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_t_dnd_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_dnd" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_t_dnd_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="DND" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        <TextView android:id="@+id/zw_t_dnd_value" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="@color/zw_text_dim" android:textSize="10sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_t_game" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_t_game_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_game" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_t_game_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="Game Space" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

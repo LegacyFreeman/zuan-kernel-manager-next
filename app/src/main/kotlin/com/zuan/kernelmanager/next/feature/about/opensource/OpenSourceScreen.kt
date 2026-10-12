@@ -7,6 +7,7 @@
  */
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.about.opensource
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.adaptive.zkmLargeAppBarExpandedHeight
 import com.zuan.kernelmanager.next.ui.components.zkmGlassFallbackTint
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
@@ -69,8 +70,8 @@ import com.zuan.kernelmanager.next.ui.theme.ThemeMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -170,7 +171,7 @@ fun OpenSourceScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier
                     .zIndex(2f)
-                    .hazeEffect(state = hazeState, style = appBarHazeStyle) {
+                    .zkmHazeEffect(state = hazeState, style = appBarHazeStyle) {
                         progressive = dev.chrisbanes.haze.HazeProgressive.verticalGradient(startIntensity = 1f, endIntensity = 0f)
                     }
             )
@@ -185,7 +186,7 @@ fun OpenSourceScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 1f)
+                    .zkmHazeSource(state = hazeState, zIndex = 1f)
                     .padding(horizontal = 16.dp)
             ) {
                 PrimaryTabRow(
@@ -298,7 +299,7 @@ private fun ContributorCard(
             .zkmCardHazeEffect(shape = shape,
                 state = hazeState,
                 style = ZkmHazeStyleCache.of(
-                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
+                    backgroundColor = MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.2f),
                     blurRadius = 20.dp,
                     noiseFactor = 0.05f,
                     tints = emptyList()
@@ -324,7 +325,7 @@ private fun ContributorCard(
             .then(cardModifier)
             .clickable(onClick = onClick),
         shape = shape,
-        color = if (isGlassActive) zkmGlassFallbackTint(zkmIsDarkTheme()) else MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+        color = if (isGlassActive) zkmGlassFallbackTint(zkmIsDarkTheme()) else MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.7f),
         tonalElevation = if (!isGlassActive) 1.dp else 0.dp
     ) {
         Column(
@@ -467,7 +468,7 @@ private fun LibraryCard(
             .zkmCardHazeEffect(shape = shape,
                 state = hazeState,
                 style = ZkmHazeStyleCache.of(
-                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
+                    backgroundColor = MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.2f),
                     blurRadius = 20.dp,
                     noiseFactor = 0.05f,
                     tints = emptyList()
@@ -493,7 +494,7 @@ private fun LibraryCard(
             .then(cardModifier)
             .clickable(onClick = onClick),
         shape = shape,
-        color = if (isGlassActive) zkmGlassFallbackTint(zkmIsDarkTheme()) else MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+        color = if (isGlassActive) zkmGlassFallbackTint(zkmIsDarkTheme()) else MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.7f),
         tonalElevation = if (!isGlassActive) 1.dp else 0.dp
     ) {
         Row(

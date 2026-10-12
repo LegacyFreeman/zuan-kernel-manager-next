@@ -145,8 +145,8 @@ import com.zuan.kernelmanager.next.ui.theme.zkmIconShape
 import com.zuan.kernelmanager.next.ui.theme.zkmIsDarkTheme
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -354,7 +354,7 @@ fun StorageScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .hazeSource(state = hazeState, zIndex = 1f)
+                        .zkmHazeSource(state = hazeState, zIndex = 1f)
                         .verticalScroll(scrollState)
                         .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -392,7 +392,7 @@ fun StorageScreen(
                         .align(Alignment.TopCenter)
                         .fillMaxWidth()
                         .onGloballyPositioned { headerHeightPx = it.size.height }
-                        .hazeEffect(state = hazeState, style = headerHazeStyle) {
+                        .zkmHazeEffect(state = hazeState, style = headerHazeStyle) {
                             progressive = HazeProgressive.verticalGradient(
                                 startIntensity = 1f,
                                 endIntensity = 0f

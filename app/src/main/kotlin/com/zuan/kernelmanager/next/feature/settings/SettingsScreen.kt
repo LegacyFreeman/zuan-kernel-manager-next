@@ -9,6 +9,8 @@
 
 package com.zuan.kernelmanager.next.feature.settings
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.adaptive.zkmLargeAppBarExpandedHeight
 import com.zuan.kernelmanager.next.ui.components.zkmOnCustomBackgroundContentColor
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
@@ -64,7 +66,7 @@ import com.zuan.kernelmanager.next.ui.navigation.NavigationRoute
 import com.zuan.kernelmanager.next.ui.theme.ThemeMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeStyle
@@ -82,7 +84,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel(),
     lifecycleOwner: LifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current,
 ) {
-    val isDynamic by viewModel.isDynamicColor.collectAsState()
+    val isDynamic by viewModel.isDynamicColor.collectAsStateWithLifecycle()
     
     MainSettingsContent(
         viewModel = viewModel,
@@ -133,7 +135,7 @@ private fun BackupRestoreSettingsItems(
         icon = Icons.Outlined.FileUpload,
         title = stringResource(R.string.pref_export_xml),
         subtitle = stringResource(R.string.pref_export_xml_desc),
-        onClick = { launcherExport.launch("ZKM_Settings_Backup.xml") },
+        onClick = { launcherExport.launch("ZKMNext_Settings_Backup.xml") },
         iconTint = finalPrimary
     )
     HorizontalDivider(modifier = Modifier.fillMaxWidth(), color = dividerColor, thickness = 0.8.dp)
@@ -200,18 +202,16 @@ fun MainSettingsContent(
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     
-    val pollingInterval by viewModel.pollingInterval.collectAsState()
-    val savedDpi by viewModel.appDpi.collectAsState()
-    val themeMode by viewModel.themeMode.collectAsState()
-    val cardDarkness by viewModel.cardDarkness.collectAsState()
-    val bgType by viewModel.bgType.collectAsState()
-    val isHazeEnabled by viewModel.isHazeEnabled.collectAsState() 
+    val savedDpi by viewModel.appDpi.collectAsStateWithLifecycle()
+    val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
+    val cardDarkness by viewModel.cardDarkness.collectAsStateWithLifecycle()
+    val bgType by viewModel.bgType.collectAsStateWithLifecycle()
+    val isHazeEnabled by viewModel.isHazeEnabled.collectAsStateWithLifecycle() 
     
-    val themeColorName by viewModel.currentThemeColor.collectAsState()
-    val isCustomColor by viewModel.isCustomColor.collectAsState()
-    val customPrimary by viewModel.customPrimaryColor.collectAsState()
+    val themeColorName by viewModel.currentThemeColor.collectAsStateWithLifecycle()
+    val isCustomColor by viewModel.isCustomColor.collectAsStateWithLifecycle()
+    val customPrimary by viewModel.customPrimaryColor.collectAsStateWithLifecycle()
 
-    var alternateIcon by remember { mutableStateOf(false) }
     val currentDeviceDpi = context.resources.configuration.densityDpi
     var dpiSliderValue by remember { mutableFloatStateOf(if (savedDpi == 0) currentDeviceDpi.toFloat() else savedDpi.toFloat()) }
     LaunchedEffect(savedDpi) { if (savedDpi != 0) dpiSliderValue = savedDpi.toFloat() }
@@ -242,7 +242,7 @@ fun MainSettingsContent(
 
     val actualCardContainerColor = when {
         isGlassActive -> zkmGlassFallbackTint(zkmIsDarkTheme())
-        bgType != BgType.SYSTEM -> MaterialTheme.colorScheme.surface.copy(alpha = cardDarkness)
+        bgType != BgType.SYSTEM -> MaterialTheme.colorScheme.surface.zkmLiteAlpha(cardDarkness)
         else -> cardContainerColor
     }
 
@@ -253,7 +253,7 @@ fun MainSettingsContent(
             .zkmCardHazeEffect(shape = cardShape,
                 state = hazeState,
                 style = ZkmHazeStyleCache.of(
-                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
+                    backgroundColor = MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.5f),
                     blurRadius = 24.dp,
                     noiseFactor = 0.1f,
                     tints = emptyList()
@@ -263,10 +263,7 @@ fun MainSettingsContent(
 
     val dividerColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
 
-    val openPollingDialog = rememberDialogState(initiallyVisible = false)
     val openDpiDialog = rememberDialogState(initiallyVisible = false)
-    var pollingValueStr by remember { mutableStateOf((pollingInterval / 1000).toString()) }
-    val intervalSeconds = pollingValueStr.toLongOrNull()
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -323,7 +320,7 @@ fun MainSettingsContent(
                             .then(glassModifier)
                     ) {
                         Column(modifier = Modifier.fillMaxWidth()) {
-                            val workingMode by com.zuan.kernelmanager.next.core.mode.WorkingModeManager.mode.collectAsState()
+                            val workingMode by com.zuan.kernelmanager.next.core.mode.WorkingModeManager.mode.collectAsStateWithLifecycle()
                             var showModeDialog by remember { mutableStateOf(false) }
                             SettingsItem(
                                 icon = Icons.Outlined.AdminPanelSettings,
@@ -348,6 +345,17 @@ fun MainSettingsContent(
                             HorizontalDivider(modifier = Modifier.fillMaxWidth(), color = dividerColor, thickness = 0.8.dp)
                             BackupRestoreSettingsItems(context = context, finalPrimary = finalPrimary, dividerColor = dividerColor)
                             HorizontalDivider(modifier = Modifier.fillMaxWidth(), color = dividerColor, thickness = 0.8.dp)
+                            val liteMode by viewModel.liteMode.collectAsStateWithLifecycle()
+                            SettingsSwitchItem(
+                                icon = Icons.Outlined.EnergySavingsLeaf,
+                                title = stringResource(R.string.pref_lite_mode),
+                                subtitle = stringResource(R.string.pref_lite_mode_desc),
+                                checked = liteMode,
+                                onCheckedChange = { viewModel.setLiteMode(it) },
+                                accentColor = finalPrimary,
+                                iconTint = finalPrimary
+                            )
+                            HorizontalDivider(modifier = Modifier.fillMaxWidth(), color = dividerColor, thickness = 0.8.dp)
                             SettingsItem(
                                 icon = Icons.Outlined.Palette,
                                 title = stringResource(R.string.pref_wallpaper_style),
@@ -356,7 +364,7 @@ fun MainSettingsContent(
                                 iconTint = finalPrimary
                             )
                             HorizontalDivider(modifier = Modifier.fillMaxWidth(), color = dividerColor, thickness = 0.8.dp)
-                            val adaptiveEcoMode by viewModel.adaptiveEcoMode.collectAsState()
+                            val adaptiveEcoMode by viewModel.adaptiveEcoMode.collectAsStateWithLifecycle()
                             SettingsSwitchItem(
                                 icon = Icons.Outlined.EnergySavingsLeaf,
                                 title = stringResource(R.string.pref_adaptive_eco_mode),
@@ -415,23 +423,50 @@ fun MainSettingsContent(
                                 }
                             }
 
-                            HorizontalDivider(modifier = Modifier.fillMaxWidth(), color = dividerColor, thickness = 0.8.dp)
-                            SettingsSwitchItem(
-                                Icons.Outlined.Android, 
-                                stringResource(R.string.pref_alt_icon), 
-                                stringResource(R.string.pref_alt_icon_desc), 
-                                alternateIcon, 
-                                { alternateIcon = it }, 
-                                finalPrimary, 
-                                finalPrimary
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = stringResource(R.string.sect_updates),
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = 1.sp,
+                            fontSize = 13.sp
+                        ),
+                        color = finalPrimary.copy(alpha = 0.9f),
+                        modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
+                    )
+
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = actualCardContainerColor),
+                        shape = cardShape,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .then(glassModifier)
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            SettingsItem(
+                                icon = Icons.Outlined.SystemUpdate,
+                                title = stringResource(R.string.upd_settings_title),
+                                subtitle = stringResource(R.string.upd_settings_entry_desc),
+                                onClick = { navController.navigate(NavigationRoute.UpdateSettings.route) },
+                                iconTint = finalPrimary
                             )
                             HorizontalDivider(modifier = Modifier.fillMaxWidth(), color = dividerColor, thickness = 0.8.dp)
                             SettingsItem(
-                                Icons.Default.Timer, 
-                                stringResource(R.string.pref_polling), 
-                                stringResource(R.string.pref_polling_desc, pollingInterval), 
-                                { openPollingDialog.visible = true }, 
-                                finalPrimary
+                                icon = Icons.Outlined.Coffee,
+                                title = stringResource(R.string.about_support_coffee_title),
+                                subtitle = stringResource(R.string.about_support_coffee_desc),
+                                onClick = {
+                                    runCatching {
+                                        context.startActivity(
+                                            android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(com.zuan.kernelmanager.next.ui.ZKM_SUPPORT_URL))
+                                        )
+                                    }
+                                },
+                                iconTint = finalPrimary
                             )
                         }
                     }
@@ -486,72 +521,6 @@ fun MainSettingsContent(
             } 
         }
     )
-
-    DialogUnstyled(
-        state = openPollingDialog, 
-        scrollableText = true,
-        hazeState = hazeState, 
-        isCustomBg = (bgType != BgType.SYSTEM), 
-        title = stringResource(R.string.pref_polling), 
-        text = { 
-            Column { 
-                Text(
-                    stringResource(R.string.dialog_msg_polling), 
-                    style = MaterialTheme.typography.bodyMedium, 
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(Modifier.height(16.dp))
-                OutlinedTextField(
-                    value = pollingValueStr, 
-                    onValueChange = { pollingValueStr = it }, 
-                    label = { Text(stringResource(R.string.label_interval_sec)) }, 
-                    modifier = Modifier.fillMaxWidth(), 
-                    singleLine = true, 
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = MaterialTheme.colorScheme.onSurface, 
-                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface, 
-                        cursorColor = finalPrimary, 
-                        focusedBorderColor = finalPrimary, 
-                        focusedLabelColor = finalPrimary, 
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
-                    ), 
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number, 
-                        imeAction = ImeAction.Done
-                    ), 
-                    keyboardActions = KeyboardActions(
-                        onDone = { 
-                            if (intervalSeconds != null && intervalSeconds in 1..30) { 
-                                viewModel.setPollingInterval(intervalSeconds * 1000)
-                                openPollingDialog.visible = false 
-                            } 
-                        }
-                    )
-                ) 
-            } 
-        }, 
-        confirmButton = { 
-            TextButton(
-                onClick = { 
-                    if (intervalSeconds != null && intervalSeconds in 1..30) { 
-                        viewModel.setPollingInterval(intervalSeconds * 1000)
-                        openPollingDialog.visible = false 
-                    } 
-                }, 
-                colors = ButtonDefaults.textButtonColors(contentColor = finalPrimary)
-        ) { 
-                Text(stringResource(R.string.btn_apply)) 
-            } 
-        }, 
-        dismissButton = { 
-            TextButton(
-                onClick = { openPollingDialog.visible = false }, 
-                colors = ButtonDefaults.textButtonColors(contentColor = finalPrimary)
-        ) { 
-                Text(stringResource(R.string.btn_cancel)) 
-            } 
-        }
-    )
 }
 
 @Composable
@@ -565,7 +534,7 @@ private fun SettingsLargeAppBar(
     val glassStyle = HazeMaterials.thin()
     
     val modifier = if (hazeState != null) {
-        Modifier.hazeEffect(state = hazeState) {
+        Modifier.zkmHazeEffect(state = hazeState) {
             style = glassStyle 
             progressive = HazeProgressive.verticalGradient(startIntensity = 1f, endIntensity = 0f, preferPerformance = true)
         }

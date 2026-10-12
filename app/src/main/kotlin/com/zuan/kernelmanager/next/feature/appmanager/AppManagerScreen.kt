@@ -1,5 +1,7 @@
 package com.zuan.kernelmanager.next.feature.appmanager
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.ConfigureSheetWindowBlur
 import com.zuan.kernelmanager.next.ui.components.zkmCardBorder
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
@@ -75,8 +77,8 @@ import com.zuan.kernelmanager.next.ui.theme.zkmIsDarkTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -519,15 +521,15 @@ fun AppManagerScreen(viewModel: AppManagerViewModel = viewModel()) {
     // masuk mode glass. Sekarang wallpaper digambar sebagai hazeSource zIndex 0
     // dan konten sebagai zIndex 1, sama seperti screen lain.
     val prefs = remember { SettingsPreference.getInstance(context) }
-    val bgType by prefs.bgType.collectAsState()
-    val bgUriString by prefs.backgroundImageUri.collectAsState()
-    val isVideo by prefs.isVideoWallpaper.collectAsState()
-    val isBgBlur by prefs.isBgBlur.collectAsState()
-    val blurStrength by prefs.blurStrength.collectAsState()
-    val bgSaturation by prefs.bgSaturation.collectAsState()
-    val bgContrast by prefs.bgContrast.collectAsState()
-    val isHazeEnabled by prefs.isHazeEnabled.collectAsState()
-    val cardDarkness by prefs.cardDarkness.collectAsState()
+    val bgType by prefs.bgType.collectAsStateWithLifecycle()
+    val bgUriString by prefs.backgroundImageUri.collectAsStateWithLifecycle()
+    val isVideo by prefs.isVideoWallpaper.collectAsStateWithLifecycle()
+    val isBgBlur by prefs.isBgBlur.collectAsStateWithLifecycle()
+    val blurStrength by prefs.blurStrength.collectAsStateWithLifecycle()
+    val bgSaturation by prefs.bgSaturation.collectAsStateWithLifecycle()
+    val bgContrast by prefs.bgContrast.collectAsStateWithLifecycle()
+    val isHazeEnabled by prefs.isHazeEnabled.collectAsStateWithLifecycle()
+    val cardDarkness by prefs.cardDarkness.collectAsStateWithLifecycle()
 
     val isCustomBg = bgType != BgType.SYSTEM
     val isGlassActive = isHazeEnabled && isCustomBg
@@ -553,7 +555,7 @@ fun AppManagerScreen(viewModel: AppManagerViewModel = viewModel()) {
 
             // LAYER 0: CUSTOM BACKGROUND (bagian dari hazeSource supaya blur
             // header benar-benar memburamkan wallpaper, bukan area kosong)
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 if (isCustomBg && bgUriString != null) {
                     val blurModifier = when {
                         isBgBlur && blurStrength > 0f -> Modifier.blur(blurStrength.dp)
@@ -581,7 +583,7 @@ fun AppManagerScreen(viewModel: AppManagerViewModel = viewModel()) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 1f),
+                    .zkmHazeSource(state = hazeState, zIndex = 1f),
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = headerHeightDp + 16.dp, bottom = 100.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
@@ -651,7 +653,7 @@ fun AppManagerScreen(viewModel: AppManagerViewModel = viewModel()) {
                     .align(Alignment.TopCenter)
                     .zIndex(1f)
                     .onGloballyPositioned { coordinates -> headerHeightPx = coordinates.size.height }
-                    .hazeEffect(state = hazeState, style = headerHazeStyle) {
+                    .zkmHazeEffect(state = hazeState, style = headerHazeStyle) {
                         progressive = dev.chrisbanes.haze.HazeProgressive.verticalGradient(
                             startIntensity = 1f,
                             endIntensity = 0f
@@ -697,8 +699,8 @@ fun AppManagerScreen(viewModel: AppManagerViewModel = viewModel()) {
                     },
                     placeholder = { Text(stringResource(R.string.app_search_hint)) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.64f),
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.82f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow.zkmLiteAlpha(0.64f),
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLow.zkmLiteAlpha(0.82f),
                         unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f),
                         focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.72f)
                     )
@@ -980,7 +982,7 @@ private fun AppManagerTabs(selectedTab: AppTab, onTabSelected: (AppTab) -> Unit,
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(22.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.72f)
+        color = MaterialTheme.colorScheme.surfaceContainerLow.zkmLiteAlpha(0.72f)
     ) {
         ScrollableTabRow(
             selectedTabIndex = selectedTab.ordinal,
@@ -1038,7 +1040,7 @@ private fun AppManagerSelectionBar(
     val barTint = when {
         isGlassActive -> zkmReferenceGlassFill()
         glassCardColor != Color.Unspecified -> glassCardColor
-        else -> MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.64f)
+        else -> MaterialTheme.colorScheme.surfaceContainerLow.zkmLiteAlpha(0.64f)
     }
     // Kaca referensi (sama dengan SetEdit): sebelumnya bar ini memakai zkmGlassCard blur 20 +
     // tint surfaceContainerHigh 50% di atas scrim -> lebih tebal/abu dari kartu lain.
@@ -1056,7 +1058,7 @@ private fun AppManagerSelectionBar(
             Surface(
                 modifier = Modifier.size(42.dp),
                 shape = zkmIconShape(RoundedCornerShape(13.dp)),
-                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.82f)
+                color = MaterialTheme.colorScheme.primaryContainer.zkmLiteAlpha(0.82f)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     ZkmIconGlyph(icon = Icons.Rounded.DoneAll, tint = MaterialTheme.colorScheme.onPrimaryContainer, iconSize = 21.dp)
@@ -1147,7 +1149,7 @@ private fun AppManagerAppCard(
     )
     // Saat custom background: pakai glass/scrim color supaya card tidak "telanjang".
     val cardColor = if (glassCardColor != Color.Unspecified) {
-        if (selected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.75f) else glassCardColor
+        if (selected) MaterialTheme.colorScheme.primaryContainer.zkmLiteAlpha(0.75f) else glassCardColor
     } else baseCardColor
     val borderColor by animateColorAsState(
         targetValue = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.70f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.28f),
@@ -1155,7 +1157,7 @@ private fun AppManagerAppCard(
     )
 
     val glassOn = isGlassActive && hazeState != null
-    val primaryContainerTint = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f)
+    val primaryContainerTint = MaterialTheme.colorScheme.primaryContainer.zkmLiteAlpha(0.35f)
     val selectedBorder = MaterialTheme.colorScheme.primary.copy(alpha = 0.70f)
     val glassFill = zkmReferenceGlassFill()
     Box(
@@ -1241,7 +1243,7 @@ private fun AppIcon(app: ManagedApp, modifier: Modifier) {
     Surface(
         modifier = modifier.clip(RoundedCornerShape(15.dp)),
         shape = RoundedCornerShape(15.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f)
+        color = MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.55f)
     ) {
         if (app.icon != null) {
             AsyncImage(
@@ -1277,7 +1279,7 @@ private fun AppSelectionIndicator(selected: Boolean) {
 private fun AppMetaPill(text: String, icon: ImageVector) {
     Surface(
         shape = RoundedCornerShape(9.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.72f)
+        color = MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.72f)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp),
@@ -1295,7 +1297,7 @@ private fun AppManagerLoadingState() {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(22.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.60f)
+        color = MaterialTheme.colorScheme.surfaceContainerLow.zkmLiteAlpha(0.60f)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(28.dp),
@@ -1313,7 +1315,7 @@ private fun AppManagerEmptyState(icon: ImageVector, title: String, message: Stri
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.62f)
+        color = MaterialTheme.colorScheme.surfaceContainerLow.zkmLiteAlpha(0.62f)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 34.dp),
@@ -1323,7 +1325,7 @@ private fun AppManagerEmptyState(icon: ImageVector, title: String, message: Stri
             Surface(
                 modifier = Modifier.size(58.dp),
                 shape = zkmIconShape(CircleShape),
-                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.82f)
+                color = MaterialTheme.colorScheme.primaryContainer.zkmLiteAlpha(0.82f)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     ZkmIconGlyph(icon = icon, tint = MaterialTheme.colorScheme.onPrimaryContainer, iconSize = 28.dp)
@@ -1349,7 +1351,7 @@ private fun AppInfoGrid(type: String, enabled: String, version: String, sdk: Str
 
 @Composable
 private fun AppInfoPill(label: String, value: String, modifier: Modifier = Modifier) {
-    Surface(modifier = modifier, shape = RoundedCornerShape(15.dp), color = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.70f)) {
+    Surface(modifier = modifier, shape = RoundedCornerShape(15.dp), color = MaterialTheme.colorScheme.surfaceContainerLow.zkmLiteAlpha(0.70f)) {
         Column(Modifier.padding(horizontal = 11.dp, vertical = 9.dp)) {
             Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(value, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
@@ -1374,7 +1376,7 @@ private fun AppActionRow(action: AppAction, onRun: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(17.dp),
-        color = if (destructive) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.50f) else MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.72f)
+        color = if (destructive) MaterialTheme.colorScheme.errorContainer.zkmLiteAlpha(0.50f) else MaterialTheme.colorScheme.surfaceContainerLow.zkmLiteAlpha(0.72f)
     ) {
         Row(Modifier.fillMaxWidth().padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
             Surface(

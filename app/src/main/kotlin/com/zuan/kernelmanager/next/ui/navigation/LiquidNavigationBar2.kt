@@ -54,7 +54,7 @@ import com.zuan.kernelmanager.next.R
 import com.zuan.kernelmanager.next.feature.settings.NavLabelState
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import kotlinx.coroutines.launch
@@ -105,7 +105,7 @@ fun LiquidNavigationBar2(
         Box(
             modifier = commonModifier
                 .clip(ContinuousCapsule2) 
-                .hazeEffect(
+                .zkmHazeEffect(
                     state = hazeState,
                     style = HazeMaterials.regular() 
                 ) {

@@ -7,6 +7,7 @@
  */
 package com.zuan.kernelmanager.next.ui.components.temp
 
+import com.zuan.kernelmanager.next.ui.components.zkmInfiniteFloat
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
@@ -55,7 +56,6 @@ fun TemperatureReactorCard(
     )
 
     // Animasi "Denyut" (Breathing Effect)
-    val infiniteTransition = rememberInfiniteTransition(label = "Pulse")
     
     // Kecepatan denyut makin ngebut kalau makin panas
     val pulseDuration = when {
@@ -64,7 +64,7 @@ fun TemperatureReactorCard(
         else -> 2000             // Santai
     }
 
-    val pulseScale by infiniteTransition.animateFloat(
+    val pulseScale by zkmInfiniteFloat(
         initialValue = 0.8f,
         targetValue = 1.1f,
         animationSpec = infiniteRepeatable(
@@ -74,7 +74,7 @@ fun TemperatureReactorCard(
         label = "PulseScale"
     )
 
-    val rotationAnim by infiniteTransition.animateFloat(
+    val rotationAnim by zkmInfiniteFloat(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(

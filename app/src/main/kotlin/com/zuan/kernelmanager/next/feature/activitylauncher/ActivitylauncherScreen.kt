@@ -13,6 +13,7 @@
 )
 
 package com.zuan.kernelmanager.next.feature.activitylauncher
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.ConfigureSheetWindowBlur
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
 import com.zuan.kernelmanager.next.ui.components.zkmCardBorder
@@ -109,8 +110,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
@@ -232,9 +233,9 @@ fun AppListScreen(
     val scope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
     
-    val allApps by viewModel.allApps.collectAsState()
-    val isInitialLoading by viewModel.isLoading.collectAsState()
-    val loadingProgress by viewModel.loadProgress.collectAsState()
+    val allApps by viewModel.allApps.collectAsStateWithLifecycle()
+    val isInitialLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val loadingProgress by viewModel.loadProgress.collectAsStateWithLifecycle()
 
     val isAndroid12 = Build.VERSION.SDK_INT == Build.VERSION_CODES.S || Build.VERSION.SDK_INT == Build.VERSION_CODES.S_V2
     val hazeState = rememberHazeState()
@@ -394,7 +395,7 @@ fun AppListScreen(
             
             val uri = Uri.parse(bgUriString)
 
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 if (isVideo) {
                     VideoWallpaperPlayer(
                         uri = uri,
@@ -415,7 +416,7 @@ fun AppListScreen(
                 }
             }
         } else {
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f))
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f))
         }
         
         // --- WEATHER EFFECT OVERLAY ---
@@ -455,7 +456,7 @@ fun AppListScreen(
                     } else {
                         LazyColumn(
                             // PENTING: List Content harus di-set sebagai hazeSource
-                            modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 1f),
+                            modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 1f),
                             contentPadding = PaddingValues(
                                 top = headerHeightDp + WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + 8.dp, 
                                 bottom = 100.dp
@@ -513,7 +514,7 @@ fun AppListScreen(
                         .onGloballyPositioned { coordinates ->
                             headerHeightPx = coordinates.size.height
                         }
-                        .hazeEffect(
+                        .zkmHazeEffect(
                             state = hazeState,
                             style = headerHazeStyle
                         ) {
@@ -590,8 +591,8 @@ fun AppListScreen(
                             singleLine = true,
                             shape = MaterialTheme.shapes.extraLarge, 
                             colors = TextFieldDefaults.colors(
-                                focusedContainerColor = if (isCustomBg) Color.White.copy(0.15f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.3f),
-                                unfocusedContainerColor = if (isCustomBg) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.3f),
+                                focusedContainerColor = if (isCustomBg) Color.White.copy(0.15f) else MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.3f),
+                                unfocusedContainerColor = if (isCustomBg) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.3f),
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                                 focusedTextColor = headerTextColor,
@@ -612,7 +613,7 @@ fun AppListScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .hazeEffect(
+                            .zkmHazeEffect(
                                 state = hazeState,
                                 style = HazeMaterials.regular()
                             ) {
@@ -798,7 +799,7 @@ fun AppDetailScreen(
             
             val uri = Uri.parse(bgUriString)
 
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 if (isVideo) {
                     VideoWallpaperPlayer(
                         uri = uri,
@@ -819,7 +820,7 @@ fun AppDetailScreen(
                 }
             }
         } else {
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f))
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f))
         }
         
         // --- WEATHER EFFECT OVERLAY ---
@@ -845,7 +846,7 @@ fun AppDetailScreen(
                 } else {
                     LazyColumn(
                         // PENTING: List Content harus di-set sebagai hazeSource
-                        modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 1f),
+                        modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 1f),
                         contentPadding = PaddingValues(
                             top = 80.dp + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
                             bottom = 16.dp
@@ -956,7 +957,7 @@ fun AppDetailScreen(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
                         .fillMaxWidth()
-                        .hazeEffect(
+                        .zkmHazeEffect(
                             state = hazeState, 
                             style = headerHazeStyle
                         ) {
@@ -978,7 +979,7 @@ fun AppDetailScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .hazeEffect(
+                            .zkmHazeEffect(
                                 state = hazeState, 
                                 style = HazeMaterials.regular()
                             ) {

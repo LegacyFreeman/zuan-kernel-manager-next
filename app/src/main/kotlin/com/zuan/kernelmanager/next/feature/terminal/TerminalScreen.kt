@@ -8,6 +8,7 @@
 @file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.terminal
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ButtonDefaults
 import android.app.Activity
@@ -81,8 +82,8 @@ import com.zuan.kernelmanager.next.feature.settings.SettingsPreference
 import com.zuan.kernelmanager.next.ui.components.isLiquidGlassSupported
 import com.zuan.kernelmanager.next.ui.components.rememberZkmLiquidGlassSpec
 import com.zuan.kernelmanager.next.ui.components.zkmLiquidGlassCard
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import dev.chrisbanes.haze.materials.HazeMaterials
 
@@ -149,7 +150,7 @@ fun TerminalScreen() {
     // Backdrop liquid = background TERMINAL sendiri (bukan wallpaper app), jadi layer
     // direkam di Box background terminal. Di bawah Android 13 liquid otomatis jatuh ke haze.
     val zkmSettingsPrefs = remember { SettingsPreference.getInstance(context) }
-    val zkmDialogStyle by zkmSettingsPrefs.dialogStyle.collectAsState()
+    val zkmDialogStyle by zkmSettingsPrefs.dialogStyle.collectAsStateWithLifecycle()
     val terminalLiquidSpec = rememberZkmLiquidGlassSpec()
     val terminalBackdrop = rememberLayerBackdrop()
     val useLiquidWindow = isBlurEnabled && zkmDialogStyle == DialogStyle.LIQUID_GLASS && isLiquidGlassSupported()
@@ -241,7 +242,7 @@ fun TerminalScreen() {
             modifier = Modifier.fillMaxSize()
                 .then(
                     if (useLiquidWindow) Modifier.layerBackdrop(terminalBackdrop)
-                    else if (isBlurEnabled) Modifier.hazeSource(state = hazeState)
+                    else if (isBlurEnabled) Modifier.zkmHazeSource(state = hazeState)
                     else Modifier
                 )
         ) {
@@ -257,7 +258,7 @@ fun TerminalScreen() {
                     Image(
                     bitmap = bitmap, contentDescription = stringResource(R.string.terminal_custom_bg_desc),
                     contentScale = ContentScale.Crop, 
-                    modifier = Modifier.fillMaxSize().then(if (Build.VERSION.SDK_INT >= 31 && bgImageBlurRadius > 0f) Modifier.blur(bgImageBlurRadius.dp) else Modifier)
+                    modifier = Modifier.fillMaxSize().then(if (!com.zuan.kernelmanager.next.ui.components.ZkmLite.active && Build.VERSION.SDK_INT >= 31 && bgImageBlurRadius > 0f) Modifier.blur(bgImageBlurRadius.dp) else Modifier)
                 )
                 Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = bgImageDimAlpha)))
                 }
@@ -297,7 +298,7 @@ fun TerminalScreen() {
                     borderColor = Color.Transparent,
                 )
             } else if (isBlurEnabled) {
-                Modifier.hazeEffect(state = hazeState, style = HazeMaterials.thin().copy(blurRadius = glassBlurRadius.dp)) {
+                Modifier.zkmHazeEffect(state = hazeState, style = HazeMaterials.thin().copy(blurRadius = glassBlurRadius.dp)) {
                    if (Build.VERSION.SDK_INT == 31 || Build.VERSION.SDK_INT == 32) forceInvalidateOnPreDraw = true 
                 }.background(glassTint) 
             } else Modifier.background(Color(0xFF1E1E2E))

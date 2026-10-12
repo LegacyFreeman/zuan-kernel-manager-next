@@ -149,7 +149,7 @@ object SettingsXmlBackup {
             event = parser.next()
         }
 
-        if (!rootSeen) throw IllegalArgumentException("Not a ZKM XML backup")
+        if (!rootSeen) throw IllegalArgumentException("Not a ZKM Next XML backup")
 
         // Exact restore: clear every current preference file, then restore what the backup contains.
         val currentDir = java.io.File(context.applicationInfo.dataDir + "/shared_prefs")

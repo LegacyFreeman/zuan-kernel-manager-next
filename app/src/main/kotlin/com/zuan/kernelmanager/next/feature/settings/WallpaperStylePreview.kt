@@ -12,6 +12,7 @@
 
 package com.zuan.kernelmanager.next.feature.settings
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.net.Uri
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
@@ -119,8 +120,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 
 // =============================================================================
@@ -180,7 +181,7 @@ private fun Modifier.pvCard(g: PreviewGlass, corner: Dp, forceCorner: Boolean = 
         g.glassOn -> {
             val shape = RoundedCornerShape(corner)
             this.clip(shape)
-                .hazeEffect(state = g.haze, style = g.hazeStyle)
+                .zkmHazeEffect(state = g.haze, style = g.hazeStyle)
                 .background(g.scrim, shape)
                 .border(1.dp, g.border, shape)
         }
@@ -448,28 +449,28 @@ fun OverallLivePreview(
     val isDark = scheme.background.luminance() < 0.5f
 
     // --- State dari pengaturan (semua realtime) ---
-    val bgType by viewModel.bgType.collectAsState()
-    val bgUri by viewModel.backgroundImageUri.collectAsState()
-    val weatherEffect by viewModel.weatherEffect.collectAsState()
-    val weatherIntensity by viewModel.weatherIntensity.collectAsState()
+    val bgType by viewModel.bgType.collectAsStateWithLifecycle()
+    val bgUri by viewModel.backgroundImageUri.collectAsStateWithLifecycle()
+    val weatherEffect by viewModel.weatherEffect.collectAsStateWithLifecycle()
+    val weatherIntensity by viewModel.weatherIntensity.collectAsStateWithLifecycle()
 
-    val isCardBlur by viewModel.isCardBlur.collectAsState()
-    val cardDarkness by viewModel.cardDarkness.collectAsState()
-    val cardGlassStyle by viewModel.cardGlassStyle.collectAsState()
-    val liquidCorner by viewModel.liquidCornerRadius.collectAsState()
-    val liquidBlur by viewModel.liquidBlurRadius.collectAsState()
-    val liquidRefHeight by viewModel.liquidRefractionHeight.collectAsState()
-    val liquidRefAmount by viewModel.liquidRefractionAmount.collectAsState()
-    val liquidChroma by viewModel.liquidChromaticAberration.collectAsState()
+    val isCardBlur by viewModel.isCardBlur.collectAsStateWithLifecycle()
+    val cardDarkness by viewModel.cardDarkness.collectAsStateWithLifecycle()
+    val cardGlassStyle by viewModel.cardGlassStyle.collectAsStateWithLifecycle()
+    val liquidCorner by viewModel.liquidCornerRadius.collectAsStateWithLifecycle()
+    val liquidBlur by viewModel.liquidBlurRadius.collectAsStateWithLifecycle()
+    val liquidRefHeight by viewModel.liquidRefractionHeight.collectAsStateWithLifecycle()
+    val liquidRefAmount by viewModel.liquidRefractionAmount.collectAsStateWithLifecycle()
+    val liquidChroma by viewModel.liquidChromaticAberration.collectAsStateWithLifecycle()
 
-    val bannerEnabled by viewModel.appBarBannerEnabled.collectAsState()
-    val bannerUriString by viewModel.appBarBannerUri.collectAsState()
-    val bannerTypeKey by viewModel.appBarBannerType.collectAsState()
-    val bannerDim by viewModel.appBarBannerDim.collectAsState()
+    val bannerEnabled by viewModel.appBarBannerEnabled.collectAsStateWithLifecycle()
+    val bannerUriString by viewModel.appBarBannerUri.collectAsStateWithLifecycle()
+    val bannerTypeKey by viewModel.appBarBannerType.collectAsStateWithLifecycle()
+    val bannerDim by viewModel.appBarBannerDim.collectAsStateWithLifecycle()
 
-    val avatarDeco by viewModel.avatarDecoration.collectAsState()
-    val iconShapeStyle by viewModel.iconShapeStyle.collectAsState()
-    val dialogStyle by viewModel.dialogStyle.collectAsState()
+    val avatarDeco by viewModel.avatarDecoration.collectAsStateWithLifecycle()
+    val iconShapeStyle by viewModel.iconShapeStyle.collectAsStateWithLifecycle()
+    val dialogStyle by viewModel.dialogStyle.collectAsStateWithLifecycle()
 
     val isCustomBg = bgType == BgType.GALLERY && bgUri != null
     val hasBanner = bannerEnabled && bannerUriString != null
@@ -531,7 +532,7 @@ fun OverallLivePreview(
                 modifier = Modifier
                     .fillMaxSize()
                     .layerBackdrop(backdrop)
-                    .hazeSource(state = hazeState, zIndex = 0f)
+                    .zkmHazeSource(state = hazeState, zIndex = 0f)
             ) {
                 BackgroundRendererWithEffects(
                     viewModel = viewModel,
@@ -555,7 +556,7 @@ fun OverallLivePreview(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 1f)
+                    .zkmHazeSource(state = hazeState, zIndex = 1f)
                     .padding(horizontal = pv(16f)),
                 verticalArrangement = Arrangement.spacedBy(pv(12f))
             ) {
@@ -771,7 +772,7 @@ fun OverallLivePreview(
                     } else {
                         Modifier
                             .clip(dialogShape)
-                            .hazeEffect(
+                            .zkmHazeEffect(
                                 state = hazeState,
                                 style = ZkmHazeStyleCache.of(
                                     blurRadius = pv(24f),
@@ -867,7 +868,7 @@ private fun PreviewAppBar(
         modifier = modifier
             .fillMaxWidth()
             .height(pv(150f))
-            .hazeEffect(state = hazeState, style = style) {
+            .zkmHazeEffect(state = hazeState, style = style) {
                 progressive = HazeProgressive.verticalGradient(
                     startIntensity = 1f,
                     endIntensity = 0f
@@ -917,7 +918,7 @@ private fun PreviewAppBar(
                     )
                     Spacer(Modifier.width(pv(4f)))
                     Text(
-                        "ZKM",
+                        "ZKM Next",
                         style = MaterialTheme.typography.labelMedium.pv(12f),
                         color = onSurfaceVariant
                     )

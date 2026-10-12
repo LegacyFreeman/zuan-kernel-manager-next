@@ -7,6 +7,7 @@
  */
 package com.zuan.kernelmanager.next.feature.settings
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.content.Context
 import android.net.Uri
 import android.os.Build
@@ -51,7 +52,7 @@ import com.zuan.kernelmanager.next.ui.theme.ZuanKernelManagerTheme
 import com.zuan.kernelmanager.next.ui.components.VideoWallpaperPlayer
 import com.zuan.kernelmanager.next.ui.components.WeatherEffectOverlay
 import com.zuan.kernelmanager.next.core.util.ContextUtils
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
 class SettingsActivity : AppCompatActivity() {
@@ -68,33 +69,33 @@ class SettingsActivity : AppCompatActivity() {
         val savedDpi = prefs.appDpi.value
 
         setContent {
-            val themeMode by prefs.themeMode.collectAsState()
-            val isDynamicColor by prefs.isDynamicColor.collectAsState()
-            val themeColorName by prefs.themeColorName.collectAsState()
+            val themeMode by prefs.themeMode.collectAsStateWithLifecycle()
+            val isDynamicColor by prefs.isDynamicColor.collectAsStateWithLifecycle()
+            val themeColorName by prefs.themeColorName.collectAsStateWithLifecycle()
             
             // [UPDATE] Custom colors
-            val isCustomColor by prefs.isCustomColor.collectAsState()
-            val customPrimary by prefs.customPrimaryColor.collectAsState()
-            val customSecondary by prefs.customSecondaryColor.collectAsState()
-            val customTertiary by prefs.customTertiaryColor.collectAsState()
+            val isCustomColor by prefs.isCustomColor.collectAsStateWithLifecycle()
+            val customPrimary by prefs.customPrimaryColor.collectAsStateWithLifecycle()
+            val customSecondary by prefs.customSecondaryColor.collectAsStateWithLifecycle()
+            val customTertiary by prefs.customTertiaryColor.collectAsStateWithLifecycle()
             
-            val isCustomBg by prefs.isCustomBackground.collectAsState()
-            val bgUriString by prefs.backgroundImageUri.collectAsState()
+            val isCustomBg by prefs.isCustomBackground.collectAsStateWithLifecycle()
+            val bgUriString by prefs.backgroundImageUri.collectAsStateWithLifecycle()
             
             // [UPDATE] Collect isVideo
-            val isVideo by prefs.isVideoWallpaper.collectAsState()
+            val isVideo by prefs.isVideoWallpaper.collectAsStateWithLifecycle()
             
-            val savedDpiState by prefs.appDpi.collectAsState()
-            val isBgBlur by prefs.isBgBlur.collectAsState()
-            val bgContrast by prefs.bgContrast.collectAsState()
+            val savedDpiState by prefs.appDpi.collectAsStateWithLifecycle()
+            val isBgBlur by prefs.isBgBlur.collectAsStateWithLifecycle()
+            val bgContrast by prefs.bgContrast.collectAsStateWithLifecycle()
             
             // [UPDATE] Weather effects
-            val weatherEffect by prefs.weatherEffect.collectAsState()
-            val weatherIntensity by prefs.weatherIntensity.collectAsState()
+            val weatherEffect by prefs.weatherEffect.collectAsStateWithLifecycle()
+            val weatherIntensity by prefs.weatherIntensity.collectAsStateWithLifecycle()
             
             // [UPDATE] Background adjustments
-            val bgSaturation by prefs.bgSaturation.collectAsState()
-            val blurStrength by prefs.blurStrength.collectAsState()
+            val bgSaturation by prefs.bgSaturation.collectAsStateWithLifecycle()
+            val blurStrength by prefs.blurStrength.collectAsStateWithLifecycle()
 
             val useDarkTheme = when (themeMode) {
                 ThemeMode.LIGHT -> false
@@ -159,7 +160,7 @@ class SettingsActivity : AppCompatActivity() {
 
                             if (isVideo) {
                                 // [UPDATE] Render Video dengan effects
-                                Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+                                Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                                     VideoWallpaperPlayer(
                                         uri = uri,
                                         modifier = Modifier.fillMaxSize().then(blurModifier)
@@ -170,7 +171,7 @@ class SettingsActivity : AppCompatActivity() {
                                 AsyncImage(
                                     model = ImageRequest.Builder(this@SettingsActivity).data(uri).build(),
                                     contentDescription = null,
-                                    modifier = Modifier.fillMaxSize().then(blurModifier).hazeSource(state = hazeState, zIndex = 0f),
+                                    modifier = Modifier.fillMaxSize().then(blurModifier).zkmHazeSource(state = hazeState, zIndex = 0f),
                                     contentScale = ContentScale.Crop,
                                     colorFilter = colorFilter
                                 )
@@ -180,7 +181,7 @@ class SettingsActivity : AppCompatActivity() {
                                 Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = bgContrast)))
                             }
                         } else {
-                            Box(modifier = Modifier.fillMaxSize().background(backgroundColor).hazeSource(state = hazeState, zIndex = 0f))
+                            Box(modifier = Modifier.fillMaxSize().background(backgroundColor).zkmHazeSource(state = hazeState, zIndex = 0f))
                         }
                         
                         // [UPDATE] Weather Effect Overlay

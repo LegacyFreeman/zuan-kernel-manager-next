@@ -13,6 +13,27 @@
 
 package com.zuan.kernelmanager.next.feature.settings
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.material.icons.rounded.EnergySavingsLeaf
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
+import com.zuan.kernelmanager.next.ui.components.ZkmLite
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -94,8 +115,8 @@ import com.zuan.kernelmanager.next.ui.theme.resolve
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 
 /**
@@ -140,12 +161,21 @@ fun FloatingCapsuleNav(
     val unselectedIcons = listOf(Icons.Outlined.Wallpaper, Icons.Outlined.Palette, Icons.Outlined.Bolt)
     val selectedIcons = listOf(Icons.Filled.Wallpaper, Icons.Filled.Palette, Icons.Filled.Bolt)
 
-    val hazeStyle = remember(scheme.surface) {
+    val hazeStyle = remember(scheme.surfaceContainerHigh) {
         HazeStyle(
-            backgroundColor = scheme.surface.copy(alpha = 0.62f),
-            blurRadius = 28.dp,
-            noiseFactor = 0.05f,
-            tints = listOf(HazeTint(scheme.surface.copy(alpha = 0.35f)))
+            backgroundColor = scheme.surfaceContainerHigh.copy(alpha = 0.60f),
+            blurRadius = 26.dp,
+            noiseFactor = 0.04f,
+            tints = listOf(HazeTint(scheme.surfaceContainerHighest.copy(alpha = 0.22f)))
+        )
+    }
+
+    val capsuleBorder = remember(scheme.outline, scheme.outlineVariant) {
+        Brush.verticalGradient(
+            listOf(
+                scheme.outline.copy(alpha = 0.38f),
+                scheme.outlineVariant.copy(alpha = 0.18f)
+            )
         )
     }
 
@@ -154,14 +184,14 @@ fun FloatingCapsuleNav(
             .navigationBarsPadding()
             .padding(bottom = 14.dp)
             .shadow(
-                elevation = 22.dp,
+                elevation = 20.dp,
                 shape = CircleShape,
-                ambientColor = Color.Black.copy(alpha = 0.3f),
-                spotColor = Color.Black.copy(alpha = 0.3f)
+                ambientColor = Color.Black.copy(alpha = 0.22f),
+                spotColor = Color.Black.copy(alpha = 0.32f)
             )
             .clip(CircleShape)
-            .hazeEffect(state = hazeState, style = hazeStyle)
-            .border(1.dp, scheme.outlineVariant.copy(alpha = 0.55f), CircleShape)
+            .zkmHazeEffect(state = hazeState, style = hazeStyle)
+            .border(1.dp, capsuleBorder, CircleShape)
             .padding(6.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -255,6 +285,7 @@ fun StudioControlPanel(
     wide: Boolean = false,
     shape: Shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp)
 ) {
+    val liteLockedAction = rememberLiteLockedAction()
     Surface(
         modifier = modifier,
         shape = shape,
@@ -265,7 +296,7 @@ fun StudioControlPanel(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .hazeSource(state = panelHaze)
+                .zkmHazeSource(state = panelHaze)
         ) {
             // Layar lebar: hub memakai SELURUH lebar panel kanan dengan kolom kartu yang bertambah.
             val columns = if (wide) ((maxWidth - 48.dp) / 220.dp).toInt().coerceIn(2, 5) else 2
@@ -300,30 +331,134 @@ fun StudioControlPanel(
                     },
                     label = "StudioPanelContent"
                 ) { (tab, d) ->
-                    if (d != null) {
-                        DetailPage(
-                            detail = d,
-                            viewModel = viewModel,
-                            wide = wide,
-                            onBack = { onDetailChange(null) },
-                            onShowCustomColorPicker = onShowCustomColorPicker,
-                            onImportCustomFont = onImportCustomFont
-                        )
-                    } else {
-                        TabHub(
-                            tab = tab,
-                            selected = null,
-                            viewModel = viewModel,
-                            onOpenDetail = { onDetailChange(it) },
-                            onOpenPhotos = onOpenPhotos,
-                            onOpenEffects = onOpenEffects,
-                            themeToggleCenter = themeToggleCenter,
-                            onToggleDarkTheme = onToggleDarkTheme,
-                            themeTransitionRunning = themeTransitionRunning
-                        )
+                    LiteStudioFrame(locked = d != null && d in LiteLockedDetails) {
+                        if (d != null) {
+                            DetailPage(
+                                detail = d,
+                                viewModel = viewModel,
+                                wide = wide,
+                                onBack = { onDetailChange(null) },
+                                onShowCustomColorPicker = onShowCustomColorPicker,
+                                onImportCustomFont = onImportCustomFont
+                            )
+                        } else {
+                            TabHub(
+                                tab = tab,
+                                selected = null,
+                                viewModel = viewModel,
+                                onOpenDetail = { onDetailChange(it) },
+                                onOpenPhotos = onOpenPhotos,
+                                // Efek wallpaper (cuaca, dll) adalah fitur berat: tidak didukung di Lite.
+                                onOpenEffects = if (ZkmLite.active) liteLockedAction else onOpenEffects,
+                                themeToggleCenter = themeToggleCenter,
+                                onToggleDarkTheme = onToggleDarkTheme,
+                                themeTransitionRunning = themeTransitionRunning
+                            )
+                        }
                     }
                 }
               }
+            }
+        }
+    }
+}
+
+// =============================================================================
+// VERSI LITE: banner + kunci fitur berat
+// =============================================================================
+
+/** Halaman detail yang berisi fitur berat (blur / glass / animasi) dan dikunci di Versi Lite. */
+private val LiteLockedDetails = setOf(
+    StyleDetail.GLASS,
+    StyleDetail.AVATAR,
+    StyleDetail.DIALOG,
+    StyleDetail.BANNER
+)
+
+/** Tinggi header halaman detail (tombol kembali) yang TIDAK boleh tertutup lapisan kunci. */
+private val LiteLockHeaderHeight = 76.dp
+
+@Composable
+private fun rememberLiteLockedAction(): () -> Unit {
+    val context = LocalContext.current
+    return remember(context) {
+        {
+            android.widget.Toast.makeText(
+                context,
+                context.getString(R.string.lite_locked_toast),
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+}
+
+/**
+ * Bingkai panel Studio saat Versi Lite aktif: menampilkan banner "Mode Lite aktif" di atas
+ * dan, untuk halaman fitur berat ([locked]), meredupkan isinya + memblokir sentuhan
+ * (header dengan tombol kembali tetap bisa dipakai). Di mode Pro bingkai ini tidak
+ * melakukan apa-apa.
+ */
+@Composable
+private fun LiteStudioFrame(locked: Boolean, content: @Composable () -> Unit) {
+    if (!ZkmLite.active) {
+        content()
+        return
+    }
+    val context = LocalContext.current
+    val onLockedTap = rememberLiteLockedAction()
+    Column(Modifier.fillMaxSize()) {
+        LiteBanner(
+            onSwitchToPro = { SettingsPreference.getInstance(context).setLiteMode(false) }
+        )
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            Box(Modifier.fillMaxSize().then(if (locked) Modifier.alpha(0.38f) else Modifier)) {
+                content()
+            }
+            if (locked) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(top = LiteLockHeaderHeight)
+                        .pointerInput(Unit) { detectTapGestures(onTap = { onLockedTap() }) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LiteBanner(onSwitchToPro: () -> Unit) {
+    val scheme = MaterialTheme.colorScheme
+    Surface(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(20.dp),
+        color = scheme.tertiaryContainer,
+        contentColor = scheme.onTertiaryContainer
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.EnergySavingsLeaf,
+                contentDescription = null,
+                modifier = Modifier.size(22.dp)
+            )
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.lite_banner_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = stringResource(R.string.lite_banner_desc),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            TextButton(onClick = onSwitchToPro) {
+                Text(stringResource(R.string.lite_banner_switch_pro))
             }
         }
     }
@@ -420,7 +555,6 @@ private fun DetailPage(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(bottom = StudioDockReserve + navInset)
         ) {
             when (detail) {
                 StyleDetail.WALL_SOURCE -> WallpaperSourceDetail(viewModel)
@@ -453,7 +587,7 @@ private fun WallpaperHub(
     onOpenEffects: () -> Unit
 ) {
     val scheme = MaterialTheme.colorScheme
-    val bgType by viewModel.bgType.collectAsState()
+    val bgType by viewModel.bgType.collectAsStateWithLifecycle()
     val isGallery = bgType == BgType.GALLERY
 
     StudioPage(
@@ -528,16 +662,16 @@ private fun StyleHub(
     themeTransitionRunning: Boolean
 ) {
     val scheme = MaterialTheme.colorScheme
-    val themeMode by viewModel.themeMode.collectAsState()
-    val isCardBlur by viewModel.isCardBlur.collectAsState()
-    val cardDarkness by viewModel.cardDarkness.collectAsState()
-    val cardGlassStyle by viewModel.cardGlassStyle.collectAsState()
-    val appFontChoice by viewModel.appFontChoice.collectAsState()
-    val iconShapeStyle by viewModel.iconShapeStyle.collectAsState()
-    val avatarDecoration by viewModel.avatarDecoration.collectAsState()
-    val toggleStyle by viewModel.toggleStyle.collectAsState()
-    val sliderStyle by viewModel.sliderStyle.collectAsState()
-    val dialogStyle by viewModel.dialogStyle.collectAsState()
+    val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
+    val isCardBlur by viewModel.isCardBlur.collectAsStateWithLifecycle()
+    val cardDarkness by viewModel.cardDarkness.collectAsStateWithLifecycle()
+    val cardGlassStyle by viewModel.cardGlassStyle.collectAsStateWithLifecycle()
+    val appFontChoice by viewModel.appFontChoice.collectAsStateWithLifecycle()
+    val iconShapeStyle by viewModel.iconShapeStyle.collectAsStateWithLifecycle()
+    val avatarDecoration by viewModel.avatarDecoration.collectAsStateWithLifecycle()
+    val toggleStyle by viewModel.toggleStyle.collectAsStateWithLifecycle()
+    val sliderStyle by viewModel.sliderStyle.collectAsStateWithLifecycle()
+    val dialogStyle by viewModel.dialogStyle.collectAsStateWithLifecycle()
     val tileMedia = rememberProfileMediaSnapshot()
 
     StudioPage(
@@ -822,9 +956,9 @@ private fun AdditionHub(
     selected: StyleDetail?,
     onOpenDetail: (StyleDetail) -> Unit
 ) {
-    val highRefreshRate by viewModel.highRefreshRate.collectAsState()
-    val bannerEnabled by viewModel.appBarBannerEnabled.collectAsState()
-    val bannerUriString by viewModel.appBarBannerUri.collectAsState()
+    val highRefreshRate by viewModel.highRefreshRate.collectAsStateWithLifecycle()
+    val bannerEnabled by viewModel.appBarBannerEnabled.collectAsStateWithLifecycle()
+    val bannerUriString by viewModel.appBarBannerUri.collectAsStateWithLifecycle()
     val bannerActive = bannerEnabled && bannerUriString != null
 
     StudioPage(
@@ -866,8 +1000,8 @@ private fun AdditionHub(
 
 @Composable
 private fun WallpaperSourceDetail(viewModel: WallpaperStyleViewModel) {
-    val bgType by viewModel.bgType.collectAsState()
-    val backgroundUri by viewModel.backgroundImageUri.collectAsState()
+    val bgType by viewModel.bgType.collectAsStateWithLifecycle()
+    val backgroundUri by viewModel.backgroundImageUri.collectAsStateWithLifecycle()
     val isGallery = bgType == BgType.GALLERY
 
     StudioDetailColumn {
@@ -907,11 +1041,11 @@ private fun WallpaperSourceDetail(viewModel: WallpaperStyleViewModel) {
 
 @Composable
 private fun WallpaperAdjustDetail(viewModel: WallpaperStyleViewModel) {
-    val bgType by viewModel.bgType.collectAsState()
-    val bgSaturation by viewModel.bgSaturation.collectAsState()
-    val blurStrength by viewModel.blurStrength.collectAsState()
-    val isBgBlur by viewModel.isBgBlur.collectAsState()
-    val bgContrast by viewModel.bgContrast.collectAsState()
+    val bgType by viewModel.bgType.collectAsStateWithLifecycle()
+    val bgSaturation by viewModel.bgSaturation.collectAsStateWithLifecycle()
+    val blurStrength by viewModel.blurStrength.collectAsStateWithLifecycle()
+    val isBgBlur by viewModel.isBgBlur.collectAsStateWithLifecycle()
+    val bgContrast by viewModel.bgContrast.collectAsStateWithLifecycle()
     val isGallery = bgType == BgType.GALLERY
 
     StudioDetailColumn {
@@ -966,14 +1100,14 @@ private fun WallpaperAdjustDetail(viewModel: WallpaperStyleViewModel) {
 @Composable
 private fun CardGlassDetail(viewModel: WallpaperStyleViewModel) {
     val scheme = MaterialTheme.colorScheme
-    val isCardBlur by viewModel.isCardBlur.collectAsState()
-    val cardDarkness by viewModel.cardDarkness.collectAsState()
-    val cardGlassStyle by viewModel.cardGlassStyle.collectAsState()
-    val liquidCorner by viewModel.liquidCornerRadius.collectAsState()
-    val liquidBlur by viewModel.liquidBlurRadius.collectAsState()
-    val liquidRefHeight by viewModel.liquidRefractionHeight.collectAsState()
-    val liquidRefAmount by viewModel.liquidRefractionAmount.collectAsState()
-    val liquidChroma by viewModel.liquidChromaticAberration.collectAsState()
+    val isCardBlur by viewModel.isCardBlur.collectAsStateWithLifecycle()
+    val cardDarkness by viewModel.cardDarkness.collectAsStateWithLifecycle()
+    val cardGlassStyle by viewModel.cardGlassStyle.collectAsStateWithLifecycle()
+    val liquidCorner by viewModel.liquidCornerRadius.collectAsStateWithLifecycle()
+    val liquidBlur by viewModel.liquidBlurRadius.collectAsStateWithLifecycle()
+    val liquidRefHeight by viewModel.liquidRefractionHeight.collectAsStateWithLifecycle()
+    val liquidRefAmount by viewModel.liquidRefractionAmount.collectAsStateWithLifecycle()
+    val liquidChroma by viewModel.liquidChromaticAberration.collectAsStateWithLifecycle()
 
     StudioDetailColumn {
         StudioCard {
@@ -1085,10 +1219,10 @@ private fun CardGlassDetail(viewModel: WallpaperStyleViewModel) {
 @Composable
 private fun AppBarBannerDetail(viewModel: WallpaperStyleViewModel) {
     val scheme = MaterialTheme.colorScheme
-    val bannerEnabled by viewModel.appBarBannerEnabled.collectAsState()
-    val bannerUriString by viewModel.appBarBannerUri.collectAsState()
-    val bannerTypeKey by viewModel.appBarBannerType.collectAsState()
-    val bannerDim by viewModel.appBarBannerDim.collectAsState()
+    val bannerEnabled by viewModel.appBarBannerEnabled.collectAsStateWithLifecycle()
+    val bannerUriString by viewModel.appBarBannerUri.collectAsStateWithLifecycle()
+    val bannerTypeKey by viewModel.appBarBannerType.collectAsStateWithLifecycle()
+    val bannerDim by viewModel.appBarBannerDim.collectAsStateWithLifecycle()
     val bannerPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let { viewModel.setAppBarBannerMedia(it) }
     }
@@ -1258,11 +1392,12 @@ private fun StudioPage(
 /** Isi halaman detail yang discroll (dipakai detail buatan studio ini). */
 @Composable
 private fun StudioDetailColumn(content: @Composable ColumnScope.() -> Unit) {
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = bottomInset + 110.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         content = content
     )

@@ -85,6 +85,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.zuan.kernelmanager.next.core.util.ZkmSamplerBus
 import kotlin.math.roundToInt
 
 private enum class XSection(val titleRes: Int) {
@@ -115,7 +116,7 @@ fun ExploreGameSpace(
     var dialog by remember { mutableStateOf<XDialog>(XDialog.None) }
     var gamesTick by remember { mutableIntStateOf(0) }
     val games by produceState(initialValue = GameSpacePrefs.games(ctx), gamesTick) {
-        while (true) { value = GameSpacePrefs.games(ctx); delay(1500) }
+        ZkmSamplerBus.slowTick.collect { value = GameSpacePrefs.games(ctx) }
     }
     var global by remember { mutableStateOf(GameSpacePrefs.globalSettings(ctx)) }
     var cpuMode by remember { mutableStateOf(CpuMode.fromOrdinal(GameSpacePrefs.cpuMode(ctx))) }
@@ -127,7 +128,9 @@ fun ExploreGameSpace(
     var enabled by remember { mutableStateOf(GameSpacePrefs.isEnabled(ctx)) }
 
     val t by produceState(initialValue = readTelemetry(ctx)) {
-        while (true) { value = withContext(Dispatchers.IO) { readTelemetry(ctx) }; delay(2000) }
+        ZkmSamplerBus.fastTick.collect {
+            value = withContext(Dispatchers.IO) { readTelemetry(ctx) }
+        }
     }
     LaunchedEffect(enabled) {
         if (enabled) { if (!GameDetectorService.isRunning) GameDetectorService.start(ctx) }

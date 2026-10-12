@@ -33,7 +33,7 @@ import com.zuan.kernelmanager.next.R
 import com.zuan.kernelmanager.next.feature.gpu.adreno.viewmodel.AdrenoViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import com.zuan.kernelmanager.next.ui.theme.zkmIsDarkTheme
 import com.zuan.kernelmanager.next.ui.components.ZkmHazeStyleCache
 import com.zuan.kernelmanager.next.ui.theme.zkmIconShape

@@ -7,6 +7,7 @@
  */
 package com.zuan.kernelmanager.next.feature.dashboard.components
 
+import com.zuan.kernelmanager.next.ui.components.zkmInfiniteFloat
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -220,11 +221,10 @@ private fun ThermalOrb(
     trackColor: Color,
     modifier: Modifier = Modifier
 ) {
-    val infinite = rememberInfiniteTransition(label = "thermalOrb")
 
     // Satu siklus penuh 12 detik; semua gerak orbit memakai kelipatan BULAT darinya
     // supaya loop-nya mulus (tidak ada loncatan di titik ulang).
-    val t by infinite.animateFloat(
+    val t by zkmInfiniteFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(tween(12000, easing = LinearEasing)),
@@ -238,7 +238,7 @@ private fun ThermalOrb(
         temp > 36f -> 1700
         else -> 2600
     }
-    val pulse by infinite.animateFloat(
+    val pulse by zkmInfiniteFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(tween(pulseMs, easing = FastOutSlowInEasing), RepeatMode.Reverse),

@@ -35,6 +35,8 @@ import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import com.zuan.kernelmanager.next.core.util.ZkmSamplerBus
+import com.zuan.kernelmanager.next.ui.components.ZkmLite
 import java.util.Locale
 
 /** Satu sampel traffic jaringan (byte/detik + total sejak boot). */
@@ -153,7 +155,14 @@ fun NetworkTrafficScreen(navController: NavController, hazeState: HazeState) {
         var prevT = SystemClock.elapsedRealtime()
         val list = ArrayDeque<TrafficSample>()
         while (true) {
-            delay(1_000)
+            val isFg = ZkmSamplerBus.isForeground.value
+            val isLite = ZkmLite.active
+            val pollDelay = when {
+                !isFg -> 5_000L
+                isLite -> 2_500L
+                else -> 1_000L
+            }
+            delay(pollDelay)
             val now = SystemClock.elapsedRealtime()
             val rx = TrafficStats.getTotalRxBytes()
             val tx = TrafficStats.getTotalTxBytes()
@@ -178,9 +187,9 @@ fun NetworkTrafficScreen(navController: NavController, hazeState: HazeState) {
     }
 
     val link by produceState(initialValue = LinkInfo()) {
-        while (true) {
+        value = withContext(Dispatchers.IO) { runCatching { readLinkInfo(context) }.getOrDefault(LinkInfo()) }
+        ZkmSamplerBus.fastTick.collect {
             value = withContext(Dispatchers.IO) { runCatching { readLinkInfo(context) }.getOrDefault(LinkInfo()) }
-            delay(2_000)
         }
     }
 

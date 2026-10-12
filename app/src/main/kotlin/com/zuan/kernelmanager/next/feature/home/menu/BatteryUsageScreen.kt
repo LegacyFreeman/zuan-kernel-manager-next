@@ -38,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.zuan.kernelmanager.next.core.util.ZkmSamplerBus
 import androidx.navigation.NavController
 import com.zuan.kernelmanager.next.R
 import com.zuan.kernelmanager.next.library.device.battery.BatteryHistory
@@ -138,24 +139,19 @@ fun BatteryUsageScreen(navController: NavController, hazeState: dev.chrisbanes.h
     val hasAccess = rememberUsageAccess()
     var refreshKey by remember { mutableIntStateOf(0) }
 
-    // Selagi layar ini terbuka, ikut mengisi riwayat (dibatasi 15 dtk di dalam record()).
-    LaunchedEffect(Unit) {
-        while (true) {
-            withContext(Dispatchers.IO) { runCatching { BatteryHistory.record(context) } }
-            delay(5_000)
+    // Penyatuan loop liar (Zkm Perf Tahap 4):
+    // Menggunakan ZkmSamplerBus sebagai ticker tunggal yang sadar lifecycle.
+    val live by produceState(initialValue = BatterySampler.read(context)) {
+        ZkmSamplerBus.fastTick.collect {
+            value = withContext(Dispatchers.IO) { BatterySampler.read(context) }
         }
     }
 
     val data by produceState<BatteryUsageData?>(initialValue = null, refreshKey, hasAccess) {
-        while (true) {
+        value = withContext(Dispatchers.IO) { runCatching { loadBatteryUsage(context) }.getOrNull() }
+        ZkmSamplerBus.slowTick.collect {
+            withContext(Dispatchers.IO) { runCatching { BatteryHistory.record(context) } }
             value = withContext(Dispatchers.IO) { runCatching { loadBatteryUsage(context) }.getOrNull() }
-            delay(15_000)
-        }
-    }
-    val live by produceState(initialValue = BatterySampler.read(context)) {
-        while (true) {
-            value = withContext(Dispatchers.IO) { BatterySampler.read(context) }
-            delay(2_000)
         }
     }
 

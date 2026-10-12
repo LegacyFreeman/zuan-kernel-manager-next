@@ -7,6 +7,7 @@
  */
 package com.zuan.kernelmanager.next.feature.dashboard.components
 
+import com.zuan.kernelmanager.next.ui.components.zkmInfiniteFloat
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -35,6 +36,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -68,6 +70,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zuan.kernelmanager.next.R
 import com.zuan.kernelmanager.next.feature.dashboard.DashboardState
+import com.zuan.kernelmanager.next.feature.dashboard.OverallUtils
 import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.max
@@ -388,7 +391,7 @@ private fun CpuHistoryChart(
     gridColor: Color,
     modifier: Modifier = Modifier
 ) {
-    val pulse by rememberInfiniteTransition(label = "cpuChartPulse").animateFloat(
+    val pulse by zkmInfiniteFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(tween(1700, easing = FastOutSlowInEasing), RepeatMode.Restart),
@@ -605,11 +608,12 @@ private fun TopProcessesSection(
                 )
             } else {
                 val maxUsage = max(state.processList.maxOf { it.cpuUsage }, 1f)
-                Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-                    state.processList.take(50).forEach { process ->
+                // LazyColumn: hanya baris yang kelihatan (~6) yang di-compose, bukan semua 20 baris.
+                androidx.compose.foundation.lazy.LazyColumn(modifier = Modifier.weight(1f)) {
+                    items(state.processList.take(OverallUtils.TOP_PROCESS_LIMIT), key = { it.pid }) { process ->
                         Column(Modifier.fillMaxWidth().padding(vertical = 5.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                                Crossfade(targetState = process.icon, animationSpec = tween(500), label = "procIcon") { icon ->
+                                process.icon.let { icon ->
                                     if (icon != null) {
                                         Image(bitmap = icon, contentDescription = null, modifier = Modifier.size(20.dp).clip(RoundedCornerShape(6.dp)))
                                     } else {

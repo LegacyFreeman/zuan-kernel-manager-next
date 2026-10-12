@@ -158,6 +158,8 @@ sealed class NavigationRoute(
     // Route untuk Changelogs & Open Source
     object Changelogs : NavigationRoute("changelogs_screen", R.string.sect_general, Icons.Filled.History, Icons.Outlined.History)
 
+    object UpdateSettings : NavigationRoute("update_settings_screen", R.string.upd_settings_title, Icons.Filled.SystemUpdate, Icons.Outlined.SystemUpdate)
+
     object OpenSource : NavigationRoute("opensource_screen", R.string.sect_general, Icons.Filled.Code, Icons.Outlined.Code)
 
     // Pusat Bantuan & Dokumentasi (in-app help untuk semua menu)
@@ -232,6 +234,9 @@ fun ZuanKernelManagerNavHost(
         // Changelogs & Open Source
         composable(NavigationRoute.Changelogs.route) {
             ChangelogsScreen(navController = navController, hazeState = hazeState)
+        }
+        composable(NavigationRoute.UpdateSettings.route) {
+            com.zuan.kernelmanager.next.feature.update.UpdateSettingsScreen(navController = navController, hazeState = hazeState)
         }
         composable(NavigationRoute.OpenSource.route) {
             OpenSourceScreen(navController = navController, hazeState = hazeState)

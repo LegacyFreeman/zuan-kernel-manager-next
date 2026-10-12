@@ -11,6 +11,7 @@
 
 package com.zuan.kernelmanager.next.feature.soc
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zuan.kernelmanager.next.ui.adaptive.zkmLargeAppBarExpandedHeight
 import com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle
 import androidx.compose.animation.AnimatedContent
@@ -66,8 +67,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import kotlinx.coroutines.launch
 import com.zuan.kernelmanager.next.ui.components.ZkmHazeStyleCache
@@ -103,18 +104,18 @@ fun SoCScreen(
     val networkVM: NetworkViewModel = viewModel()
     val density = LocalDensity.current
 
-    val themeMode by settingsViewModel.themeMode.collectAsState()
-    val isCustomBg by settingsViewModel.isCustomBackground.collectAsState()
-    val cardDarkness by settingsViewModel.cardDarkness.collectAsState()
-    val isDynamic by settingsViewModel.isDynamicColor.collectAsState()
-    val themeColor by settingsViewModel.currentThemeColor.collectAsState()
-    val isHazeEnabled by settingsViewModel.isHazeEnabled.collectAsState()
+    val themeMode by settingsViewModel.themeMode.collectAsStateWithLifecycle()
+    val isCustomBg by settingsViewModel.isCustomBackground.collectAsStateWithLifecycle()
+    val cardDarkness by settingsViewModel.cardDarkness.collectAsStateWithLifecycle()
+    val isDynamic by settingsViewModel.isDynamicColor.collectAsStateWithLifecycle()
+    val themeColor by settingsViewModel.currentThemeColor.collectAsStateWithLifecycle()
+    val isHazeEnabled by settingsViewModel.isHazeEnabled.collectAsStateWithLifecycle()
     
-    val isCustomColor by settingsViewModel.isCustomColor.collectAsState()
-    val customPrimary by settingsViewModel.customPrimaryColor.collectAsState()
+    val isCustomColor by settingsViewModel.isCustomColor.collectAsStateWithLifecycle()
+    val customPrimary by settingsViewModel.customPrimaryColor.collectAsStateWithLifecycle()
 
-    val weatherEffect by settingsViewModel.weatherEffect.collectAsState()
-    val weatherIntensity by settingsViewModel.weatherIntensity.collectAsState()
+    val weatherEffect by settingsViewModel.weatherEffect.collectAsStateWithLifecycle()
+    val weatherIntensity by settingsViewModel.weatherIntensity.collectAsStateWithLifecycle()
 
     val isSystemDark = isSystemInDarkTheme()
     val useDarkTheme = when (themeMode) {
@@ -156,7 +157,7 @@ fun SoCScreen(
     val scope = rememberCoroutineScope()
 
     // Permintaan buka sub-tab dari luar (mis. kartu Memory / VM Parameters / Core CPU di Overall)
-    val pendingTab by ZkmTabNavigator.pendingSocTab.collectAsState()
+    val pendingTab by ZkmTabNavigator.pendingSocTab.collectAsStateWithLifecycle()
     LaunchedEffect(pendingTab) {
         val target = pendingTab ?: return@LaunchedEffect
         pagerState.scrollToPage(target.ordinal.coerceIn(0, tabs.size - 1))
@@ -188,7 +189,7 @@ fun SoCScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 1f)
+                    .zkmHazeSource(state = hazeState, zIndex = 1f)
             ) {
                 if (!isCustomBg) {
                     WeatherEffectOverlay(
@@ -262,7 +263,7 @@ fun SoCScreen(
                             appBarHeightPx = coordinates.size.height
                         }
                     }
-                    .hazeEffect(
+                    .zkmHazeEffect(
                         state = hazeState, 
                         style = headerHazeStyle
                     ) {
@@ -373,7 +374,7 @@ fun ExpressiveTabRow(
 
             if (isSelected && isGlassActive && hazeState != null) {
                 tabModifier = tabModifier
-                    .hazeEffect(
+                    .zkmHazeEffect(
                         state = hazeState,
                         style = ZkmHazeStyleCache.of(
                             backgroundColor = activeColor.copy(alpha = 0.3f),

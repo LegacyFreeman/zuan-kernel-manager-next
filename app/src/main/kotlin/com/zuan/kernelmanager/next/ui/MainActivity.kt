@@ -9,6 +9,7 @@
 
 package com.zuan.kernelmanager.next.ui
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.app.Activity
@@ -90,8 +91,8 @@ import com.zuan.kernelmanager.next.core.kernel.KernelCore
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
@@ -231,6 +232,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen: SplashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        // Widgets / app shortcuts can ask to open a specific screen.
+        com.zuan.kernelmanager.next.feature.widget.ZkmDeepLink.handle(intent)
+        // Long-press app-icon shortcuts (published at runtime).
+        com.zuan.kernelmanager.next.feature.widget.ZkmShortcuts.publish(this)
 
         val prefs = SettingsPreference.getInstance(this)
         val savedDpi = prefs.appDpi.value
@@ -252,16 +257,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContent {
-            val savedDpiState by prefs.appDpi.collectAsState()
-            val themeMode by prefs.themeMode.collectAsState()
-            val hasCompletedIntro by prefs.hasCompletedIntro.collectAsState()
+            val savedDpiState by prefs.appDpi.collectAsStateWithLifecycle()
+            val themeMode by prefs.themeMode.collectAsStateWithLifecycle()
+            val hasCompletedIntro by prefs.hasCompletedIntro.collectAsStateWithLifecycle()
+            // Versi Lite: splash sederhana, tanpa layer backdrop liquid, tanpa video wallpaper.
+            val liteMode by prefs.liteMode.collectAsStateWithLifecycle()
             
-            val isDynamicColor by prefs.isDynamicColor.collectAsState()
-            val themeColorName by prefs.themeColorName.collectAsState()
-            val isCustomColor by prefs.isCustomColor.collectAsState()
-            val customPrimary by prefs.customPrimaryColor.collectAsState()
-            val customSecondary by prefs.customSecondaryColor.collectAsState()
-            val customTertiary by prefs.customTertiaryColor.collectAsState()
+            val isDynamicColor by prefs.isDynamicColor.collectAsStateWithLifecycle()
+            val themeColorName by prefs.themeColorName.collectAsStateWithLifecycle()
+            val isCustomColor by prefs.isCustomColor.collectAsStateWithLifecycle()
+            val customPrimary by prefs.customPrimaryColor.collectAsStateWithLifecycle()
+            val customSecondary by prefs.customSecondaryColor.collectAsStateWithLifecycle()
+            val customTertiary by prefs.customTertiaryColor.collectAsStateWithLifecycle()
             
             var showCustomSplash by remember { mutableStateOf(true) }
 
@@ -314,7 +321,7 @@ class MainActivity : AppCompatActivity() {
                     val rootLiquidBackdrop = rememberLayerBackdrop()
 
                     Box(modifier = Modifier.fillMaxSize()) {
-                        Box(modifier = Modifier.fillMaxSize().layerBackdrop(rootLiquidBackdrop)) {
+                        Box(modifier = Modifier.fillMaxSize().then(if (liteMode) Modifier else Modifier.layerBackdrop(rootLiquidBackdrop))) {
                             MainActivityWallpaperBackground(
                                 hazeState = mainBackgroundHazeState
                             )
@@ -331,9 +338,15 @@ class MainActivity : AppCompatActivity() {
                         ) { state ->
                             when (state) {
                                 "splash" -> {
-                                    Zuan3DCustomSplashScreen(
-                                        onSplashFinished = { showCustomSplash = false }
-                                    )
+                                    if (liteMode) {
+                                        ZuanLiteSplashScreen(
+                                            onSplashFinished = { showCustomSplash = false }
+                                        )
+                                    } else {
+                                        Zuan3DCustomSplashScreen(
+                                            onSplashFinished = { showCustomSplash = false }
+                                        )
+                                    }
                                 }
                                 "intro" -> {
                                     IntroScreen(
@@ -354,6 +367,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        com.zuan.kernelmanager.next.feature.widget.ZkmDeepLink.handle(intent)
     }
 
     override fun onDestroy() {
@@ -391,15 +410,18 @@ private fun MainActivityWallpaperBackground(
     val context = LocalContext.current
     val prefs = remember { SettingsPreference.getInstance(context) }
 
-    val themeMode by prefs.themeMode.collectAsState()
-    val bgType by prefs.bgType.collectAsState()
-    val solidColor by prefs.solidColor.collectAsState()
-    val expressiveThemeId by prefs.expressiveThemeId.collectAsState()
+    val themeMode by prefs.themeMode.collectAsStateWithLifecycle()
+    val bgType by prefs.bgType.collectAsStateWithLifecycle()
+    val solidColor by prefs.solidColor.collectAsStateWithLifecycle()
+    val expressiveThemeId by prefs.expressiveThemeId.collectAsStateWithLifecycle()
 
-    val isCustomBg by prefs.isCustomBackground.collectAsState()
-    val bgUriString by prefs.backgroundImageUri.collectAsState()
-    val isVideo by prefs.isVideoWallpaper.collectAsState()
-    val adaptiveEcoMode by prefs.adaptiveEcoMode.collectAsState()
+    val isCustomBg by prefs.isCustomBackground.collectAsStateWithLifecycle()
+    val bgUriString by prefs.backgroundImageUri.collectAsStateWithLifecycle()
+    val isVideo by prefs.isVideoWallpaper.collectAsStateWithLifecycle()
+    val adaptiveEcoMode by prefs.adaptiveEcoMode.collectAsStateWithLifecycle()
+    // Versi Lite tidak memutar video wallpaper (berat): jatuh ke warna latar tema.
+    val liteMode by prefs.liteMode.collectAsStateWithLifecycle()
+    val liteBlocksVideo = liteMode && prefs.isVideoWallpaperRaw()
 
     val powerManager = remember { context.getSystemService(Context.POWER_SERVICE) as? android.os.PowerManager }
     val isPowerSaveMode = remember { powerManager?.isPowerSaveMode == true }
@@ -414,21 +436,21 @@ private fun MainActivityWallpaperBackground(
 
     val effectiveIsVideo = if (isEcoActive) false else isVideo
 
-    val useSystemWallpaper by prefs.useSystemWallpaper.collectAsState()
-    val isBgBlur by prefs.isBgBlur.collectAsState()
-    val bgContrast by prefs.bgContrast.collectAsState()
+    val useSystemWallpaper by prefs.useSystemWallpaper.collectAsStateWithLifecycle()
+    val isBgBlur by prefs.isBgBlur.collectAsStateWithLifecycle()
+    val bgContrast by prefs.bgContrast.collectAsStateWithLifecycle()
 
-    val weatherEffect by prefs.weatherEffect.collectAsState()
+    val weatherEffect by prefs.weatherEffect.collectAsStateWithLifecycle()
     val effectiveWeather = if (isEcoActive) WeatherEffect.NONE else weatherEffect
-    val weatherIntensity by prefs.weatherIntensity.collectAsState()
+    val weatherIntensity by prefs.weatherIntensity.collectAsStateWithLifecycle()
 
-    val bgSaturation by prefs.bgSaturation.collectAsState()
-    val blurStrength by prefs.blurStrength.collectAsState()
+    val bgSaturation by prefs.bgSaturation.collectAsStateWithLifecycle()
+    val blurStrength by prefs.blurStrength.collectAsStateWithLifecycle()
 
-    val isDynamicColor by prefs.isDynamicColor.collectAsState()
-    val themeColorName by prefs.themeColorName.collectAsState()
-    val isCustomColor by prefs.isCustomColor.collectAsState()
-    val customPrimary by prefs.customPrimaryColor.collectAsState()
+    val isDynamicColor by prefs.isDynamicColor.collectAsStateWithLifecycle()
+    val themeColorName by prefs.themeColorName.collectAsStateWithLifecycle()
+    val isCustomColor by prefs.isCustomColor.collectAsStateWithLifecycle()
+    val customPrimary by prefs.customPrimaryColor.collectAsStateWithLifecycle()
 
     val useDarkTheme = when (themeMode) {
         ThemeMode.LIGHT -> false
@@ -482,7 +504,7 @@ private fun MainActivityWallpaperBackground(
         modifier = Modifier
             .fillMaxSize()
             .background(activityBackgroundColor)
-            .hazeSource(state = hazeState, zIndex = 0f)
+            .zkmHazeSource(state = hazeState, zIndex = 0f)
     ) {
         if (!useSystemWallpaper) {
             when (bgType) {
@@ -499,7 +521,7 @@ private fun MainActivityWallpaperBackground(
                 }
 
                 BgType.GALLERY -> {
-                    if (isCustomBg && bgUriString != null) {
+                    if (isCustomBg && bgUriString != null && !liteBlocksVideo) {
                         val blurModifier = when {
                             isBgBlur && blurStrength > 0f -> Modifier.blur(blurStrength.dp)
                             isBgBlur -> Modifier.blur(20.dp)
@@ -576,11 +598,12 @@ fun ZuanKernelManagerApp(
     val navController = rememberNavController()
 
     val prefs = remember { SettingsPreference.getInstance(context) }
-    val navStyle by prefs.navStyle.collectAsState()
-    val navLabelState by prefs.navLabelState.collectAsState()
+    val navStyle by prefs.navStyle.collectAsStateWithLifecycle()
+    val navLabelState by prefs.navLabelState.collectAsStateWithLifecycle()
+    val liteMode by prefs.liteMode.collectAsStateWithLifecycle()
 
     // Style kartu liquid aktif -> Surface di atas kaca dibuat transparan (lihat ZkmLiquidFlags).
-    val cardGlassStyleNow by prefs.cardGlassStyle.collectAsState()
+    val cardGlassStyleNow by prefs.cardGlassStyle.collectAsStateWithLifecycle()
     androidx.compose.runtime.SideEffect {
         com.zuan.kernelmanager.next.ui.components.ZkmLiquidFlags.cardsLiquid =
             cardGlassStyleNow == com.zuan.kernelmanager.next.feature.settings.CardGlassStyle.LIQUID_GLASS &&
@@ -589,6 +612,14 @@ fun ZuanKernelManagerApp(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+
+    // Deep link from a home-screen widget / app shortcut (see feature/widget).
+    val pendingRoute by com.zuan.kernelmanager.next.feature.widget.ZkmDeepLink.pending.collectAsStateWithLifecycle()
+    LaunchedEffect(pendingRoute) {
+        val target = pendingRoute ?: return@LaunchedEffect
+        com.zuan.kernelmanager.next.feature.widget.ZkmDeepLink.pending.value = null
+        runCatching { navController.navigate(target) { launchSingleTop = true } }
+    }
     
     var activeDialog by remember { mutableStateOf(ActiveDialog.NONE) }
 
@@ -600,6 +631,8 @@ fun ZuanKernelManagerApp(
         if (!varHasCheckedUpdate) {
             varHasCheckedUpdate = true
             delay(1500)
+            // "Show update dialog" off in Update Settings: stay quiet (the Home card still shows updates).
+            if (!com.zuan.kernelmanager.next.feature.settings.SettingsPreference.getInstance(context).getShowUpdateDialog()) return@LaunchedEffect
             val info = UpdateChecker.checkForUpdate(context)
             if (info != null) {
                 updateInfo = info
@@ -664,8 +697,8 @@ fun ZuanKernelManagerApp(
             Scaffold(
                 modifier = Modifier
                     .fillMaxSize()
-                    .layerBackdrop(contentBackdrop)
-                    .hazeSource(state = contentHazeState, zIndex = 1f),
+                    .then(if (liteMode) Modifier else Modifier.layerBackdrop(contentBackdrop))
+                    .zkmHazeSource(state = contentHazeState, zIndex = 1f),
                 containerColor = Color.Transparent,
                 contentWindowInsets = WindowInsets(0.dp)
             ) { innerPadding ->
@@ -775,6 +808,10 @@ fun ZuanKernelManagerApp(
                             ChangelogsScreen(navController = navController, hazeState = backgroundHazeState) 
                         }
                         
+                        gatedComposable(navController, NavigationRoute.UpdateSettings.route) {
+                            com.zuan.kernelmanager.next.feature.update.UpdateSettingsScreen(navController = navController, hazeState = backgroundHazeState)
+                        }
+
                         gatedComposable(navController, NavigationRoute.OpenSource.route) { 
                             OpenSourceScreen(navController = navController, hazeState = backgroundHazeState) 
                         }
@@ -795,7 +832,7 @@ fun ZuanKernelManagerApp(
                 modifier = Modifier
                     .fillMaxSize()
                     .zIndex(2f)
-                    .hazeEffect(
+                    .zkmHazeEffect(
                         state = contentHazeState,
                         style = ZkmHazeStyleCache.of(blurRadius = 25.dp, tint = HazeTint(Color.Transparent))
                     )
@@ -908,7 +945,7 @@ fun ZuanKernelManagerApp(
         AnimatedVisibility(visible = showRootDialog, enter = fadeIn(), exit = fadeOut()) {
             Box(
                 modifier = Modifier.fillMaxSize()
-                    .hazeEffect(state = contentHazeState, style = ZkmHazeStyleCache.of(blurRadius = 20.dp, tint = HazeTint(Color.Black.copy(alpha = 0.4f))))
+                    .zkmHazeEffect(state = contentHazeState, style = ZkmHazeStyleCache.of(blurRadius = 20.dp, tint = HazeTint(Color.Black.copy(alpha = 0.4f))))
                     .background(Color.Black.copy(alpha = 0.1f))
                     .clickable(enabled = false) {}
             )

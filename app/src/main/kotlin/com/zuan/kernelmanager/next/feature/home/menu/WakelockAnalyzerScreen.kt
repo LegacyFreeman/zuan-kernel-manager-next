@@ -39,6 +39,7 @@ import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import com.zuan.kernelmanager.next.core.util.ZkmSamplerBus
 import java.util.Locale
 
 /** Satu wakelock hasil parse (kernel / partial / wakeup source / aktif sekarang). */
@@ -207,13 +208,13 @@ fun WakelockAnalyzerScreen(navController: NavController, hazeState: HazeState) {
     val context = LocalContext.current
     var refreshKey by remember { mutableIntStateOf(0) }
 
+    // Penyatuan loop liar (Zkm Perf Tahap 4):
     val sleep by produceState(initialValue = readSleep()) {
-        while (true) { value = readSleep(); delay(2_000) }
+        ZkmSamplerBus.fastTick.collect { value = readSleep() }
     }
     val report by produceState(initialValue = WakelockReport(), refreshKey) {
         value = withContext(Dispatchers.IO) { runCatching { loadReport(context) }.getOrDefault(WakelockReport(loaded = true)) }
-        while (true) {
-            delay(30_000)
+        ZkmSamplerBus.slowTick.collect {
             value = withContext(Dispatchers.IO) { runCatching { loadReport(context) }.getOrDefault(value) }
         }
     }

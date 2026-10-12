@@ -9,6 +9,7 @@
 
 package com.zuan.kernelmanager.next.ui.theme
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.app.Activity
 import android.graphics.BitmapFactory
 import android.graphics.Typeface
@@ -165,10 +166,10 @@ fun ZuanKernelManagerTheme(
     }
 
     val prefs = remember { SettingsPreference.getInstance(context) }
-    val fontChoice = prefs.appFontChoice.collectAsState().value
-    val customFontPath = prefs.customFontPath.collectAsState().value
-    val iconShapeStyle = prefs.iconShapeStyle.collectAsState().value
-    val iconImagePath = prefs.customIconImagePath.collectAsState().value
+    val fontChoice = prefs.appFontChoice.collectAsStateWithLifecycle().value
+    val customFontPath = prefs.customFontPath.collectAsStateWithLifecycle().value
+    val iconShapeStyle = prefs.iconShapeStyle.collectAsStateWithLifecycle().value
+    val iconImagePath = prefs.customIconImagePath.collectAsStateWithLifecycle().value
     val iconRandomSeed = remember { Random.nextInt() }
     val iconImage: ImageBitmap? = produceState<ImageBitmap?>(initialValue = null, key1 = iconImagePath) {
         val path = iconImagePath

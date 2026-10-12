@@ -236,6 +236,9 @@ object OverallUtils {
         }
     }
 
+    /** Jumlah maksimum app/proses di daftar "Top CPU usage" Overall screen. Sama untuk semua mode (Lite maupun Pro). */
+    const val TOP_PROCESS_LIMIT = 20
+
     fun parseTopProcesses(rawTop: String): String {
         data class Proc(val pid: String, val cpu: Float, val cmd: String)
         val processes = ArrayList<Proc>(300)
@@ -279,7 +282,7 @@ object OverallUtils {
                 if (count > 0) append(';')
                 append(p.pid).append('|').append(p.cpu).append('|').append(p.cmd)
                 count++
-                if (count >= 50) break
+                if (count >= TOP_PROCESS_LIMIT) break
             }
         }
     }
@@ -651,7 +654,7 @@ object OverallUtils {
             }
             list.add(ProcessInfo(displayName, processName, pid, cpuUsage, iconBitmap))
         }
-        list.take(50)
+        list.take(TOP_PROCESS_LIMIT)
     }
 
     private fun drawableToBitmap(drawable: Drawable): Bitmap {
@@ -665,8 +668,16 @@ object OverallUtils {
 
     @Volatile
     private var prevCpuStatStr: String = ""
+    @Volatile private var cachedCpuLoadResult: CpuLoadResult? = null
+    @Volatile private var cachedCpuLoadAtMs: Long = 0L
 
     suspend fun getCpuLoads(): CpuLoadResult = withContext(Dispatchers.IO) {
+        val now = SystemClock.elapsedRealtime()
+        val cached = cachedCpuLoadResult
+        if (cached != null && now - cachedCpuLoadAtMs < 500L) {
+            return@withContext cached
+        }
+
         val currStatStr = readLines("/proc/stat").joinToString("\n")
         // /proc/stat is hidden from normal apps since Android 8. Shizuku / root read it fine;
         // BASIC mode estimates the load from how far each core's clock is above its minimum.
@@ -682,10 +693,15 @@ object OverallUtils {
         for (i in 1 until loads.size) {
             perCore.add(loads[i].toIntOrNull() ?: 0)
         }
-        CpuLoadResult(total, perCore)
+        val result = CpuLoadResult(total, perCore)
+        cachedCpuLoadResult = result
+        cachedCpuLoadAtMs = now
+        result
     }
 
     @Volatile private var cpuFreqPaths: List<String>? = null
+    @Volatile private var cachedCpuFreqs: List<String>? = null
+    @Volatile private var cachedCpuFreqsAtMs: Long = 0L
 
     /** Core count even when /sys/devices/system/cpu cannot be listed by the app. */
     private fun cpuCoreCount(): Int {
@@ -700,13 +716,22 @@ object OverallUtils {
     }
 
     suspend fun getCpuFrequencies(): List<String> = withContext(Dispatchers.IO) {
+        val now = SystemClock.elapsedRealtime()
+        val cached = cachedCpuFreqs
+        if (cached != null && now - cachedCpuFreqsAtMs < 500L) {
+            return@withContext cached
+        }
+
         val paths = freqPaths()
         // One batched read instead of N separate shell spawns (matters a lot over Shizuku).
         val values = batchRead(paths)
-        paths.map { path ->
+        val freqs = paths.map { path ->
             val freq = values[path]?.trim()?.toLongOrNull()
             if (freq != null) "${freq / 1000} MHz" else "Offline"
         }
+        cachedCpuFreqs = freqs
+        cachedCpuFreqsAtMs = now
+        freqs
     }
 
     /**

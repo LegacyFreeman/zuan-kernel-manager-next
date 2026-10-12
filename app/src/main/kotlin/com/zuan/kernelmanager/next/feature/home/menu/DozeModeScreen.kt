@@ -8,6 +8,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.home.menu
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
 import com.zuan.kernelmanager.next.ui.components.zkmCardFill
@@ -72,8 +73,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.rememberHazeState
 import com.zuan.kernelmanager.next.ui.components.ZkmHazeStyleCache
@@ -181,7 +182,7 @@ fun DozeModeScreen(
             val colorFilter = ColorFilter.colorMatrix(saturationMatrix)
             val uri = Uri.parse(bgUriString)
 
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 if (isVideo) {
                     VideoWallpaperPlayer(
                         uri = uri, 
@@ -204,10 +205,10 @@ fun DozeModeScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 0f)
+                    .zkmHazeSource(state = hazeState, zIndex = 0f)
             ) {
                 // Background harus jadi child hazeSource: modifier .background()
-                // yang dipasang SEBELUM .hazeSource() tidak ikut terekam ke buffer
+                // yang dipasang SEBELUM .zkmHazeSource() tidak ikut terekam ke buffer
                 // haze, sehingga progressive blur appbar kosong di mode non-custom.
                 Box(modifier = Modifier.fillMaxSize().background(themeBgColor))
             }
@@ -230,7 +231,7 @@ fun DozeModeScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .hazeSource(state = hazeState, zIndex = 1f)
+                        .zkmHazeSource(state = hazeState, zIndex = 1f)
                 ) {
                     when (selectedTab) {
                         0 -> DozeAppsTabGlass(
@@ -300,7 +301,7 @@ fun DozeModeScreen(
                         .onGloballyPositioned { coordinates ->
                             headerHeightPx = coordinates.size.height
                         }
-                        .hazeEffect(
+                        .zkmHazeEffect(
                             state = hazeState,
                             style = headerHazeStyle
                         ) {
@@ -342,7 +343,7 @@ fun DozeModeScreen(
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp),
                             shape = RoundedCornerShape(22.dp),
-                            color = if (isCustomBg) Color.White.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.7f)
+                            color = if (isCustomBg) Color.White.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(0.7f)
                         ) {
                             ScrollableTabRow(
                                 selectedTabIndex = selectedTab,

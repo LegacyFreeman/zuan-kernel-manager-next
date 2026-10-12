@@ -11,6 +11,7 @@
 
 package com.zuan.kernelmanager.next.feature.dashboard.components
 
+import com.zuan.kernelmanager.next.ui.components.zkmInfiniteFloat
 import android.graphics.Matrix
 import android.graphics.RectF
 import androidx.activity.compose.BackHandler
@@ -86,7 +87,7 @@ import com.zuan.kernelmanager.next.feature.dashboard.OverallBatteryInfo
 import com.zuan.kernelmanager.next.feature.dashboard.GithubRelease // FIX: Import diperbaiki ke package yang benar
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import com.zuan.kernelmanager.next.ui.components.ZkmHazeStyleCache
 import com.zuan.kernelmanager.next.ui.theme.zkmIconShape
@@ -631,8 +632,7 @@ fun UpdateCard(release: GithubRelease, modifier: Modifier, containerColor: Color
     val interaction = remember { MutableInteractionSource() }
     OSWidgetContainer(modifier.expressivePress(interaction, 0.98f).clickable(interactionSource = interaction, indication = null) { onClick() }, containerColor) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            val infinite = rememberInfiniteTransition(label = "updatePulse")
-            val glow by infinite.animateFloat(initialValue = 0.85f, targetValue = 1.05f, animationSpec = infiniteRepeatable(tween(1400, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "glow")
+            val glow by zkmInfiniteFloat(initialValue = 0.85f, targetValue = 1.05f, animationSpec = infiniteRepeatable(tween(1400, easing = FastOutSlowInEasing), RepeatMode.Reverse), label = "glow")
             Box(modifier = Modifier.scale(glow)) {
                 OverallIconContainer(icon = Icons.Default.SystemUpdate, containerColor = MaterialTheme.colorScheme.primary, iconColor = MaterialTheme.colorScheme.onPrimary, size = 46.dp, iconSize = 24.dp, cornerRadius = 23.dp)
             }
@@ -654,8 +654,7 @@ fun OSWidgetContainer(modifier: Modifier = Modifier, containerColor: Color, cont
 fun DeviceHeroSection(state: DashboardState, modifier: Modifier, containerColor: Color, textColor: Color, subTextColor: Color) {
     OSWidgetContainer(modifier, containerColor) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            val infinite = rememberInfiniteTransition(label = "heroSpin")
-            val rotation by infinite.animateFloat(initialValue = 0f, targetValue = 360f, animationSpec = infiniteRepeatable(tween(18000, easing = LinearEasing), RepeatMode.Restart), label = "heroRotation")
+            val rotation by zkmInfiniteFloat(initialValue = 0f, targetValue = 360f, animationSpec = infiniteRepeatable(tween(18000, easing = LinearEasing), RepeatMode.Restart), label = "heroRotation")
             Box(Modifier.size(58.dp).rotate(rotation).clip(RoundedPolygon(9).toShape()).background(Brush.linearGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.tertiary))), Alignment.Center) {
                 Icon(Icons.Rounded.Smartphone, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(28.dp).rotate(-rotation))
             }

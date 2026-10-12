@@ -13,6 +13,7 @@
 
 package com.zuan.kernelmanager.next.feature.fps
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
 import com.zuan.kernelmanager.next.ui.components.zkmCardBorder
@@ -80,8 +81,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -177,7 +178,7 @@ fun FpsManagerScreen(
             .zkmCardHazeEffect(shape = cardShape,
                 state = localHazeState,
                 style = ZkmHazeStyleCache.of(
-                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f),
+                    backgroundColor = MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.3f),
                     blurRadius = 24.dp,
                     noiseFactor = 0.1f,
                     tints = listOf(HazeTint(Color.White.copy(alpha = 0.1f)))
@@ -212,7 +213,7 @@ fun FpsManagerScreen(
         androidx.compose.runtime.CompositionLocalProvider(LocalZkmHazeState provides localHazeState) {
         Box(modifier = Modifier.fillMaxSize().background(screenBackground)) {
             // LAYER 0: CUSTOM BACKGROUND
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = localHazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = localHazeState, zIndex = 0f)) {
                 if (isCustomBg && bgUriString != null) {
                     val blurModifier = if (isBgBlur && blurStrength > 0f) Modifier.blur(blurStrength.dp) else if (isBgBlur) Modifier.blur(20.dp) else Modifier
                     val colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(bgSaturation) })
@@ -233,7 +234,7 @@ fun FpsManagerScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = localHazeState, zIndex = 1f)
+                    .zkmHazeSource(state = localHazeState, zIndex = 1f)
             ) {
                 HorizontalPager(
                     state = pagerState,
@@ -290,7 +291,7 @@ fun FpsManagerScreen(
                     .align(Alignment.TopCenter)
                     .fillMaxWidth()
                     .onGloballyPositioned { headerHeightPx = it.size.height }
-                    .hazeEffect(
+                    .zkmHazeEffect(
                         state = localHazeState,
                         style = headerHazeStyle
                     ) {
@@ -321,7 +322,7 @@ fun FpsManagerScreen(
                     Surface(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         shape = RoundedCornerShape(22.dp),
-                        color = if (isCustomBg) Color.White.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.7f)
+                        color = if (isCustomBg) Color.White.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(0.7f)
                     ) {
                         ScrollableTabRow(
                             selectedTabIndex = pagerState.currentPage,

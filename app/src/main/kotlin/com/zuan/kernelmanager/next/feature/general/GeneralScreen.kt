@@ -7,6 +7,7 @@
  */
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.general
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.BorderStroke
@@ -57,14 +58,14 @@ fun GeneralScreen(
     navController: NavController,
     viewModel: SettingsViewModel = viewModel()
 ) {
-    val navStyle by viewModel.navStyle.collectAsState()
-    val navLabelState by viewModel.navLabelState.collectAsState()
+    val navStyle by viewModel.navStyle.collectAsStateWithLifecycle()
+    val navLabelState by viewModel.navLabelState.collectAsStateWithLifecycle()
     
-    val themeMode by viewModel.themeMode.collectAsState()
-    val isDynamic by viewModel.isDynamicColor.collectAsState()
-    val themeColorName by viewModel.currentThemeColor.collectAsState()
-    val isCustomColor by viewModel.isCustomColor.collectAsState()
-    val customPrimary by viewModel.customPrimaryColor.collectAsState()
+    val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
+    val isDynamic by viewModel.isDynamicColor.collectAsStateWithLifecycle()
+    val themeColorName by viewModel.currentThemeColor.collectAsStateWithLifecycle()
+    val isCustomColor by viewModel.isCustomColor.collectAsStateWithLifecycle()
+    val customPrimary by viewModel.customPrimaryColor.collectAsStateWithLifecycle()
 
     val useDarkTheme = when (themeMode) {
         ThemeMode.LIGHT -> false

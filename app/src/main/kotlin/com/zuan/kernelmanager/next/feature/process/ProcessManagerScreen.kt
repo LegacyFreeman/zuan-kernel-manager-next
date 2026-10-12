@@ -11,6 +11,8 @@
 
 package com.zuan.kernelmanager.next.feature.process
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
 import com.zuan.kernelmanager.next.ui.components.zkmCardFill
@@ -105,8 +107,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import kotlinx.coroutines.Dispatchers
@@ -315,17 +317,17 @@ fun ProcessManagerScreen(
     var showForceStopConfirm by remember { mutableStateOf(false) }
 
     // --- THEME STATES ---
-    val themeMode by settingsViewModel.themeMode.collectAsState()
-    val bgType by settingsViewModel.bgType.collectAsState()
-    val isHazeEnabled by settingsViewModel.isHazeEnabled.collectAsState()
+    val themeMode by settingsViewModel.themeMode.collectAsStateWithLifecycle()
+    val bgType by settingsViewModel.bgType.collectAsStateWithLifecycle()
+    val isHazeEnabled by settingsViewModel.isHazeEnabled.collectAsStateWithLifecycle()
     val isCustomBg = bgType != BgType.SYSTEM
     val isGlassActive = isHazeEnabled && isCustomBg
     
-    val cardDarkness by settingsViewModel.cardDarkness.collectAsState()
-    val isDynamic by settingsViewModel.isDynamicColor.collectAsState()
-    val themeColorName by settingsViewModel.currentThemeColor.collectAsState()
-    val isCustomColor by settingsViewModel.isCustomColor.collectAsState()
-    val customPrimary by settingsViewModel.customPrimaryColor.collectAsState()
+    val cardDarkness by settingsViewModel.cardDarkness.collectAsStateWithLifecycle()
+    val isDynamic by settingsViewModel.isDynamicColor.collectAsStateWithLifecycle()
+    val themeColorName by settingsViewModel.currentThemeColor.collectAsStateWithLifecycle()
+    val isCustomColor by settingsViewModel.isCustomColor.collectAsStateWithLifecycle()
+    val customPrimary by settingsViewModel.customPrimaryColor.collectAsStateWithLifecycle()
 
     val isSystemDark = isSystemInDarkTheme()
     val useDarkTheme = when (themeMode) {
@@ -352,7 +354,7 @@ fun ProcessManagerScreen(
 
     val actualCardContainerColor = when {
         isGlassActive -> zkmGlassFallbackTint(zkmIsDarkTheme())
-        isCustomBg -> MaterialTheme.colorScheme.surface.copy(alpha = cardDarkness)
+        isCustomBg -> MaterialTheme.colorScheme.surface.zkmLiteAlpha(cardDarkness)
         else -> cardContainerColor
     }
 
@@ -366,7 +368,7 @@ fun ProcessManagerScreen(
             .zkmCardHazeEffect(shape = RoundedCornerShape(ExpressiveCornerRadius),
                 state = hazeState,
                 style = ZkmHazeStyleCache.of(
-                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
+                    backgroundColor = MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.2f),
                     blurRadius = 20.dp,
                     noiseFactor = 0.05f,
                     tints = emptyList()
@@ -422,14 +424,14 @@ fun ProcessManagerScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 0f)
+                    .zkmHazeSource(state = hazeState, zIndex = 0f)
             )
             
             // LAYER 1: SCROLLABLE PROCESS LIST
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 1f),
+                    .zkmHazeSource(state = hazeState, zIndex = 1f),
                 contentPadding = PaddingValues(top = headerHeightDp, bottom = 100.dp)
             ) {
                 item {
@@ -531,7 +533,7 @@ fun ProcessManagerScreen(
                         )
                         if (!isGlassActive) HorizontalDivider(
                             modifier = Modifier.padding(start = 72.dp, end = 24.dp),
-                            color = if (isCustomBg) Color.White.copy(0.2f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                            color = if (isCustomBg) Color.White.copy(0.2f) else MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.5f)
                         )
                     }
                 }
@@ -547,7 +549,7 @@ fun ProcessManagerScreen(
                     .onGloballyPositioned { coordinates ->
                         headerHeightPx = coordinates.size.height
                     }
-                    .hazeEffect(
+                    .zkmHazeEffect(
                         state = hazeState,
                         style = headerHazeStyle
                     ) {

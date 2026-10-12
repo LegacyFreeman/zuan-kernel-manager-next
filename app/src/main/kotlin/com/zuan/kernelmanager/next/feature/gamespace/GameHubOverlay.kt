@@ -412,7 +412,7 @@ internal fun AnimatedVisibilityScope.EnergyCubeHub(m: HubModel) {
             }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(sk(12f))) {
                 val c = Color.White.copy(alpha = 0.92f)
-                HubText("ZKM", 19f, u, c, FontWeight.Medium, spacing = 4f, minSp = 8f)
+                HubText("ZKM NEXT", 19f, u, c, FontWeight.Medium, spacing = 4f, minSp = 8f)
                 HubText(m.clock, 19f, u, c, minSp = 8f)
                 Icon(Icons.Rounded.BatteryFull, null, tint = c, modifier = Modifier.size(sk(18f)))
                 HubText("${m.battery}%", 19f, u, c, minSp = 8f)

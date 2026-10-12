@@ -17,11 +17,11 @@ object DataExporter {
     fun exportSessionToCsv(context: Context, session: FpsSession, points: List<FpsDataPoint>) {
         try {
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            val dir = File(downloadsDir, "ZKM_Reports").apply { if (!exists()) mkdirs() }
+            val dir = File(downloadsDir, "ZKMNext_Reports").apply { if (!exists()) mkdirs() }
             val stamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
             val file = File(dir, "FPS_${session.packageName.replace('.', '_')}_$stamp.csv")
             val csv = StringBuilder()
-            csv.appendLine("=== ZKM FPS REPORT ===")
+            csv.appendLine("=== ZKM NEXT FPS REPORT ===")
             csv.appendLine("App,${session.packageName}")
             csv.appendLine("Start,${SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.US).format(Date(session.startTime))}")
             csv.appendLine("Duration,${session.durationSeconds} sec")

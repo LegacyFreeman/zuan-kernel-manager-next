@@ -13,6 +13,7 @@
 
 package com.zuan.kernelmanager.next.ui.components
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import android.os.Build
 import android.view.WindowManager
 import androidx.compose.animation.core.Spring
@@ -86,7 +87,7 @@ fun DialogUnstyled(
     // [1] Warna Panel Dialog (Isinya)
     // Menggunakan logika DialogNEW agar tetap transparan (glassy)
     // Same glass look for every dialog; isCustomBg/hazeState are kept only for source compatibility.
-    val dialogContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = ZkmDialogDefaults.MaxContainerAlpha)
+    val dialogContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh.zkmLiteAlpha(ZkmDialogDefaults.containerAlpha)
     val mainTextColor = MaterialTheme.colorScheme.onSurface
     val subTextColor = MaterialTheme.colorScheme.onSurfaceVariant
 

@@ -16,6 +16,7 @@
  */
 package com.zuan.kernelmanager.next.ui
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -76,6 +77,7 @@ import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Code
+import androidx.compose.material.icons.rounded.EnergySavingsLeaf
 import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Memory
@@ -84,6 +86,7 @@ import androidx.compose.material.icons.rounded.TouchApp
 import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.Icon
+import androidx.compose.runtime.collectAsState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
@@ -188,7 +191,7 @@ sealed class IntroPage(
     )
 }
 
-private class IntroColors(val dark: Boolean) {
+internal class IntroColors(val dark: Boolean) {
     val bgTop = if (dark) Color(0xFF070A10) else ZkmSurfaceBg
     val bgBottom = if (dark) Color(0xFF020409) else Color(0xFFE3ECF5)
     val text = if (dark) Color(0xFFF1F5F9) else ZkmDark
@@ -199,7 +202,7 @@ private class IntroColors(val dark: Boolean) {
     val strokeB = if (dark) Color.White.copy(alpha = 0.04f) else Color.White.copy(alpha = 0.4f)
 }
 
-private fun Modifier.glass(colors: IntroColors, shape: Shape): Modifier =
+internal fun Modifier.glass(colors: IntroColors, shape: Shape): Modifier =
     this
         .clip(shape)
         .background(Brush.linearGradient(listOf(colors.glassA, colors.glassB)))
@@ -212,7 +215,7 @@ private val TAU = (2.0 * PI).toFloat()
 
 private fun frac(x: Float): Float = x - floor(x)
 private fun mixF(a: Float, b: Float, t: Float): Float = a + (b - a) * t
-private fun smooth(x: Float): Float {
+internal fun smooth(x: Float): Float {
     val t = x.coerceIn(0f, 1f)
     return t * t * (3f - 2f * t)
 }
@@ -615,13 +618,13 @@ private fun DrawScope.drawVault(g: Gfx, cam: Cam, t: Float, k: Float, c1: Color,
 }
 
 // ═════════════════════════ KONTEKS & SENSOR ═════════════════════════
-private class Tilt {
+internal class Tilt {
     val x = mutableFloatStateOf(0f)
     val y = mutableFloatStateOf(0f)
 }
 
 @Stable
-private class HeroCtx(
+internal class HeroCtx(
     val time: FloatState,
     val tilt: Tilt,
     val kick: Animatable<Float, androidx.compose.animation.core.AnimationVector1D>,
@@ -674,7 +677,7 @@ private fun rememberTilt(enabled: Boolean): Tilt {
 }
 
 @Composable
-private fun Hero3D(
+internal fun Hero3D(
     kind: Int,
     ctx: HeroCtx,
     offset: () -> Float,
@@ -791,6 +794,7 @@ fun IntroScreen(
 ) {
     val context = LocalContext.current
     val prefs = remember { SettingsPreference.getInstance(context) }
+    val liteMode by prefs.liteMode.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val haptic = LocalHapticFeedback.current
     val dark = com.zuan.kernelmanager.next.ui.theme.zkmIsDarkTheme()
@@ -800,13 +804,25 @@ fun IntroScreen(
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val currentPage = pages[pagerState.currentPage]
 
-    // 0 = explanation pages, 1 = final step "Select working mode"
+    // 0 = explanation pages, 1 = "Select working mode" (required),
+    // 2..5 = optional setup: Support, Profile, Appearance, Backup & Language (all skippable)
     var stage by rememberSaveable { mutableStateOf(0) }
     var selectedModeId by rememberSaveable { mutableStateOf<String?>(null) }
     val selectedMode = WorkingMode.fromId(selectedModeId)
-    val totalSteps = pages.size + 1
+    val totalSteps = pages.size + 1 + (SETUP_LAST_STAGE - SETUP_FIRST_STAGE + 1)
+    // dot / counter position of the current stage: pages 0..2, mode 3, setup 4..7
+    val stepIndex = if (stage == 0) pagerState.currentPage else pages.size + stage - 1
 
-    BackHandler(enabled = stage == 1) { stage = 0 }
+    BackHandler(enabled = stage > 0) { stage -= 1 }
+
+    val finishIntro: () -> Unit = {
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        // Mode first, then the intro flag: the flag is what swaps the screen.
+        selectedMode?.let { WorkingModeManager.set(context, it) }
+        prefs.setAcceptedTerms(true)
+        prefs.setHasCompletedIntro(true)
+        onIntroCompleted()
+    }
 
     LaunchedEffect(pagerState.currentPage, stage) {
         if (stage == 0) {
@@ -818,8 +834,24 @@ fun IntroScreen(
 
     // di tema gelap warna dibuat lebih "neon"
     fun neon(c: Color): Color = if (dark) lerp(c, Color.White, 0.22f) else c
-    val targetA = if (stage == 1) (selectedMode?.let { modeTheme(it).first } ?: ThemeBlue) else currentPage.themeColor
-    val targetB = if (stage == 1) (selectedMode?.let { modeTheme(it).second } ?: Color(0xFF22D3EE)) else currentPage.accent2
+    val appPrimary = MaterialTheme.colorScheme.primary
+    val appTertiary = MaterialTheme.colorScheme.tertiary
+    val targetA = when (stage) {
+        0 -> currentPage.themeColor
+        1 -> selectedMode?.let { modeTheme(it).first } ?: ThemeBlue
+        2 -> Color(0xFFF59E0B)      // support: coffee amber
+        3 -> ThemeBlue              // profile
+        4 -> appPrimary             // appearance: follows the theme the user is picking
+        else -> ThemeGreen          // backup & language
+    }
+    val targetB = when (stage) {
+        0 -> currentPage.accent2
+        1 -> selectedMode?.let { modeTheme(it).second } ?: Color(0xFF22D3EE)
+        2 -> Color(0xFFFB7185)
+        3 -> Color(0xFF22D3EE)
+        4 -> appTertiary
+        else -> Color(0xFF2DD4BF)
+    }
     val c1 by animateColorAsState(neon(targetA), tween(600, easing = FastOutSlowInEasing), label = "c1")
     val c2 by animateColorAsState(neon(targetB), tween(600, easing = FastOutSlowInEasing), label = "c2")
 
@@ -838,14 +870,23 @@ fun IntroScreen(
             }
         }
     }
-    val pagePos: () -> Float = { if (stage == 1) pages.size.toFloat() else pagerState.currentPage + pagerState.currentPageOffsetFraction }
+    val pagePos: () -> Float = { if (stage >= 1) (pages.size + stage - 1).toFloat() else pagerState.currentPage + pagerState.currentPageOffsetFraction }
 
     Scaffold(
         containerColor = colors.bgBottom,
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { paddingValues ->
         Box(Modifier.fillMaxSize().padding(paddingValues)) {
-            AuroraBackground(c1, c2, colors, time, pagePos)
+            if (liteMode) {
+                // Versi Lite: tanpa kanvas aurora animasi, cukup gradien polos.
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .background(Brush.verticalGradient(listOf(colors.bgTop, colors.bgBottom)))
+                )
+            } else {
+                AuroraBackground(c1, c2, colors, time, pagePos)
+            }
 
             Column(
                 modifier = Modifier
@@ -854,7 +895,7 @@ fun IntroScreen(
                     .padding(horizontal = 24.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                IntroHeader(if (stage == 1) pages.size else pagerState.currentPage, totalSteps, colors, c1)
+                IntroHeader(stepIndex, totalSteps, colors, c1)
 
                 Spacer(Modifier.height(8.dp))
 
@@ -913,7 +954,7 @@ fun IntroScreen(
                                 }
                             )
                         }
-                    } else {
+                    } else if (st == 1) {
                         ModeSelectStage(
                             ctx = ctx,
                             colors = colors,
@@ -921,6 +962,7 @@ fun IntroScreen(
                             c2 = c2,
                             time = time,
                             totalSteps = totalSteps,
+                            currentStep = pages.size,
                             selected = selectedMode,
                             onSelect = {
                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -930,12 +972,29 @@ fun IntroScreen(
                             onStart = {
                                 val mode = selectedMode ?: return@ModeSelectStage
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                // Mode first, then the intro flag: the flag is what swaps the screen.
+                                // Save the mode now; the intro only completes at the end of the (skippable) setup.
                                 WorkingModeManager.set(context, mode)
                                 prefs.setAcceptedTerms(true)
-                                prefs.setHasCompletedIntro(true)
-                                onIntroCompleted()
+                                stage = SETUP_FIRST_STAGE
                             }
+                        )
+                    } else {
+                        IntroSetupStage(
+                            stage = st,
+                            ctx = ctx,
+                            colors = colors,
+                            c1 = c1,
+                            c2 = c2,
+                            time = time,
+                            totalSteps = totalSteps,
+                            currentStep = pages.size + st - 1,
+                            selectedMode = selectedMode,
+                            onContinue = {
+                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                if (st >= SETUP_LAST_STAGE) finishIntro() else stage = st + 1
+                            },
+                            onBack = { stage = st - 1 },
+                            onSkipAll = finishIntro
                         )
                     }
                 }
@@ -1176,7 +1235,7 @@ private fun InsightCard(
 
 // ═════════════════════════ DOCK BAWAH ═════════════════════════
 @Composable
-private fun PagerPills(position: () -> Float, count: Int, c1: Color, muted: Color) {
+internal fun PagerPills(position: () -> Float, count: Int, c1: Color, muted: Color) {
     Canvas(Modifier.width(160.dp).height(10.dp)) {
         val pos = position()
         val minW = 8.dp.toPx()
@@ -1200,7 +1259,7 @@ private fun PagerPills(position: () -> Float, count: Int, c1: Color, muted: Colo
 }
 
 @Composable
-private fun GlowButton(
+internal fun GlowButton(
     text: String,
     showArrow: Boolean,
     c1: Color,
@@ -1366,6 +1425,7 @@ private fun ModeSelectStage(
     c2: Color,
     time: FloatState,
     totalSteps: Int,
+    currentStep: Int,
     selected: WorkingMode?,
     onSelect: (WorkingMode) -> Unit,
     onBack: () -> Unit,
@@ -1467,6 +1527,7 @@ private fun ModeSelectStage(
                     )
                     Spacer(Modifier.height(12.dp))
                 }
+                LiteModeCard(colors = colors, c1 = c1)
                 Spacer(Modifier.height(4.dp))
             }
         }
@@ -1475,7 +1536,7 @@ private fun ModeSelectStage(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth().animateContentSize()
         ) {
-            PagerPills({ (totalSteps - 1).toFloat() }, totalSteps, c1, colors.muted)
+            PagerPills({ currentStep.toFloat() }, totalSteps, c1, colors.muted)
             Spacer(Modifier.height(12.dp))
 
             if (selected == null) {
@@ -1489,7 +1550,7 @@ private fun ModeSelectStage(
             }
 
             GlowButton(
-                text = stringResource(R.string.intro_mode_btn_start),
+                text = stringResource(R.string.intro_btn_continue),
                 showArrow = true,
                 c1 = c1,
                 c2 = c2,
@@ -1507,6 +1568,70 @@ private fun ModeSelectStage(
             }
             Spacer(Modifier.height(4.dp))
         }
+    }
+}
+
+/**
+ * Toggle "Versi Lite" di intro. Aktif = aplikasi lebih ringan (blur / glass / efek berat
+ * dimatikan, tampilan simpel). Mati = Pro, tampilan normal penuh. Bisa diganti lagi di Pengaturan.
+ */
+@Composable
+private fun LiteModeCard(colors: IntroColors, c1: Color) {
+    val context = LocalContext.current
+    val prefs = remember { SettingsPreference.getInstance(context) }
+    val lite by prefs.liteMode.collectAsStateWithLifecycle()
+    val haptic = LocalHapticFeedback.current
+    val shape = RoundedCornerShape(24.dp)
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .glass(colors, shape)
+            .clickable(role = Role.Switch) {
+                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                prefs.setLiteMode(!lite)
+            }
+            .padding(horizontal = 16.dp, vertical = 14.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.EnergySavingsLeaf,
+            contentDescription = null,
+            tint = c1,
+            modifier = Modifier.size(28.dp)
+        )
+        Spacer(Modifier.width(14.dp))
+        Column(Modifier.weight(1f)) {
+            Text(
+                text = stringResource(R.string.lite_mode_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = colors.text
+            )
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = stringResource(R.string.lite_mode_desc),
+                style = MaterialTheme.typography.bodySmall,
+                color = colors.muted,
+                lineHeight = 18.sp
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = stringResource(if (lite) R.string.lite_mode_state_on else R.string.lite_mode_state_off),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = c1,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+        Spacer(Modifier.width(12.dp))
+        androidx.compose.material3.Switch(
+            checked = lite,
+            onCheckedChange = {
+                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                prefs.setLiteMode(it)
+            }
+        )
     }
 }
 

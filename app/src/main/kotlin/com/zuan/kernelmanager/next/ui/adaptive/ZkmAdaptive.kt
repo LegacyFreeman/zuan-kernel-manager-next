@@ -7,6 +7,7 @@
  */
 package com.zuan.kernelmanager.next.ui.adaptive
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -53,7 +54,7 @@ import com.zuan.kernelmanager.next.feature.settings.SettingsPreference
 import com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle
 import com.zuan.kernelmanager.next.ui.theme.zkmIconShape
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 
 /**
  * Info ukuran jendela saat ini. Dipakai semua layar supaya keputusan "landscape / lebar"
@@ -142,7 +143,7 @@ fun ZkmNavigationRail(
 ) {
     val context = LocalContext.current
     val prefs = remember { SettingsPreference.getInstance(context) }
-    val bgType by prefs.bgType.collectAsState()
+    val bgType by prefs.bgType.collectAsStateWithLifecycle()
     val isCustomBg = bgType != BgType.SYSTEM
 
     val hazeStyle = zkmAppBarHazeStyle(
@@ -153,7 +154,7 @@ fun ZkmNavigationRail(
     Box(
         modifier = modifier
             .fillMaxHeight()
-            .hazeEffect(state = hazeState, style = hazeStyle)
+            .zkmHazeEffect(state = hazeState, style = hazeStyle)
             // Inset kiri (cutout / bilah nav sistem), atas & bawah ditangani di sini
             .windowInsetsPadding(
                 WindowInsets.safeDrawing.only(

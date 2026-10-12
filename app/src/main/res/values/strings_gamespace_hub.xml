@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Game Space Hub (Super Base, Plugin Library, Game Center, Control Panel, Atmosphere).
-  Original ZKM UI. Banyak bagian baru kerangka UI: nilai tersimpan tapi belum diterapkan ke sistem.
+  Original ZKM Next UI. Banyak bagian baru kerangka UI: nilai tersimpan tapi belum diterapkan ke sistem.
 -->
 <resources>
     <!-- tab & Super Base -->

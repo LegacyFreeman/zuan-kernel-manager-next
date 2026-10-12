@@ -8,6 +8,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.miuithermal
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
 import com.zuan.kernelmanager.next.ui.components.zkmReferenceGlass
@@ -77,8 +78,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -454,7 +455,7 @@ fun MiuiThermalScreen(
             val colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(bgSaturation) })
             val uri = Uri.parse(bgUriString)
 
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 if (isVideo) {
                     VideoWallpaperPlayer(uri = uri, modifier = Modifier.fillMaxSize().then(blurModifier))
                 } else {
@@ -465,7 +466,7 @@ fun MiuiThermalScreen(
         } else {
             // Background digambar sebagai child di dalam hazeSource agar terekam
             // ke buffer haze (fix progressive blur appbar di mode non-custom).
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 Box(modifier = Modifier.fillMaxSize().background(mainBackgroundColor))
             }
         }
@@ -482,7 +483,7 @@ fun MiuiThermalScreen(
                 
                 // LAYER 1: SCROLLABLE CONTENT
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 1f),
+                    modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 1f),
                     contentPadding = PaddingValues(top = headerHeightDp, bottom = 100.dp, start = 16.dp, end = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
@@ -613,7 +614,7 @@ fun MiuiThermalScreen(
                         .onGloballyPositioned { coordinates ->
                             headerHeightPx = coordinates.size.height
                         }
-                        .hazeEffect(
+                        .zkmHazeEffect(
                             state = hazeState,
                             style = headerHazeStyle
                         ) {
@@ -636,7 +637,7 @@ fun MiuiThermalScreen(
                             Surface(
                                 modifier = Modifier.size(40.dp), 
                                 shape = zkmIconShape(CircleShape), 
-                                color = if(isGlassActive) Color.White.copy(0.2f) else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.75f)
+                                color = if(isGlassActive) Color.White.copy(0.2f) else MaterialTheme.colorScheme.primaryContainer.zkmLiteAlpha(0.75f)
                             ) {
                                 Box(contentAlignment = Alignment.Center) { 
                                     ZkmIconGlyph(icon = Icons.Rounded.Thermostat, tint = if(isGlassActive) Color.White else MaterialTheme.colorScheme.primary, iconSize = 24.dp) 
@@ -684,7 +685,7 @@ fun MiuiThermalScreen(
                             onClick = { filesDialog.visible = false; viewModel.openFile(path) },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(17.dp),
-                            colors = CardDefaults.cardColors(containerColor = if(isGlassActive) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.72f))
+                            colors = CardDefaults.cardColors(containerColor = if(isGlassActive) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surfaceContainer.zkmLiteAlpha(0.72f))
                         ) {
                             Row(Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                                 Icon(Icons.Rounded.Description, null, tint = effectivePrimary)
@@ -766,7 +767,7 @@ fun MiuiThermalScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(containerColor = if(isGlassActive) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.76f))
+                    colors = CardDefaults.cardColors(containerColor = if(isGlassActive) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surfaceContainer.zkmLiteAlpha(0.76f))
                 ) {
                     Text(viewModel.log.ifBlank { stringResource(R.string.miui_no_log) }, modifier = Modifier.padding(14.dp), color = textColor, style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace))
                 }
@@ -796,7 +797,7 @@ fun GlassActionCard(
     } else {
         Modifier.fillMaxWidth().clip(shape)
     }
-    Card(modifier = modifier, shape = shape, colors = CardDefaults.cardColors(containerColor = if (isGlassActive) zkmReferenceGlassFill() else MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.78f))) {
+    Card(modifier = modifier, shape = shape, colors = CardDefaults.cardColors(containerColor = if (isGlassActive) zkmReferenceGlassFill() else MaterialTheme.colorScheme.surfaceContainerHigh.zkmLiteAlpha(0.78f))) {
         content()
     }
 }
@@ -826,7 +827,7 @@ private fun ThermalOverviewCardGlass(
     Card(
         modifier = modifier,
         shape = shape,
-        colors = CardDefaults.cardColors(containerColor = if(isGlassActive) zkmReferenceGlassFill() else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.42f))
+        colors = CardDefaults.cardColors(containerColor = if(isGlassActive) zkmReferenceGlassFill() else MaterialTheme.colorScheme.primaryContainer.zkmLiteAlpha(0.42f))
     ) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -857,7 +858,7 @@ private fun ThermalOverviewCardGlass(
 
 @Composable
 private fun ThermalStatPillGlass(label: String, value: String, modifier: Modifier = Modifier, isGlassActive: Boolean, textColor: Color, subTextColor: Color) {
-    Surface(modifier = modifier, shape = RoundedCornerShape(15.dp), color = if(isGlassActive) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.58f)) {
+    Surface(modifier = modifier, shape = RoundedCornerShape(15.dp), color = if(isGlassActive) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.58f)) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 9.dp)) {
             Text(label, style = MaterialTheme.typography.labelSmall, color = subTextColor)
             Text(value, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = textColor, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -896,10 +897,10 @@ private fun ThermalModeCardGlass(
     Card(
         modifier = modifier,
         shape = shape,
-        colors = CardDefaults.cardColors(containerColor = if (isGlassActive) zkmReferenceGlassFill() else if (active) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.66f) else MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.8f))
+        colors = CardDefaults.cardColors(containerColor = if (isGlassActive) zkmReferenceGlassFill() else if (active) MaterialTheme.colorScheme.primaryContainer.zkmLiteAlpha(0.66f) else MaterialTheme.colorScheme.surfaceContainer.zkmLiteAlpha(0.8f))
     ) {
         Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-            Surface(modifier = Modifier.size(46.dp), shape = zkmIconShape(RoundedCornerShape(14.dp)), color = if (active) (if(isGlassActive) Color.White.copy(0.2f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)) else (if(isGlassActive) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f))) {
+            Surface(modifier = Modifier.size(46.dp), shape = zkmIconShape(RoundedCornerShape(14.dp)), color = if (active) (if(isGlassActive) Color.White.copy(0.2f) else MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)) else (if(isGlassActive) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.7f))) {
                 Box(contentAlignment = Alignment.Center) { ZkmIconGlyph(icon = if (active) Icons.Rounded.CheckCircle else Icons.Rounded.Upload, tint = if (active) (if(isGlassActive) zkmOnCustomBackgroundContentColor(zkmIsDarkTheme()) else MaterialTheme.colorScheme.primary) else subTextColor, iconSize = 24.dp) }
             }
             Spacer(Modifier.width(12.dp))
@@ -933,14 +934,14 @@ private fun ThermalEmptyStateGlass(icon: ImageVector, title: String, message: St
     Card(
         modifier = modifier,
         shape = shape,
-        colors = CardDefaults.cardColors(containerColor = if(isGlassActive) zkmReferenceGlassFill() else MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.72f))
+        colors = CardDefaults.cardColors(containerColor = if(isGlassActive) zkmReferenceGlassFill() else MaterialTheme.colorScheme.surfaceContainerLow.zkmLiteAlpha(0.72f))
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Surface(modifier = Modifier.size(56.dp), shape = zkmIconShape(CircleShape), color = if(isGlassActive) Color.White.copy(0.2f) else MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.72f)) {
+            Surface(modifier = Modifier.size(56.dp), shape = zkmIconShape(CircleShape), color = if(isGlassActive) Color.White.copy(0.2f) else MaterialTheme.colorScheme.primaryContainer.zkmLiteAlpha(0.72f)) {
                 Box(contentAlignment = Alignment.Center) { ZkmIconGlyph(icon = icon, tint = if(isGlassActive) zkmOnCustomBackgroundContentColor(zkmIsDarkTheme()) else primaryColor, iconSize = 24.dp) }
             }
             Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = textColor)
@@ -961,10 +962,10 @@ private fun ThermalFileCardGlass(path: String, onOpen: () -> Unit, isGlassActive
     Card(
         modifier = modifier,
         shape = shape,
-        colors = CardDefaults.cardColors(containerColor = if(isGlassActive) zkmReferenceGlassFill() else MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.8f))
+        colors = CardDefaults.cardColors(containerColor = if(isGlassActive) zkmReferenceGlassFill() else MaterialTheme.colorScheme.surfaceContainer.zkmLiteAlpha(0.8f))
     ) {
         Row(Modifier.fillMaxWidth().padding(13.dp), verticalAlignment = Alignment.CenterVertically) {
-            Surface(modifier = Modifier.size(44.dp), shape = zkmIconShape(RoundedCornerShape(13.dp)), color = if(isGlassActive) Color.White.copy(0.15f) else MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.72f)) {
+            Surface(modifier = Modifier.size(44.dp), shape = zkmIconShape(RoundedCornerShape(13.dp)), color = if(isGlassActive) Color.White.copy(0.15f) else MaterialTheme.colorScheme.secondaryContainer.zkmLiteAlpha(0.72f)) {
                 Box(contentAlignment = Alignment.Center) { ZkmIconGlyph(icon = Icons.Rounded.Description, tint = if(isGlassActive) zkmOnCustomBackgroundContentColor(zkmIsDarkTheme()) else MaterialTheme.colorScheme.secondary, iconSize = 24.dp) }
             }
             Spacer(Modifier.width(12.dp))

@@ -7,6 +7,8 @@
  */
 package com.zuan.kernelmanager.next.ui.components
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -30,7 +32,7 @@ import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.platform.LocalView
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
@@ -66,11 +68,11 @@ data class ZkmLiquidGlassSpec(
 fun rememberZkmLiquidGlassSpec(): ZkmLiquidGlassSpec {
     val context = LocalContext.current
     val prefs = remember { SettingsPreference.getInstance(context) }
-    val corner by prefs.liquidCornerRadius.collectAsState()
-    val blur by prefs.liquidBlurRadius.collectAsState()
-    val refHeight by prefs.liquidRefractionHeight.collectAsState()
-    val refAmount by prefs.liquidRefractionAmount.collectAsState()
-    val chroma by prefs.liquidChromaticAberration.collectAsState()
+    val corner by prefs.liquidCornerRadius.collectAsStateWithLifecycle()
+    val blur by prefs.liquidBlurRadius.collectAsStateWithLifecycle()
+    val refHeight by prefs.liquidRefractionHeight.collectAsStateWithLifecycle()
+    val refAmount by prefs.liquidRefractionAmount.collectAsStateWithLifecycle()
+    val chroma by prefs.liquidChromaticAberration.collectAsStateWithLifecycle()
     return remember(corner, blur, refHeight, refAmount, chroma) {
         ZkmLiquidGlassSpec(
             cornerRadius = corner.dp,
@@ -148,7 +150,7 @@ fun resolveLiquidGlassCardRequest(isGlassActive: Boolean): Pair<Backdrop, ZkmLiq
     if (!isGlassActive || !isLiquidGlassSupported()) return null
     val context = LocalContext.current
     val prefs = remember { SettingsPreference.getInstance(context) }
-    val style by prefs.cardGlassStyle.collectAsState()
+    val style by prefs.cardGlassStyle.collectAsStateWithLifecycle()
     if (style != CardGlassStyle.LIQUID_GLASS) return null
     val backdrop = LocalZkmLiquidBackdrop.current ?: return null
     if (!isInHostWindow()) return null
@@ -157,7 +159,7 @@ fun resolveLiquidGlassCardRequest(isGlassActive: Boolean): Pair<Backdrop, ZkmLiq
 }
 
 /**
- * Pengganti drop-in untuk pasangan `.clip(shape).hazeEffect(state, style)` pada
+ * Pengganti drop-in untuk pasangan `.clip(shape).zkmHazeEffect(state, style)` pada
  * KARTU. Jalur Haze = persis perilaku lama. Jalur Android Liquid Glass (Kyant)
  * dipakai bila user memilih style itu: corner radius, blur radius, refraction
  * height/amount dan chromatic aberration diambil dari pengaturan Wallpaper
@@ -175,14 +177,14 @@ fun Modifier.zkmCardHazeEffect(
         // Tint SERAGAM untuk semua kartu (mirip kartu DoD Manager: tipis, theme-aware).
         // Sebelumnya tint diambil dari warna Haze tiap call-site (Transparent / putih 5% /
         // putih 10% / warna kartu 50% ...) sehingga tampilan antar layar beda-beda.
-        val tint = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = ZkmLiquidCardTintAlpha)
+        val tint = MaterialTheme.colorScheme.surfaceContainer.zkmLiteAlpha(ZkmLiquidCardTintAlpha)
         Modifier.zkmLiquidGlassCard(
             backdrop = backdrop,
             spec = spec,
             tint = tint,
         )
     } else {
-        Modifier.clip(shape).hazeEffect(state = state, style = style)
+        Modifier.clip(shape).zkmHazeEffect(state = state, style = style)
     }
 }
 
@@ -214,7 +216,7 @@ fun Modifier.zkmLiquidSurface(cornerRadius: Dp? = null): Modifier = composed {
         Modifier.zkmLiquidGlassCard(
             backdrop = backdrop,
             spec = if (cornerRadius != null) spec.copy(cornerRadius = cornerRadius) else spec,
-            tint = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = ZkmLiquidCardTintAlpha),
+            tint = MaterialTheme.colorScheme.surfaceContainer.zkmLiteAlpha(ZkmLiquidCardTintAlpha),
         )
     } else {
         Modifier

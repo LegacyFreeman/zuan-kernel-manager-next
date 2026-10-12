@@ -111,6 +111,7 @@
         <activity 
             android:name=".ui.MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.ZuanTheme.SplashScreen"
             android:windowSoftInputMode="adjustResize"> 
             <intent-filter>
@@ -118,6 +119,67 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Invisible trampoline used by app shortcuts that run an action without opening the UI -->
+        <activity
+            android:name=".feature.widget.ShortcutActionActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.NoDisplay" />
+
+        <!-- HOME-SCREEN WIDGETS -->
+        <receiver
+            android:name=".feature.widget.PerformanceWidget"
+            android:exported="true"
+            android:label="@string/zw_name_performance">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/zw_info_performance" />
+        </receiver>
+        <receiver
+            android:name=".feature.widget.QuickActionsWidget"
+            android:exported="true"
+            android:label="@string/zw_name_toggles">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/zw_info_toggles" />
+        </receiver>
+        <receiver
+            android:name=".feature.widget.MenuWidget"
+            android:exported="true"
+            android:label="@string/zw_name_menu">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/zw_info_menu" />
+        </receiver>
+        <receiver
+            android:name=".feature.widget.GameLauncherWidget"
+            android:exported="true"
+            android:label="@string/zw_name_games">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/zw_info_games" />
+        </receiver>
+        <receiver
+            android:name=".feature.widget.LiveStatsWidget"
+            android:exported="true"
+            android:label="@string/zw_name_stats">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/zw_info_stats" />
+        </receiver>
+
+        <!-- Widget button + shortcut actions (CPU mode, clear RAM, refresh rate, DND) -->
+        <receiver
+            android:name=".feature.widget.WidgetActionReceiver"
+            android:exported="false" />
         
         <activity
             android:name="com.canhub.cropper.CropImageActivity"

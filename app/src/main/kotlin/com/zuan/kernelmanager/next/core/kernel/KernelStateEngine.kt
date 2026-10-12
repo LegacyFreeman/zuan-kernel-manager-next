@@ -4,7 +4,10 @@
  */
 package com.zuan.kernelmanager.next.core.kernel
 
+import android.app.Activity
+import android.app.Application
 import android.content.Context
+import android.os.Bundle
 import android.content.IntentFilter
 import android.os.BatteryManager
 import android.content.Intent
@@ -12,10 +15,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import com.zuan.kernelmanager.next.core.util.ZkmSamplerBus
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -92,6 +98,106 @@ object KernelStateEngine {
     private var sequence = 0L
     private val history = mutableListOf<State>()
 
+    // --- Adaptive sampling (Zkm perf stage 1) ---
+    // App di foreground = interval penuh. App di background = interval lambat (automation
+    // baterai/thermal tetap jalan, tapi tidak membakar CPU). Pergantian langsung membangunkan loop.
+    @Volatile private var startedActivities = 0
+    @Volatile private var lifecycleHooked = false
+    private val wake = Channel<Unit>(Channel.CONFLATED)
+    private const val BACKGROUND_INTERVAL_MS = 4_000L
+    private const val HEARTBEAT_MS = 3_000L // paksa emit tiap 3 dtk supaya State.stale tidak salah true
+    @Volatile private var lastEmitAt = 0L
+    @Volatile private var cachedPaths: List<String> = emptyList()
+    @Volatile private var cachedPathsKey = -1L
+
+    private fun hookLifecycle(app: Context) {
+        if (lifecycleHooked) return
+        val application = app.applicationContext as? Application ?: return
+        lifecycleHooked = true
+        application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityStarted(activity: Activity) {
+                val wasBackground = startedActivities == 0
+                startedActivities++
+                if (wasBackground) wake.trySend(Unit)
+            }
+            override fun onActivityStopped(activity: Activity) {
+                startedActivities = (startedActivities - 1).coerceAtLeast(0)
+            }
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+            override fun onActivityResumed(activity: Activity) {}
+            override fun onActivityPaused(activity: Activity) {}
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+            override fun onActivityDestroyed(activity: Activity) {}
+        })
+    }
+
+    private fun pathsFor(snapshot: KernelCapabilityEngine.Snapshot): List<String> {
+        val key = snapshot.generatedAt
+        val cached = cachedPaths
+        if (key == cachedPathsKey && cached.isNotEmpty()) return cached
+        val built = buildPaths(snapshot.topology)
+        cachedPaths = built
+        cachedPathsKey = key
+        return built
+    }
+
+    private fun buildPaths(topology: KernelCapabilityEngine.Topology): List<String> {
+        val paths = LinkedHashSet<String>()
+        paths += "/proc/stat"
+        paths += "/proc/meminfo"
+        paths += "/proc/pressure/memory"
+        paths += "/proc/pressure/cpu"
+        paths += "/sys/class/power_supply/battery/capacity"
+        paths += "/sys/class/power_supply/battery/status"
+        paths += "/sys/class/power_supply/battery/voltage_now"
+        paths += "/sys/class/power_supply/battery/current_now"
+        paths += "/sys/class/power_supply/battery/temp"
+        paths += "/sys/block/zram0/disksize"
+        paths += "/sys/block/zram0/mem_used_total"
+        paths += "/sys/class/kgsl/kgsl-3d0/gpuclk"
+        topology.cpuPolicies.forEach { policy ->
+            val base = "/sys/devices/system/cpu/cpufreq/$policy"
+            paths += "$base/scaling_cur_freq"
+            paths += "$base/scaling_min_freq"
+            paths += "$base/scaling_max_freq"
+            paths += "$base/scaling_governor"
+        }
+        topology.gpuDevfreq.forEach { gpu ->
+            val base = "/sys/class/devfreq/$gpu"
+            paths += "$base/cur_freq"
+            paths += "$base/min_freq"
+            paths += "$base/max_freq"
+            paths += "$base/governor"
+        }
+        topology.thermalZones.forEach {
+            paths += "/sys/class/thermal/$it/type"
+            paths += "/sys/class/thermal/$it/temp"
+        }
+        topology.blockDevices.forEach {
+            paths += "/sys/block/$it/queue/scheduler"
+        }
+        return paths.toList()
+    }
+
+    private fun sameContent(prev: State, next: State): Boolean =
+        prev.timestamp != 0L &&
+            prev.copy(
+                timestamp = next.timestamp,
+                sequence = next.sequence,
+                collectionLatencyMs = next.collectionLatencyMs
+            ) == next
+
+    private fun publish(next: State) {
+        val prev = state.value
+        if (sameContent(prev, next) && next.timestamp - lastEmitAt < HEARTBEAT_MS) return
+        lastEmitAt = next.timestamp
+        state.value = next
+        synchronized(history) {
+            history.add(next)
+            while (history.size > 60) history.removeAt(0)
+        }
+    }
+
     suspend fun refresh(context: Context): State = mutex.withLock {
         withContext(Dispatchers.IO) {
             val started = System.nanoTime()
@@ -103,42 +209,8 @@ object KernelStateEngine {
             }
             val topology = snapshot.topology
 
-            val paths = LinkedHashSet<String>()
-            paths += "/proc/stat"
-            paths += "/proc/meminfo"
-            paths += "/proc/pressure/memory"
-            paths += "/proc/pressure/cpu"
-            paths += "/sys/class/power_supply/battery/capacity"
-            paths += "/sys/class/power_supply/battery/status"
-            paths += "/sys/class/power_supply/battery/voltage_now"
-            paths += "/sys/class/power_supply/battery/current_now"
-            paths += "/sys/class/power_supply/battery/temp"
-            paths += "/sys/block/zram0/disksize"
-            paths += "/sys/block/zram0/mem_used_total"
-            paths += "/sys/class/kgsl/kgsl-3d0/gpuclk"
-            topology.cpuPolicies.forEach { policy ->
-                val base = "/sys/devices/system/cpu/cpufreq/$policy"
-                paths += "$base/scaling_cur_freq"
-                paths += "$base/scaling_min_freq"
-                paths += "$base/scaling_max_freq"
-                paths += "$base/scaling_governor"
-            }
-            topology.gpuDevfreq.forEach { gpu ->
-                val base = "/sys/class/devfreq/$gpu"
-                paths += "$base/cur_freq"
-                paths += "$base/min_freq"
-                paths += "$base/max_freq"
-                paths += "$base/governor"
-            }
-            topology.thermalZones.forEach {
-                paths += "/sys/class/thermal/$it/type"
-                paths += "/sys/class/thermal/$it/temp"
-            }
-            topology.blockDevices.forEach {
-                paths += "/sys/block/$it/queue/scheduler"
-            }
-
-            val values = KernelRootRuntime.readNodes(paths.toList())
+            val pathList = pathsFor(snapshot)
+            val values = KernelRootRuntime.readNodes(pathList)
             val cpu = parseCpu(values["/proc/stat"].orEmpty())
             val cpuLoad = computeCpuLoad(cpu.first, cpu.second)
             val mem = parseMeminfo(values["/proc/meminfo"].orEmpty())
@@ -200,13 +272,7 @@ object KernelStateEngine {
                 runtimeFailures = runtime.failures,
                 healthy = runtime.daemonConnected && runtime.lastError == null && (cpu.first > 0L || mem.totalMb > 0),
                 error = if (runtime.lastError != null) runtime.lastError else null
-            ).also {
-                state.value = it
-                synchronized(history) {
-                    history.add(it)
-                    while (history.size > 60) history.removeAt(0)
-                }
-            }
+            ).also { publish(it) }
         }
     }
 
@@ -215,12 +281,20 @@ object KernelStateEngine {
         val app = context.applicationContext
         monitorJob = scope.launch {
             KernelRootRuntime.initialize(app)
+            hookLifecycle(app)
             while (isActive) {
+                // Screen-Off Deep Sleep (Adopsi dari VTools ScreenOffCleanup)
+                if (!ZkmSamplerBus.isScreenOn.value) {
+                    ZkmSamplerBus.isScreenOn.first { it }
+                }
+
                 runCatching { refresh(app) }.onFailure { throwable ->
                     val old = state.value
                     state.value = old.copy(error = throwable.message ?: throwable.javaClass.simpleName, healthy = false)
                 }
-                delay(intervalMs.coerceAtLeast(1000L))
+                val fg = startedActivities > 0
+                val wait = if (fg) intervalMs.coerceAtLeast(1000L) else maxOf(intervalMs, BACKGROUND_INTERVAL_MS)
+                withTimeoutOrNull(wait) { wake.receive() }
             }
         }
     }
@@ -236,9 +310,32 @@ object KernelStateEngine {
 
     private data class CpuSample(val total: Long, val idle: Long)
     private fun parseCpu(raw: String): Pair<Long, Long> {
-        val line = raw.lineSequence().firstOrNull { it.startsWith("cpu ") }.orEmpty()
-        val v = line.trim().split(Regex("\\s+")).drop(1).mapNotNull { it.toLongOrNull() }
-        return (v.sum()) to ((v.getOrNull(3) ?: 0L) + (v.getOrNull(4) ?: 0L))
+        val end = raw.indexOf('\n').let { if (it < 0) raw.length else it }
+        if (!raw.startsWith("cpu ")) {
+            val idx = raw.indexOf("\ncpu ")
+            if (idx < 0) return 0L to 0L
+            return parseCpuLine(raw, idx + 1, raw.indexOf('\n', idx + 1).let { if (it < 0) raw.length else it })
+        }
+        return parseCpuLine(raw, 0, end)
+    }
+
+    private fun parseCpuLine(raw: String, from: Int, to: Int): Pair<Long, Long> {
+        var i = from + 3
+        var field = 0
+        var total = 0L
+        var idle = 0L
+        while (i < to) {
+            while (i < to && raw[i] == ' ') i++
+            if (i >= to) break
+            var v = 0L
+            var digits = 0
+            while (i < to && raw[i] in '0'..'9') { v = v * 10 + (raw[i] - '0'); i++; digits++ }
+            if (digits == 0) { i++; continue }
+            total += v
+            if (field == 3 || field == 4) idle += v
+            field++
+        }
+        return total to idle
     }
 
     private fun computeCpuLoad(total: Long, idle: Long): Int {
@@ -257,10 +354,25 @@ object KernelStateEngine {
 
     private data class Memory(val usedMb: Int, val totalMb: Int, val availableMb: Int)
     private fun parseMeminfo(raw: String): Memory {
-        fun kb(name: String): Long = raw.lineSequence().firstOrNull { it.startsWith(name) }
-            ?.substringAfter(':')?.trim()?.split(Regex("\\s+"))?.firstOrNull()?.toLongOrNull() ?: 0L
-        val total = kb("MemTotal")
-        val available = kb("MemAvailable")
+        var total = 0L
+        var available = 0L
+        var found = 0
+        var pos = 0
+        while (pos < raw.length && found < 2) {
+            var eol = raw.indexOf('\n', pos)
+            if (eol < 0) eol = raw.length
+            val isTotal = raw.startsWith("MemTotal", pos)
+            val isAvail = !isTotal && raw.startsWith("MemAvailable", pos)
+            if (isTotal || isAvail) {
+                var i = raw.indexOf(':', pos) + 1
+                while (i < eol && raw[i] == ' ') i++
+                var v = 0L
+                while (i < eol && raw[i] in '0'..'9') { v = v * 10 + (raw[i] - '0'); i++ }
+                if (isTotal) total = v else available = v
+                found++
+            }
+            pos = eol + 1
+        }
         return Memory(((total - available).coerceAtLeast(0L) / 1024L).toInt(), (total / 1024L).toInt(), (available / 1024L).toInt())
     }
 

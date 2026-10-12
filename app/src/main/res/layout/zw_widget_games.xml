@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/zw_root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="10dp" android:background="@drawable/zw_bg">
+    <LinearLayout android:id="@+id/zw_header" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/zw_ic_game"
+            android:tint="@color/zw_accent" android:contentDescription="@null" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp"
+            android:text="Game Launcher" android:textColor="@color/zw_text" android:textSize="14sp" android:textStyle="bold" />
+        <TextView android:id="@+id/zw_games_status" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginStart="8dp" android:textColor="@color/zw_text_dim" android:textSize="11sp"
+            android:maxLines="1" android:ellipsize="end" />
+    </LinearLayout>
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal">
+        <LinearLayout android:id="@+id/zw_g0" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:visibility="invisible">
+            <ImageView android:id="@+id/zw_g0_icon" android:layout_width="46dp" android:layout_height="46dp"
+                android:scaleType="fitCenter" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_g0_label" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:gravity="center" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_g1" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:visibility="invisible">
+            <ImageView android:id="@+id/zw_g1_icon" android:layout_width="46dp" android:layout_height="46dp"
+                android:scaleType="fitCenter" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_g1_label" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:gravity="center" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_g2" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:visibility="invisible">
+            <ImageView android:id="@+id/zw_g2_icon" android:layout_width="46dp" android:layout_height="46dp"
+                android:scaleType="fitCenter" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_g2_label" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:gravity="center" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_g3" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:visibility="invisible">
+            <ImageView android:id="@+id/zw_g3_icon" android:layout_width="46dp" android:layout_height="46dp"
+                android:scaleType="fitCenter" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_g3_label" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:gravity="center" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        </LinearLayout>
+        <TextView android:id="@+id/zw_games_empty" android:layout_width="match_parent" android:layout_height="match_parent"
+            android:gravity="center" android:textColor="@color/zw_text_dim" android:textSize="12sp" android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

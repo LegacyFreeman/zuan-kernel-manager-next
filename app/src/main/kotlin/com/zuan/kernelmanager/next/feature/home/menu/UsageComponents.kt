@@ -103,8 +103,8 @@ import com.zuan.kernelmanager.next.ui.components.zkmReferenceGlassFill
 import com.zuan.kernelmanager.next.ui.theme.zkmIsDarkTheme
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 
 /**
  * Komponen bersama untuk layar Home baru: Screen Time, Battery Usage, Charge Stats.
@@ -207,7 +207,7 @@ fun UsageScreenScaffold(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .hazeSource(state = hazeState, zIndex = 1f)
+                        .zkmHazeSource(state = hazeState, zIndex = 1f)
                         .verticalScroll(rememberScrollState())
                         .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -223,7 +223,7 @@ fun UsageScreenScaffold(
                         .align(Alignment.TopCenter)
                         .fillMaxWidth()
                         .onGloballyPositioned { headerHeightPx = it.size.height }
-                        .hazeEffect(state = hazeState, style = headerHazeStyle) {
+                        .zkmHazeEffect(state = hazeState, style = headerHazeStyle) {
                             progressive = HazeProgressive.verticalGradient(
                                 startIntensity = 1f,
                                 endIntensity = 0f

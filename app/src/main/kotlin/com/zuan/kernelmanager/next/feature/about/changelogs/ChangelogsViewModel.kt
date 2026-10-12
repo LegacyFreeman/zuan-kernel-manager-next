@@ -43,6 +43,12 @@ enum class UpdateSourceMode {
 
 class ChangelogsViewModel(application: Application) : AndroidViewModel(application) {
     
+    private val currentVersionName: String = try {
+        application.packageManager.getPackageInfo(application.packageName, 0).versionName ?: "0.0.0"
+    } catch (e: Exception) {
+        "0.0.0"
+    }
+
     private val _uiState = MutableStateFlow(ChangelogsUiState())
     val uiState: StateFlow<ChangelogsUiState> = _uiState.asStateFlow()
     
@@ -81,9 +87,9 @@ class ChangelogsViewModel(application: Application) : AndroidViewModel(applicati
             
             val result = when (targetMode) {
                 UpdateSourceMode.GITHUB -> 
-                    ChangelogsUtils.fetchLatestRelease(_uiState.value.currentVersionCode)
+                    ChangelogsUtils.fetchLatestRelease(currentVersionName)
                 UpdateSourceMode.TELEGRAM -> 
-                    ChangelogsUtils.fetchTelegramLatestPost(_uiState.value.currentVersionCode)
+                    ChangelogsUtils.fetchTelegramLatestPost(currentVersionName)
             }
             
             result.onSuccess { release ->

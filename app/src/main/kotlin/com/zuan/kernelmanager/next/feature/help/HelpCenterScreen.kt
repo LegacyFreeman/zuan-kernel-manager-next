@@ -76,7 +76,7 @@ import com.zuan.kernelmanager.next.ui.components.zkmGlassCard
 import com.zuan.kernelmanager.next.ui.components.zkmGlassFallbackTint
 import com.zuan.kernelmanager.next.ui.theme.ThemeMode
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 
 /**
  * Help & Documentation center: every menu explained, plus general FAQ.
@@ -160,7 +160,7 @@ fun HelpCenterScreen(
     // Haze app bar hanya dipasang bila ada sumber haze; tanpa itu style
     // tetap valid tapi tidak ada yang di-blur, jadi modifier dilewati.
     val appBarModifier = if (hazeState != null) {
-        Modifier.hazeEffect(
+        Modifier.zkmHazeEffect(
             state = hazeState,
             style = headerHazeStyle,
         ) { progressive = ZkmAppBarProgressive }

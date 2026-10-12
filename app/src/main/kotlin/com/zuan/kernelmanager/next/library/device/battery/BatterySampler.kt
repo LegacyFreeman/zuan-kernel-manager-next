@@ -35,8 +35,20 @@ data class BatteryReading(
 object BatterySampler {
 
     private const val CURRENT_NODE = "/sys/class/power_supply/battery/current_now"
+    private const val CACHE_DURATION_MS = 500L
+
+    @Volatile private var cachedReading: BatteryReading? = null
+    @Volatile private var cachedAtMs = 0L
 
     fun read(context: Context): BatteryReading {
+        // Multi-consumer cache 500ms (Adopsi pola CpuLoadUtils dari VTools)
+        // Mencegah multiple widget membaca IPC BatteryManager dan sysfs storage berulang kali.
+        val now = android.os.SystemClock.elapsedRealtime()
+        val cached = cachedReading
+        if (cached != null && now - cachedAtMs < CACHE_DURATION_MS) {
+            return cached
+        }
+
         val app = context.applicationContext
         val intent: Intent? = app.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
 
@@ -52,7 +64,10 @@ object BatterySampler {
         val signedMa = if (charging) magnitudeMa else -magnitudeMa
         val watt = voltageV * signedMa / 1000f
 
-        return BatteryReading(level, tempC, voltageV, signedMa, watt, charging, status)
+        val result = BatteryReading(level, tempC, voltageV, signedMa, watt, charging, status)
+        cachedReading = result
+        cachedAtMs = now
+        return result
     }
 
     /** Arus (mA, tanpa tanda). Kernel bisa melapor µA atau mA -> samakan. */

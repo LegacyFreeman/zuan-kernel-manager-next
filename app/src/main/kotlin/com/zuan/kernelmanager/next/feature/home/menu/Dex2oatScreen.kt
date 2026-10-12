@@ -80,8 +80,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.rememberHazeState
 import androidx.compose.foundation.border
@@ -203,7 +203,7 @@ fun Dex2oatScreen(
             val colorFilter = ColorFilter.colorMatrix(saturationMatrix)
             val uri = Uri.parse(bgUriString)
 
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 if (isVideo) {
                     VideoWallpaperPlayer(
                         uri = uri, 
@@ -225,7 +225,7 @@ fun Dex2oatScreen(
         } else {
             // Background digambar sebagai child di dalam hazeSource agar terekam
             // ke buffer haze (fix progressive blur appbar di mode non-custom).
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 Box(modifier = Modifier.fillMaxSize().background(mainBackgroundColor))
             }
         }
@@ -265,7 +265,7 @@ fun Dex2oatScreen(
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 1f),
+                        modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 1f),
                         contentPadding = PaddingValues(
                             top = headerHeightDp,
                             bottom = 100.dp
@@ -356,7 +356,7 @@ fun Dex2oatScreen(
                         .onGloballyPositioned { coordinates ->
                             headerHeightPx = coordinates.size.height
                         }
-                        .hazeEffect(
+                        .zkmHazeEffect(
                             state = hazeState,
                             style = headerHazeStyle
                         ) {

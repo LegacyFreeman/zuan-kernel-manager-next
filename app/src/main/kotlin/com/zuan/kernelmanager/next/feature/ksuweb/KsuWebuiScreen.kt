@@ -13,6 +13,7 @@
 )
 
 package com.zuan.kernelmanager.next.feature.ksuweb
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.ConfigureSheetWindowBlur
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
 import com.zuan.kernelmanager.next.ui.components.zkmCardBorder
@@ -118,8 +119,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
@@ -327,7 +328,7 @@ fun KsuWebuiScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .hazeSource(state = localHazeState, zIndex = 0f)
+                        .zkmHazeSource(state = localHazeState, zIndex = 0f)
                 ) {
                     if (isVideo) {
                         VideoWallpaperPlayer(
@@ -356,7 +357,7 @@ fun KsuWebuiScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .hazeSource(state = localHazeState, zIndex = 0f)
+                        .zkmHazeSource(state = localHazeState, zIndex = 0f)
                 )
             }
             
@@ -396,7 +397,7 @@ fun KsuWebuiScreen(
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .hazeSource(state = localHazeState, zIndex = 1f),
+                                .zkmHazeSource(state = localHazeState, zIndex = 1f),
                             contentPadding = PaddingValues(
                                 top = headerHeightDp + 8.dp, 
                                 bottom = 100.dp
@@ -430,7 +431,7 @@ fun KsuWebuiScreen(
                         .align(Alignment.TopCenter)
                         .fillMaxWidth()
                         .onGloballyPositioned { headerHeightPx = it.size.height }
-                        .hazeEffect(
+                        .zkmHazeEffect(
                             state = localHazeState,
                             style = headerHazeStyle
                         ) {
@@ -514,7 +515,7 @@ fun KsuWebuiScreen(
                     onDismissRequest = { showBottomSheet = false },
                     sheetState = bottomSheetState,
                     containerColor = if (isCustomBg) 
-                        MaterialTheme.colorScheme.surface.copy(alpha = 0.95f) 
+                        MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.95f) 
                     else 
                         MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)

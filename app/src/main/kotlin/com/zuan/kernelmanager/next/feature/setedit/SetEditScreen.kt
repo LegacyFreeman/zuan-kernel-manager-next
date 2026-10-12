@@ -8,6 +8,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class, ExperimentalFoundationApi::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.setedit
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.ConfigureSheetWindowBlur
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
 import com.zuan.kernelmanager.next.ui.components.zkmCardFill
@@ -118,8 +119,8 @@ import com.zuan.kernelmanager.next.feature.settings.SettingsViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -419,7 +420,7 @@ fun SetEditScreen(
                 val colorFilter = ColorFilter.colorMatrix(saturationMatrix)
                 val uri = Uri.parse(bgUriString)
 
-                Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+                Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                     if (isVideo) {
                         VideoWallpaperPlayer(uri = uri, modifier = Modifier.fillMaxSize().then(blurModifier))
                     } else {
@@ -430,12 +431,12 @@ fun SetEditScreen(
                     }
                 }
             } else {
-                Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f))
+                Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f))
             }
             
             WeatherEffectOverlay(effect = weatherEffect, intensity = weatherIntensity, modifier = Modifier.fillMaxSize())
 
-            HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize().padding(bottom = innerPadding.calculateBottomPadding()).hazeSource(state = hazeState, zIndex = 1f)) { pageIndex ->
+            HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize().padding(bottom = innerPadding.calculateBottomPadding()).zkmHazeSource(state = hazeState, zIndex = 1f)) { pageIndex ->
                 if (pageIndex == detectPageIndex) {
                     PropDetectedPage(
                         hasConsent = detectHasConsent,
@@ -478,7 +479,7 @@ fun SetEditScreen(
 
             Column(
                 modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter).zIndex(2f).onGloballyPositioned { coordinates -> headerHeightPx = coordinates.size.height }
-                    .hazeEffect(state = hazeState, style = headerHazeStyle) { progressive = dev.chrisbanes.haze.HazeProgressive.verticalGradient(startIntensity = 1f, endIntensity = 0f) }
+                    .zkmHazeEffect(state = hazeState, style = headerHazeStyle) { progressive = dev.chrisbanes.haze.HazeProgressive.verticalGradient(startIntensity = 1f, endIntensity = 0f) }
                     .zIndex(2f)
             ) {
                 Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
@@ -511,8 +512,8 @@ fun SetEditScreen(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp).height(56.dp),
                     shape = RoundedCornerShape(50),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = if(isCustomBg) Color.White.copy(0.15f) else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.6f),
-                        unfocusedContainerColor = if(isCustomBg) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.6f),
+                        focusedContainerColor = if(isCustomBg) Color.White.copy(0.15f) else MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(0.6f),
+                        unfocusedContainerColor = if(isCustomBg) Color.White.copy(0.1f) else MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(0.6f),
                         focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent, cursorColor = finalPrimary,
                         focusedTextColor = headerTextColor, unfocusedTextColor = headerTextColor
                     ),
@@ -853,7 +854,7 @@ fun SetEditItemCard(item: SetEditItem, onClick: () -> Unit, isGlassActive: Boole
 
     val textColor = if (isGlassActive || cardColor.alpha < 1f) zkmOnCustomBackgroundContentColor(zkmIsDarkTheme()) else MaterialTheme.colorScheme.onSurface
     val iconTint = if (isGlassActive || cardColor.alpha < 1f) zkmOnCustomBackgroundContentColor(zkmIsDarkTheme()).copy(0.8f) else primaryColor.copy(alpha = 0.8f)
-    val valueBoxColor = if (isGlassActive || cardColor.alpha < 1f) Color.White.copy(0.15f) else MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.5f)
+    val valueBoxColor = if (isGlassActive || cardColor.alpha < 1f) Color.White.copy(0.15f) else MaterialTheme.colorScheme.surfaceContainerHigh.zkmLiteAlpha(0.5f)
     val valueTextColor = if (isGlassActive || cardColor.alpha < 1f) zkmOnCustomBackgroundContentColor(zkmIsDarkTheme()).copy(0.9f) else MaterialTheme.colorScheme.secondary
 
     Card(onClick = onClick, shape = shape, colors = CardDefaults.cardColors(containerColor = if (isGlassActive) zkmReferenceGlassFill() else cardColor), modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 2.dp).then(glassModifier)) {

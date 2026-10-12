@@ -87,8 +87,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import kotlinx.coroutines.delay
 import com.zuan.kernelmanager.next.ui.components.ZkmHazeStyleCache
@@ -316,7 +316,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(mainBackgroundColor)
-                    .hazeSource(state = hazeState, zIndex = 0f)
+                    .zkmHazeSource(state = hazeState, zIndex = 0f)
             ) {
                 if (isCustomBg && bgUriString != null) {
                     val blurModifier = if (isBgBlur && blurStrength > 0f) {
@@ -377,7 +377,7 @@ fun HomeScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 1f)
+                    .zkmHazeSource(state = hazeState, zIndex = 1f)
                     .verticalScroll(scrollState)
                     .padding(horizontal = sidePadding)
             ) {
@@ -433,7 +433,7 @@ fun HomeScreen(
                     .align(Alignment.TopCenter)
                     .fillMaxWidth()
                     .onGloballyPositioned { headerHeightPx = it.size.height }
-                    .hazeEffect(
+                    .zkmHazeEffect(
                         state = hazeState,
                         style = headerHazeStyle
                     ) {
@@ -591,7 +591,7 @@ fun CompactFeatureCard(
 
             Spacer(modifier = Modifier.width(14.dp))
 
-            val activeMode by com.zuan.kernelmanager.next.core.mode.WorkingModeManager.mode.collectAsState()
+            val activeMode by com.zuan.kernelmanager.next.core.mode.WorkingModeManager.mode.collectAsStateWithLifecycle()
             val requiredMode = com.zuan.kernelmanager.next.core.mode.FeatureAccess.requiredMode(item.route)
             val locked = activeMode.rank < requiredMode.rank
 

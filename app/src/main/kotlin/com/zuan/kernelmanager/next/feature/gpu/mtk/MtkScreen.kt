@@ -76,8 +76,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import kotlinx.coroutines.launch
 import com.zuan.kernelmanager.next.ui.components.ZkmHazeStyleCache
@@ -94,7 +94,7 @@ fun MtkScreen(
     viewModel: MtkViewModel = viewModel(),
     settingsViewModel: SettingsViewModel = viewModel()
 ) {
-    val uiState by viewModel.state.collectAsState()
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     
     val tabs = remember {
@@ -183,7 +183,7 @@ fun MtkScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(if (isCustomBg) Color.Transparent else mainBackgroundColor)
-                    .hazeSource(state = hazeState, zIndex = 0f)
+                    .zkmHazeSource(state = hazeState, zIndex = 0f)
             ) {
                 if (isCustomBg && bgUriString != null) {
                     val blurModifier = if (isBgBlur && blurStrength > 0f) Modifier.blur(blurStrength.dp) else if (isBgBlur) Modifier.blur(20.dp) else Modifier
@@ -210,7 +210,7 @@ fun MtkScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 1f)
+                    .zkmHazeSource(state = hazeState, zIndex = 1f)
             ) {
                 HorizontalPager(
                     state = pagerState,
@@ -305,7 +305,7 @@ fun MtkScreen(
                             headerHeightPx = coordinates.size.height
                         }
                     }
-                    .hazeEffect(
+                    .zkmHazeEffect(
                         state = hazeState,
                         style = headerHazeStyle
                     ) {
@@ -407,7 +407,7 @@ private fun MtkExpressiveTabRow(
 
             if (isSelected && isGlassActive && hazeState != null) {
                 tabModifier = tabModifier
-                    .hazeEffect(
+                    .zkmHazeEffect(
                         state = hazeState,
                         style = ZkmHazeStyleCache.of(
                             backgroundColor = activeColor.copy(alpha = 0.3f),

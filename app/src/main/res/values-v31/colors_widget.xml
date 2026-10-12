@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="zw_bg">@android:color/system_neutral1_50</color>
+    <color name="zw_card">@android:color/system_neutral1_10</color>
+    <color name="zw_chip">@android:color/system_accent2_100</color>
+    <color name="zw_text">@android:color/system_neutral1_900</color>
+    <color name="zw_text_dim">@android:color/system_neutral2_600</color>
+    <color name="zw_accent">@android:color/system_accent1_600</color>
+    <color name="zw_on_accent">@android:color/system_accent1_0</color>
+</resources>

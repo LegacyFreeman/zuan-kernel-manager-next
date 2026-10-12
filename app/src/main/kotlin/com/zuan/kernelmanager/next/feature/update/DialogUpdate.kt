@@ -44,7 +44,7 @@ import com.zuan.kernelmanager.next.R
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.zuan.kernelmanager.next.ui.components.ZkmHazeStyleCache

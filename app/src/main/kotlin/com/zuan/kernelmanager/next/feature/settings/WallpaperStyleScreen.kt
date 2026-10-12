@@ -13,6 +13,7 @@
 
 package com.zuan.kernelmanager.next.feature.settings
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zuan.kernelmanager.next.ui.components.ConfigureSheetWindowBlur
 import android.net.Uri
 import android.os.Build
@@ -83,7 +84,7 @@ import com.zuan.kernelmanager.next.ui.components.VideoWallpaperPlayer
 import com.zuan.kernelmanager.next.ui.components.WeatherEffectOverlay
 import com.zuan.kernelmanager.next.ui.theme.ThemeMode
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import com.zuan.kernelmanager.next.ui.theme.zkmIconShape
@@ -111,23 +112,23 @@ fun WallpaperStyleScreen(
     navController: NavController,
     viewModel: WallpaperStyleViewModel = viewModel()
 ) {
-    val themeMode by viewModel.themeMode.collectAsState()
-    val isDynamic by viewModel.isDynamicColor.collectAsState()
-    val selectedThemeColor by viewModel.currentThemeColor.collectAsState()
-    val effectiveColor by viewModel.effectiveThemeColor.collectAsState()
+    val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
+    val isDynamic by viewModel.isDynamicColor.collectAsStateWithLifecycle()
+    val selectedThemeColor by viewModel.currentThemeColor.collectAsStateWithLifecycle()
+    val effectiveColor by viewModel.effectiveThemeColor.collectAsStateWithLifecycle()
 
-    val isCustomColor by viewModel.isCustomColor.collectAsState()
-    val customPrimary by viewModel.customPrimaryColor.collectAsState()
-    val customSecondary by viewModel.customSecondaryColor.collectAsState()
-    val customTertiary by viewModel.customTertiaryColor.collectAsState()
+    val isCustomColor by viewModel.isCustomColor.collectAsStateWithLifecycle()
+    val customPrimary by viewModel.customPrimaryColor.collectAsStateWithLifecycle()
+    val customSecondary by viewModel.customSecondaryColor.collectAsStateWithLifecycle()
+    val customTertiary by viewModel.customTertiaryColor.collectAsStateWithLifecycle()
 
-    val weatherEffect by viewModel.weatherEffect.collectAsState()
-    val weatherIntensity by viewModel.weatherIntensity.collectAsState()
+    val weatherEffect by viewModel.weatherEffect.collectAsStateWithLifecycle()
+    val weatherIntensity by viewModel.weatherIntensity.collectAsStateWithLifecycle()
 
-    val bgSaturation by viewModel.bgSaturation.collectAsState()
-    val blurStrength by viewModel.blurStrength.collectAsState()
-    val isBgBlur by viewModel.isBgBlur.collectAsState()
-    val bgContrast by viewModel.bgContrast.collectAsState()
+    val bgSaturation by viewModel.bgSaturation.collectAsStateWithLifecycle()
+    val blurStrength by viewModel.blurStrength.collectAsStateWithLifecycle()
+    val isBgBlur by viewModel.isBgBlur.collectAsStateWithLifecycle()
+    val bgContrast by viewModel.bgContrast.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val isDark = when (themeMode) {
@@ -617,10 +618,14 @@ fun FontSelectionSheetContent(
     onImportCustomFont: () -> Unit,
     onDone: () -> Unit
 ) {
-    val selected by viewModel.appFontChoice.collectAsState()
+    val selected by viewModel.appFontChoice.collectAsStateWithLifecycle()
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     Column(
-        modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = bottomInset + 110.dp)
     ) {
         Text(stringResource(R.string.wall_app_font), style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
         Spacer(Modifier.height(6.dp))
@@ -685,11 +690,11 @@ fun IconShapeSelectionSheetContent(
     viewModel: WallpaperStyleViewModel,
     onDone: () -> Unit
 ) {
-    val selected by viewModel.iconShapeStyle.collectAsState()
-    val customImagePath by viewModel.customIconImagePath.collectAsState()
-    val customImagePaths by viewModel.customIconImagePaths.collectAsState()
-    val menuShapeStyles by viewModel.menuIconShapes.collectAsState()
-    val autoImageColor by viewModel.autoIconImageColor.collectAsState()
+    val selected by viewModel.iconShapeStyle.collectAsStateWithLifecycle()
+    val customImagePath by viewModel.customIconImagePath.collectAsStateWithLifecycle()
+    val customImagePaths by viewModel.customIconImagePaths.collectAsStateWithLifecycle()
+    val menuShapeStyles by viewModel.menuIconShapes.collectAsStateWithLifecycle()
+    val autoImageColor by viewModel.autoIconImageColor.collectAsStateWithLifecycle()
     val iconMenuOptions = remember {
         listOf(
             NavigationRoute.Terminal.route to R.string.ext_terminal,
@@ -729,8 +734,12 @@ fun IconShapeSelectionSheetContent(
         Icons.Rounded.Settings
     )
 
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     Column(
-        modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = bottomInset + 110.dp)
     ) {
         Text(stringResource(R.string.wall_icon_shapes), style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold))
         Spacer(Modifier.height(6.dp))
@@ -951,8 +960,8 @@ fun EffectsStudioScreen(
     onClose: () -> Unit
 ) {
     var selectedCategory by remember { mutableStateOf("Weather") }
-    val bgType by viewModel.bgType.collectAsState()
-    val backgroundUri by viewModel.backgroundImageUri.collectAsState()
+    val bgType by viewModel.bgType.collectAsStateWithLifecycle()
+    val backgroundUri by viewModel.backgroundImageUri.collectAsStateWithLifecycle()
     val customBackgroundActive = bgType == BgType.GALLERY && backgroundUri != null
     val visibleWeatherEffect = if (customBackgroundActive || weatherEffect == WeatherEffect.NONE || weatherEffect == WeatherEffect.SNOW) {
         weatherEffect
@@ -1192,18 +1201,20 @@ fun ColorsSelectionSheetContent(
     viewModel: WallpaperStyleViewModel,
     onShowCustomColorPicker: (ColorType) -> Unit
 ) {
-    val isDynamic by viewModel.isDynamicColor.collectAsState()
-    val selectedThemeColor by viewModel.currentThemeColor.collectAsState()
-    val isCustomColor by viewModel.isCustomColor.collectAsState()
-    val customPrimary by viewModel.customPrimaryColor.collectAsState()
-    val customSecondary by viewModel.customSecondaryColor.collectAsState()
-    val customTertiary by viewModel.customTertiaryColor.collectAsState()
+    val isDynamic by viewModel.isDynamicColor.collectAsStateWithLifecycle()
+    val selectedThemeColor by viewModel.currentThemeColor.collectAsStateWithLifecycle()
+    val isCustomColor by viewModel.isCustomColor.collectAsStateWithLifecycle()
+    val customPrimary by viewModel.customPrimaryColor.collectAsStateWithLifecycle()
+    val customSecondary by viewModel.customSecondaryColor.collectAsStateWithLifecycle()
+    val customTertiary by viewModel.customTertiaryColor.collectAsStateWithLifecycle()
+
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = bottomInset + 110.dp)
     ) {
         Text(
             text = stringResource(R.string.wall_colors_theme_mode),
@@ -1291,12 +1302,12 @@ fun BackgroundRendererWithEffects(
     bgSaturation: Float,
     blurStrength: Float
 ) {
-    val bgType by viewModel.bgType.collectAsState()
-    val solidColor by viewModel.solidColor.collectAsState()
-    val expressiveThemeId by viewModel.expressiveThemeId.collectAsState()
-    val customImageUri by viewModel.backgroundImageUri.collectAsState()
-    val isVideo by viewModel.isVideoWallpaper.collectAsState()
-    val bgContrast by viewModel.bgContrast.collectAsState()
+    val bgType by viewModel.bgType.collectAsStateWithLifecycle()
+    val solidColor by viewModel.solidColor.collectAsStateWithLifecycle()
+    val expressiveThemeId by viewModel.expressiveThemeId.collectAsStateWithLifecycle()
+    val customImageUri by viewModel.backgroundImageUri.collectAsStateWithLifecycle()
+    val isVideo by viewModel.isVideoWallpaper.collectAsStateWithLifecycle()
+    val bgContrast by viewModel.bgContrast.collectAsStateWithLifecycle()
 
     Box(Modifier.fillMaxSize()) {
         when (bgType) {
@@ -1469,9 +1480,9 @@ private fun StyleOptionRow(
 
 @Composable
 fun ToggleStyleSheetContent(viewModel: WallpaperStyleViewModel) {
-    val toggleStyle by viewModel.toggleStyle.collectAsState()
-    val onImagePath by viewModel.customToggleOnImagePath.collectAsState()
-    val offImagePath by viewModel.customToggleOffImagePath.collectAsState()
+    val toggleStyle by viewModel.toggleStyle.collectAsStateWithLifecycle()
+    val onImagePath by viewModel.customToggleOnImagePath.collectAsStateWithLifecycle()
+    val offImagePath by viewModel.customToggleOffImagePath.collectAsStateWithLifecycle()
 
     val onImagePicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let { viewModel.setCustomControlImage(ControlImageKind.TOGGLE_ON, it) }
@@ -1480,11 +1491,13 @@ fun ToggleStyleSheetContent(viewModel: WallpaperStyleViewModel) {
         uri?.let { viewModel.setCustomControlImage(ControlImageKind.TOGGLE_OFF, it) }
     }
 
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = bottomInset + 110.dp)
     ) {
         Text(
             stringResource(R.string.wall_toggle_style),
@@ -1557,18 +1570,20 @@ fun ToggleStyleSheetContent(viewModel: WallpaperStyleViewModel) {
 
 @Composable
 fun SliderStyleSheetContent(viewModel: WallpaperStyleViewModel) {
-    val sliderStyle by viewModel.sliderStyle.collectAsState()
-    val thumbImagePath by viewModel.customSliderThumbImagePath.collectAsState()
+    val sliderStyle by viewModel.sliderStyle.collectAsStateWithLifecycle()
+    val thumbImagePath by viewModel.customSliderThumbImagePath.collectAsStateWithLifecycle()
 
     val thumbImagePicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let { viewModel.setCustomControlImage(ControlImageKind.SLIDER_THUMB, it) }
     }
 
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = bottomInset + 110.dp)
     ) {
         Text(
             stringResource(R.string.wall_slider_style),
@@ -1627,13 +1642,15 @@ fun SliderStyleSheetContent(viewModel: WallpaperStyleViewModel) {
 
 @Composable
 fun DialogStyleSheetContent(viewModel: WallpaperStyleViewModel) {
-    val dialogStyle by viewModel.dialogStyle.collectAsState()
+    val dialogStyle by viewModel.dialogStyle.collectAsStateWithLifecycle()
+
+    val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = bottomInset + 110.dp)
     ) {
         Text(
             stringResource(R.string.wall_dialog_style),
@@ -1676,7 +1693,7 @@ private enum class AvatarDecoCategory(val title: String) {
 
 @Composable
 fun AvatarDecorationSheetContent(viewModel: WallpaperStyleViewModel) {
-    val selected by viewModel.avatarDecoration.collectAsState()
+    val selected by viewModel.avatarDecoration.collectAsStateWithLifecycle()
     val media = rememberProfileMediaSnapshot()
     var category by remember { mutableStateOf(AvatarDecoCategory.ALL) }
 
@@ -1829,12 +1846,13 @@ fun AvatarDecorationSheetContent(viewModel: WallpaperStyleViewModel) {
             }
         }
 
+        val bottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 2.dp, bottom = 28.dp),
+            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 2.dp, bottom = bottomInset + 110.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
             horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {

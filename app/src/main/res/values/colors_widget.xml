@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="zw_bg">#F4EFF4</color>
+    <color name="zw_card">#FFFFFF</color>
+    <color name="zw_chip">#E9E1EA</color>
+    <color name="zw_text">#1D1B20</color>
+    <color name="zw_text_dim">#6B6570</color>
+    <color name="zw_accent">#6750A4</color>
+    <color name="zw_on_accent">#FFFFFF</color>
+    <color name="zw_good">#2E9E5B</color>
+    <color name="zw_warn">#E8A317</color>
+    <color name="zw_hot">#E5384F</color>
+</resources>

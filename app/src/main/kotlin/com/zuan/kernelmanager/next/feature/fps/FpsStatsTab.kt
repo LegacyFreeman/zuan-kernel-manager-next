@@ -1,6 +1,7 @@
 @file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.fps
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.compose.animation.AnimatedVisibility
@@ -374,7 +375,7 @@ private fun buildCharts(points: List<FpsDataPoint>, s: FpsSession): List<Triple<
 private fun HeadlineStats(s: FpsSession, content: Color, sub: Color) {
     Column(
         Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = .45f)).padding(vertical = 14.dp, horizontal = 8.dp),
+            .background(MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(.45f)).padding(vertical = 14.dp, horizontal = 8.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         Row(Modifier.fillMaxWidth()) {
@@ -435,7 +436,7 @@ private fun ChartCard(
 
     Column(
         Modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = .45f)).padding(14.dp)
+            .background(MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(.45f)).padding(14.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(title, color = content, fontWeight = FontWeight.SemiBold, fontSize = 13.sp, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -569,7 +570,7 @@ private fun DetailMetricGrid(s: FpsSession, content: Color, sub: Color) {
 @Composable
 private fun MetricTile(label: String, value: String, content: Color, sub: Color, modifier: Modifier) {
     Column(
-        modifier.clip(RoundedCornerShape(14.dp)).background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = .45f)).padding(horizontal = 12.dp, vertical = 9.dp)
+        modifier.clip(RoundedCornerShape(14.dp)).background(MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(.45f)).padding(horizontal = 12.dp, vertical = 9.dp)
     ) {
         Text(label, fontSize = 10.sp, color = sub, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
         Text(value, color = content, fontWeight = FontWeight.Bold, fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)

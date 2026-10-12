@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/zw_root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="10dp" android:background="@drawable/zw_bg">
+    <LinearLayout android:id="@+id/zw_header" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="4dp">
+        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/zw_ic_list"
+            android:tint="@color/zw_accent" android:contentDescription="@null" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp"
+            android:text="ZKM Menu" android:textColor="@color/zw_text" android:textSize="14sp" android:textStyle="bold" />
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:orientation="horizontal">
+        <LinearLayout android:id="@+id/zw_m0" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_m0_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_game" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_m0_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_m1" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_m1_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_tune" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_m1_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_m2" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_m2_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_battery" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_m2_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_m3" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_m3_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_thermo" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_m3_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:orientation="horizontal">
+        <LinearLayout android:id="@+id/zw_m4" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_m4_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_display" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_m4_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_m5" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_m5_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_list" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_m5_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_m6" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_m6_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_terminal" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_m6_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/zw_m7" android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="1" android:layout_margin="2dp" android:orientation="vertical"
+            android:gravity="center" android:padding="4dp" android:background="@drawable/zw_chip">
+            <ImageView android:id="@+id/zw_m7_icon" android:layout_width="20dp" android:layout_height="20dp"
+                android:src="@drawable/zw_ic_storage" android:tint="@color/zw_text" android:contentDescription="@null" />
+            <TextView android:id="@+id/zw_m7_label" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="" android:textColor="@color/zw_text"
+                android:textSize="11sp" android:maxLines="1" android:ellipsize="end" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

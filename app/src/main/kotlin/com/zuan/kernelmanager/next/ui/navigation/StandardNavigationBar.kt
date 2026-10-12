@@ -7,6 +7,7 @@
  */
 package com.zuan.kernelmanager.next.ui.navigation
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,7 +31,7 @@ import com.zuan.kernelmanager.next.feature.settings.BgType
 import com.zuan.kernelmanager.next.feature.settings.NavLabelState
 import com.zuan.kernelmanager.next.feature.settings.SettingsPreference
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 
@@ -46,7 +47,7 @@ fun StandardNavigationBar(
 
     val context = LocalContext.current
     val prefs = remember { SettingsPreference.getInstance(context) }
-    val bgType by prefs.bgType.collectAsState()
+    val bgType by prefs.bgType.collectAsStateWithLifecycle()
     val isCustomBg = bgType != BgType.SYSTEM
 
     val items = listOf(
@@ -61,7 +62,7 @@ fun StandardNavigationBar(
         // [FIX] HazeMaterials.thin() statis: tidak mengikuti dark/light app
         // maupun custom background. Pakai style theme-aware yang sama dengan
         // app bar (tanpa progressive, bar kecil).
-        modifier = Modifier.hazeEffect(
+        modifier = Modifier.zkmHazeEffect(
             state = hazeState,
             style = com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle(
                 tintedBackground = MaterialTheme.colorScheme.surface,
@@ -104,6 +105,9 @@ fun StandardNavigationBar(
                 },
                 label = if (showLabel) { { Text(text = labelText) } } else null,
                 selected = isSelected,
+                // [FIX] Indikator bawaan Material (pil 64x32) numpuk dengan Box 40dp custom di atas
+                // -> bentuk rounded ganda yang aneh. Matikan indikator bawaan, pakai Box custom saja.
+                colors = NavigationBarItemDefaults.colors(indicatorColor = Color.Transparent),
                 onClick = {
                     if (currentDestination?.route != item.route) {
                         navController.navigate(item.route) {

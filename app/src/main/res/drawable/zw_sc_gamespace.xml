@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval"><solid android:color="#6750A4" /></shape>
+    </item>
+    <item>
+        <inset android:drawable="@drawable/zw_ic_game" android:inset="26%" />
+    </item>
+</layer-list>

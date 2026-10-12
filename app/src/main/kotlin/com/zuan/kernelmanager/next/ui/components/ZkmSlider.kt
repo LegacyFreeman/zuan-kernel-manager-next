@@ -7,6 +7,8 @@
  */
 package com.zuan.kernelmanager.next.ui.components
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -97,7 +99,7 @@ fun ZkmSlider(
 ) {
     val context = LocalContext.current
     val prefs = remember { SettingsPreference.getInstance(context) }
-    val style by prefs.sliderStyle.collectAsState()
+    val style by prefs.sliderStyle.collectAsStateWithLifecycle()
 
     when (style) {
         SliderStyle.MATERIAL_EXPRESSIVE -> androidx.compose.material3.Slider(
@@ -401,7 +403,7 @@ private fun ZkmSliderTrack(
                 Modifier
                     .fillMaxSize()
                     .background(
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+                        MaterialTheme.colorScheme.surfaceVariant.zkmLiteAlpha(0.6f),
                         shape
                     )
             )
@@ -462,7 +464,7 @@ private fun ZkmSliderThumb(
             // CUSTOM_IMAGE
             val context = LocalContext.current
             val prefs = remember { SettingsPreference.getInstance(context) }
-            val thumbPath by prefs.customSliderThumbImagePath.collectAsState()
+            val thumbPath by prefs.customSliderThumbImagePath.collectAsStateWithLifecycle()
             val file = thumbPath?.let { File(it) }?.takeIf { it.exists() }
             if (file != null) {
                 Image(

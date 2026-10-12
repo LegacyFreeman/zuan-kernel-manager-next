@@ -1,0 +1,164 @@
+# ZKM Next - Nightly build
+# Runs by itself every night (and when you press "Run workflow"), builds an APK,
+# publishes it as a GitHub pre-release tagged nightly-YYYYMMDD and sends it to Telegram.
+name: Nightly
+
+on:
+  schedule:
+    - cron: "0 17 * * *"      # 17:00 UTC = 00:00 WIB (Jakarta). Change the hour if you want another time.
+  workflow_dispatch:           # adds a "Run workflow" button in the Actions tab
+    inputs:
+      force:
+        description: "Build even if there are no new commits"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write              # needed to create the GitHub Release
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+jobs:
+  nightly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Scheduled runs are skipped when nothing changed in the last 24 hours.
+      - name: Any new commits?
+        id: changes
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            COUNT=$(git rev-list --count --since="24 hours ago" HEAD)
+            if [ "$COUNT" = "0" ]; then echo "build=false" >> "$GITHUB_OUTPUT"; echo "No new commits, skipping."; exit 0; fi
+          fi
+          echo "build=true" >> "$GITHUB_OUTPUT"
+
+      - name: Set up JDK 21
+        if: steps.changes.outputs.build == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle (with cache)
+        if: steps.changes.outputs.build == 'true'
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Accept Android SDK licenses
+        if: steps.changes.outputs.build == 'true'
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+
+      - name: Work out version numbers
+        if: steps.changes.outputs.build == 'true'
+        id: ver
+        run: |
+          BASE=$(grep -oP 'versionName =.*"\K[0-9]+\.[0-9]+\.[0-9]+(?=")' app/build.gradle.kts | head -1)
+          BASECODE=$(grep -oP 'toIntOrNull\(\) \?: \K[0-9]+' app/build.gradle.kts | head -1)
+          DATE=$(date -u +%Y%m%d)
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "name=${BASE}-nightly.${DATE}" >> "$GITHUB_OUTPUT"
+          echo "code=$((BASECODE + GITHUB_RUN_NUMBER))" >> "$GITHUB_OUTPUT"
+          echo "tag=nightly-${DATE}" >> "$GITHUB_OUTPUT"
+
+      # Optional but IMPORTANT: sign with your own key so each build can update the previous one.
+      - name: Prepare signing key
+        if: steps.changes.outputs.build == 'true'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+            echo "KEYSTORE_FILE=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
+            echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> "$GITHUB_ENV"
+            echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> "$GITHUB_ENV"
+            echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> "$GITHUB_ENV"
+          else
+            echo "::warning::No KEYSTORE_BASE64 secret. APK gets a random debug key and cannot update older installs."
+          fi
+
+      - name: Build APK
+        if: steps.changes.outputs.build == 'true'
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace \
+            -Pzkm.versionName="${{ steps.ver.outputs.name }}" \
+            -Pzkm.versionCode="${{ steps.ver.outputs.code }}"
+
+      - name: Rename APK and make checksum
+        if: steps.changes.outputs.build == 'true'
+        id: apk
+        run: |
+          SRC=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
+          NAME="ZKMNext-nightly-${{ steps.ver.outputs.date }}.apk"
+          mkdir -p dist && cp "$SRC" "dist/$NAME"
+          (cd dist && sha256sum "$NAME" > "$NAME.sha256")
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "size=$(stat -c%s "dist/$NAME")" >> "$GITHUB_OUTPUT"
+          echo "sha=$(cut -d' ' -f1 "dist/$NAME.sha256")" >> "$GITHUB_OUTPUT"
+
+      - name: Save APK as workflow artifact (backup)
+        if: steps.changes.outputs.build == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.apk.outputs.name }}
+          path: dist/*
+          retention-days: 14
+
+      - name: Create GitHub pre-release
+        if: steps.changes.outputs.build == 'true'
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          {
+            echo "Automatic nightly build of \`${GITHUB_SHA::7}\` (${{ steps.ver.outputs.name }})."
+            echo
+            echo "### Recent changes"
+            git log -n 15 --pretty='- %s (%h)'
+            echo
+            echo "### SHA-256"
+            echo '```'
+            cat "dist/${{ steps.apk.outputs.name }}.sha256"
+            echo '```'
+          } > notes.md
+          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$TAG" dist/* \
+            --title "Nightly ${{ steps.ver.outputs.date }}" \
+            --notes-file notes.md --prerelease --target "$GITHUB_SHA"
+
+      # Keep only the 7 newest nightly releases so the page stays clean.
+      - name: Delete old nightlies
+        if: steps.changes.outputs.build == 'true'
+        run: |
+          gh release list --limit 100 --json tagName,createdAt \
+            --jq '[.[] | select(.tagName | startswith("nightly-"))] | sort_by(.createdAt) | reverse | .[7:] | .[].tagName' \
+          | while read -r OLD; do gh release delete "$OLD" --yes --cleanup-tag; done
+
+      - name: Send to Telegram
+        if: steps.changes.outputs.build == 'true' && env.TELEGRAM_BOT_TOKEN != '' && env.TELEGRAM_CHAT_ID != ''
+        run: |
+          esc() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g'; }
+          COMMITS=$(git log -n 5 --pretty='• %s' | esc | cut -c1-120)
+          URL="https://github.com/${{ github.repository }}/releases/tag/${{ steps.ver.outputs.tag }}"
+          CAPTION=$(printf '<b>ZKM Next Nightly</b>\n<code>%s</code>\n\n%s\n\nSHA-256: <code>%s</code>\n<a href="%s">Open release page</a>' \
+            "${{ steps.ver.outputs.name }}" "$COMMITS" "${{ steps.apk.outputs.sha }}" "$URL")
+          API="https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}"
+          # Telegram bots can upload files up to 50 MB; bigger APKs are sent as a link only.
+          if [ "${{ steps.apk.outputs.size }}" -lt 49000000 ]; then
+            curl -sS --fail-with-body "$API/sendDocument" \
+              -F chat_id="$TELEGRAM_CHAT_ID" -F parse_mode=HTML \
+              -F caption="$CAPTION" -F document=@"dist/${{ steps.apk.outputs.name }}" > /dev/null
+          else
+            curl -sS --fail-with-body "$API/sendMessage" \
+              -d chat_id="$TELEGRAM_CHAT_ID" -d parse_mode=HTML \
+              --data-urlencode text="$CAPTION" > /dev/null
+          fi

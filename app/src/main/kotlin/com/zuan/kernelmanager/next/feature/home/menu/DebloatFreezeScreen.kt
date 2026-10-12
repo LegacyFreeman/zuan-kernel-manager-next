@@ -8,6 +8,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeMaterialsApi::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.home.menu
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
 import com.zuan.kernelmanager.next.ui.components.zkmReferenceGlass
@@ -77,8 +78,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.rememberHazeState
 import androidx.compose.ui.tooling.preview.Preview
@@ -190,7 +191,7 @@ fun DebloatFreezeScreen(
             val colorFilter = ColorFilter.colorMatrix(saturationMatrix)
             val uri = Uri.parse(bgUriString)
 
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 if (isVideo) {
                     VideoWallpaperPlayer(
                         uri = uri, 
@@ -214,7 +215,7 @@ fun DebloatFreezeScreen(
             // ikut terekam ke buffer haze (blur appbar punya sumber di mode non-custom).
             // Sebelumnya Box ini kosong dan warna tema hanya ada di Box luar (bukan
             // hazeSource), sehingga progressive blur appbar tidak merender apa-apa.
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 Box(modifier = Modifier.fillMaxSize().background(mainBackgroundColor))
             }
         }
@@ -241,7 +242,7 @@ fun DebloatFreezeScreen(
                 } else {
                     LazyColumn(
                         // HazeSource ada di sini agar terdeteksi oleh header
-                        modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 1f),
+                        modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 1f),
                         contentPadding = PaddingValues(
                             top = headerHeightDp,
                             bottom = 100.dp
@@ -319,7 +320,7 @@ fun DebloatFreezeScreen(
                         .onGloballyPositioned { coordinates ->
                             headerHeightPx = coordinates.size.height
                         }
-                        .hazeEffect(
+                        .zkmHazeEffect(
                             state = hazeState,
                             style = headerHazeStyle
                         ) {
@@ -370,8 +371,8 @@ fun DebloatFreezeScreen(
                             leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null, tint = subTextColor) },
                             shape = RoundedCornerShape(24.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedContainerColor = if (isCustomBg) Color.White.copy(0.15f) else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.6f),
-                                focusedContainerColor = if (isCustomBg) Color.White.copy(0.2f) else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.8f),
+                                unfocusedContainerColor = if (isCustomBg) Color.White.copy(0.15f) else MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(0.6f),
+                                focusedContainerColor = if (isCustomBg) Color.White.copy(0.2f) else MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(0.8f),
                                 unfocusedBorderColor = Color.Transparent,
                                 focusedBorderColor = effectivePrimary.copy(alpha = 0.5f),
                                 cursorColor = effectivePrimary,

@@ -13,8 +13,11 @@ android {
         applicationId = "com.zuan.kernelmanager.next"
         minSdk = 29
         targetSdk = 37
-        versionCode = 10000
-        versionName = "1.0.0"
+        // CI (GitHub Actions) passes -Pzkm.versionName / -Pzkm.versionCode for nightly & beta builds.
+        // For a normal build both fall back to the values after "?:".
+        // When you publish a stable release: raise the fallback versionCode ABOVE every nightly/beta code.
+        versionCode = (project.findProperty("zkm.versionCode") as String?)?.toIntOrNull() ?: 10000
+        versionName = (project.findProperty("zkm.versionName") as String?) ?: "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
@@ -22,13 +25,29 @@ android {
         buildConfigField("boolean", "ENABLE_BETA_FEATURES", "true")
     }
 
+    // Signing key for CI builds. It is only used when KEYSTORE_FILE is set (GitHub Actions does that
+    // from your repository secrets). Locally nothing changes.
+    signingConfigs {
+        create("ci") {
+            val keystorePath = System.getenv("KEYSTORE_FILE")
+            if (!keystorePath.isNullOrBlank() && file(keystorePath).exists()) {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
+
     // TAMBAH BUILD TYPES YANG BENAR
     buildTypes {
         debug {
+            if (signingConfigs.getByName("ci").storeFile != null) signingConfig = signingConfigs.getByName("ci")
             // Untuk debug build
             buildConfigField("boolean", "ENABLE_BETA_FEATURES", "true")
         }
         release {
+            if (signingConfigs.getByName("ci").storeFile != null) signingConfig = signingConfigs.getByName("ci")
             // Keep the existing public versionCode until release history is verified;
             // lowering it would break Android upgrade ordering for existing installs.
             isMinifyEnabled = true
@@ -162,3 +181,31 @@ dependencies {
     implementation("androidx.media3:media3-common:1.11.1")
     implementation(project(":kernel-flasher"))
 }
+// ACS_SIGNING_CONFIG_START
+val keystorePropertiesFile = file("keystore.properties")
+val acsProps = if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.readLines()
+        .filter { '=' in it }
+        .associate { it.substringBefore('=').trim() to it.substringAfter('=').trim() }
+} else emptyMap()
+
+android {
+    signingConfigs {
+        maybeCreate("release").apply {
+            val sf = acsProps["storeFile"]
+            val sp = acsProps["storePassword"]
+            val ka = acsProps["keyAlias"]
+            val kp = acsProps["keyPassword"]
+            if (!sf.isNullOrBlank()) storeFile = file(sf)
+            if (!sp.isNullOrBlank()) storePassword = sp
+            if (!ka.isNullOrBlank()) keyAlias = ka
+            if (!kp.isNullOrBlank()) keyPassword = kp
+        }
+    }
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+}
+// ACS_SIGNING_CONFIG_END

@@ -201,7 +201,7 @@ object GameSpaceEngine {
 
     fun screenshot(c: Context): String? {
         if (!canRunPrivileged()) return null
-        val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "ZKM GameSpace")
+        val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "ZKMNext GameSpace")
         val name = "GS_" + SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date()) + ".png"
         val path = File(dir, name).absolutePath
         sh(c, "mkdir -p '${dir.absolutePath}'")
@@ -212,7 +212,7 @@ object GameSpaceEngine {
 
     fun startRecording(c: Context): String? {
         if (!canRunPrivileged() || recording) return null
-        val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "ZKM GameSpace")
+        val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "ZKMNext GameSpace")
         val name = "GS_" + SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date()) + ".mp4"
         val path = File(dir, name).absolutePath
         sh(c, "mkdir -p '${dir.absolutePath}'")

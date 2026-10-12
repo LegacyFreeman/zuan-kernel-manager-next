@@ -66,7 +66,7 @@ import com.zuan.kernelmanager.next.library.shell.su
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -169,7 +169,7 @@ fun ModernTabNavigationBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .hazeEffect(state = hazeState, style = navBarHazeStyle)
+            .zkmHazeEffect(state = hazeState, style = navBarHazeStyle)
             .background(Color.Transparent)
             .statusBarsPadding()
             .zIndex(2f)
@@ -295,7 +295,7 @@ fun ModernSwipeableNavBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .hazeEffect(state = hazeState, style = navBarHazeStyle)
+            .zkmHazeEffect(state = hazeState, style = navBarHazeStyle)
             .background(Color.Transparent)
             .statusBarsPadding()
             .zIndex(2f)

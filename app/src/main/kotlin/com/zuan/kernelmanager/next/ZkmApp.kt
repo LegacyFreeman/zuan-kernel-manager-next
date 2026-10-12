@@ -27,5 +27,9 @@ class ZkmApp : Application() {
         ShizukuShell.registerListeners(applicationContext)
         AxeronShell.registerListeners(applicationContext)
         PrivilegedAccess.bumpEpoch()
+
+        // Inisialisasi engine performa adaptif (Zkm Perf Tahap 2, 3 & 4)
+        com.zuan.kernelmanager.next.ui.components.ZkmQualityGovernor.init(applicationContext)
+        com.zuan.kernelmanager.next.core.util.ZkmSamplerBus.init(applicationContext)
     }
 }

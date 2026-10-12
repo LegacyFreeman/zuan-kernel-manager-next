@@ -7,6 +7,7 @@
  */
 @file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.soc
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.BlurredAlertDialog
 import com.zuan.kernelmanager.next.R
 import androidx.compose.ui.res.stringResource
@@ -179,7 +180,7 @@ fun SocConfigMenu(activeColor: Color) {
                     OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text(stringResource(R.string.lp_config_description)) }, modifier = Modifier.fillMaxWidth().height(100.dp), shape = RoundedCornerShape(12.dp), placeholder = { Text(stringResource(R.string.lp_e_g_stable_60fps_everywhere)) })
                     
                     Surface(
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                        color = MaterialTheme.colorScheme.primaryContainer.zkmLiteAlpha(0.4f),
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -260,7 +261,7 @@ fun SocConfigMenu(activeColor: Color) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(stringResource(R.string.lp_this_config_was_made_for_different_hardware_applyi), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
                     
-                    Surface(color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()) {
+                    Surface(color = MaterialTheme.colorScheme.errorContainer.zkmLiteAlpha(0.5f), shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()) {
                         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(state.metadata.profileName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onErrorContainer)
                             Text("By: ${state.metadata.author}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onErrorContainer)
@@ -323,7 +324,7 @@ fun SocConfigMenu(activeColor: Color) {
                         }
 
                         Surface(
-                            color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.65f),
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(0.65f),
                             shape = RoundedCornerShape(20.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {

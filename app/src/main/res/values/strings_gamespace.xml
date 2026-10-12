@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Game Space (ZKM original implementation) -->
+<!-- Game Space (ZKM Next original implementation) -->
 <resources>
     <string name="ext_gamespace">Game Space</string>
     <string name="desc_gamespace">Game mode, side panel overlay, live stats, crosshair and per-game profiles</string>
@@ -92,8 +92,8 @@
     <string name="gs_ram_cleared">Background processes cleared</string>
     <string name="gs_need_privileged">Needs Root or Shizuku mode</string>
     <string name="gs_no_game">No game is running. Open a game from your list to use Performance mode</string>
-    <string name="gs_shizuku_not_ready">Shizuku is not running or ZKM has no permission yet. Start Shizuku and grant access</string>
-    <string name="gs_root_denied">Root access was denied. Grant ZKM in your root manager</string>
+    <string name="gs_shizuku_not_ready">Shizuku is not running or ZKM Next has no permission yet. Start Shizuku and grant access</string>
+    <string name="gs_root_denied">Root access was denied. Grant ZKM Next in your root manager</string>
     <string name="gs_cmd_failed">Command failed: %1$s</string>
     <string name="gs_need_dnd">Grant Do Not Disturb access first</string>
     <!-- Energy Cube hub -->

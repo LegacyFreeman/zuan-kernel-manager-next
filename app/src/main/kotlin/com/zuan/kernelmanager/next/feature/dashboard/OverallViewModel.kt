@@ -2,6 +2,7 @@ package com.zuan.kernelmanager.next.feature.dashboard
 
 import android.content.Context
 import android.os.SystemClock
+import android.os.Process
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zuan.kernelmanager.next.feature.dashboard.layout.DashboardWidgetType
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
@@ -129,10 +131,21 @@ class OverallViewModel : ViewModel() {
     }
 
     val monitoring: StateFlow<Unit> = flow {
+        // Little-Core Pinning (ZKM Perf - Adopsi Scene / ACSIDE):
+        runCatching { Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND) }
+
         while (currentCoroutineContext().isActive) {
+            // Screen-Off Deep Sleep (Adopsi VTools ScreenOffCleanup):
+            if (!com.zuan.kernelmanager.next.core.util.ZkmSamplerBus.isScreenOn.value) {
+                com.zuan.kernelmanager.next.core.util.ZkmSamplerBus.isScreenOn.first { it }
+            }
+
             sampleOnce()
             emit(Unit)
-            delay(POLL_INTERVAL_MS)
+
+            // Interval adaptif yang sinkron (2s Pro / 5s Lite) alih-alih 1s terus menerus
+            val delayMs = if (com.zuan.kernelmanager.next.ui.components.ZkmLite.active) 5000L else 2000L
+            delay(delayMs)
         }
     }
         .flowOn(Dispatchers.IO)
@@ -143,6 +156,7 @@ class OverallViewModel : ViewModel() {
         )
 
     private suspend fun sampleOnce() = coroutineScope {
+        runCatching { Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND) }
         val context = appContext.get() ?: return@coroutineScope
         val visible = visibleWidgets.value
         tickCount++
@@ -184,7 +198,7 @@ class OverallViewModel : ViewModel() {
         val gpuDeferred = if (needGpuTelemetry) async { OverallUtils.getGpuLoadAndFreq() } else null
         val cpuLoadDeferred = if (needCpuTelemetry) async { OverallUtils.getCpuLoads() } else null
         val cpusDeferred = if (needCpu) async { OverallUtils.getCpuFrequencies() } else null
-        val procDeferred = if (needCpu && tickCount % 2 == 1L) async { OverallUtils.getTopProcesses(context) } else null
+        val procDeferred = if (needCpu && tickCount % 4 == 1L) async { OverallUtils.getTopProcesses(context) } else null
         val storageDeferred = if (needStorageTelemetry) async { OverallUtils.getStorageIntelligence() } else null
         val ufsHealthDeferred = if (needUfsHealthTelemetry) async { OverallUtils.getUfsHealth() } else null
         val thermalDeferred = if (needThermal && (tickCount % 2 == 1L || _uiState.value.thermal.zoneCount == 0)) async { OverallUtils.getThermalIntelligence() } else null
@@ -247,7 +261,7 @@ class OverallViewModel : ViewModel() {
             }
             if (gpu != null) next = next.copy(gpuFreq = gpu.first, gpuLoad = gpu.second)
             if (cpus != null) next = next.copy(cpuFreqs = cpus)
-            if (processes != null) next = next.copy(processList = processes)
+            if (processes != null && processes != s.processList) next = next.copy(processList = processes)
             if (storage != null) next = next.copy(storageIntelligence = storage)
             if (ufsHealth != null) next = next.copy(ufsHealth = ufsHealth)
             if (thermal != null) {
@@ -282,26 +296,23 @@ class OverallViewModel : ViewModel() {
     }
     private fun <T> List<T>.append(value: T, maxSize: Int): List<T> = if (size >= maxSize) drop(size - maxSize + 1) + value else this + value
 
-    private fun checkUpdate(currentVer: String) {
+    private fun checkUpdate(@Suppress("UNUSED_PARAMETER") currentVer: String) {
+        val ctx = appContext.get() ?: return
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val url = URL("https://api.github.com/repos/ZuanVfx/KernelManagerX/releases/latest")
-                val conn = url.openConnection() as HttpURLConnection
-                conn.requestMethod = "GET"
-                conn.setRequestProperty("User-Agent", "KotlinApp")
-                conn.connectTimeout = 10_000
-                conn.readTimeout = 10_000
-                if (conn.responseCode == 200) {
-                    val jsonStr = conn.inputStream.bufferedReader().use { it.readText() }
-                    val json = JSONObject(jsonStr)
-                    val tagName = json.getString("tag_name")
-                    val body = json.getString("body")
-                    val assetsJson = json.getJSONArray("assets")
-                    val assets = buildList { for (i in 0 until assetsJson.length()) { add(GithubAsset(assetsJson.getJSONObject(i).getString("browser_download_url"))) } }
-                    if (tagName != currentVer) { _uiState.update { it.copy(updateRelease = GithubRelease(tagName, body, assets)) } }
-                }
-                conn.disconnect()
-            } catch (e: Exception) { android.util.Log.e("ZKM", "Unhandled operation failure", e) }
+            // Same source as the update dialog: github.com/zuanvfx02/zuan-kernel-manager-next/releases,
+            // honouring the "Check for manager/beta updates" toggles in Settings.
+            val info = com.zuan.kernelmanager.next.feature.update.UpdateChecker.checkForUpdate(ctx) ?: return@launch
+            val isApk = info.downloadUrl.substringBefore('?').endsWith(".apk", ignoreCase = true)
+            if (!isApk) return@launch
+            _uiState.update {
+                it.copy(
+                    updateRelease = GithubRelease(
+                        tag_name = "v${info.version}",
+                        body = info.changelog,
+                        assets = listOf(GithubAsset(info.downloadUrl))
+                    )
+                )
+            }
         }
     }
 }

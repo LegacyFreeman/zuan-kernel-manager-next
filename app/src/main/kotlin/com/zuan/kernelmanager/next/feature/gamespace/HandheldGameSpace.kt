@@ -129,6 +129,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.zuan.kernelmanager.next.core.util.ZkmSamplerBus
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -182,7 +183,7 @@ fun HandheldGameSpace(
 
     var gamesTick by remember { mutableIntStateOf(0) }
     val games by produceState(initialValue = GameSpacePrefs.games(ctx), gamesTick) {
-        while (true) { value = GameSpacePrefs.games(ctx); delay(1500) }
+        ZkmSamplerBus.slowTick.collect { value = GameSpacePrefs.games(ctx) }
     }
     var global by remember { mutableStateOf(GameSpacePrefs.globalSettings(ctx)) }
     var cpuMode by remember { mutableStateOf(CpuMode.fromOrdinal(GameSpacePrefs.cpuMode(ctx))) }
@@ -194,11 +195,14 @@ fun HandheldGameSpace(
     val selPkg: String? = games.getOrNull(sel)
 
     val telemetry by produceState(initialValue = readTelemetry(ctx)) {
-        while (true) { value = withContext(Dispatchers.IO) { readTelemetry(ctx) }; delay(2000) }
+        ZkmSamplerBus.fastTick.collect {
+            value = withContext(Dispatchers.IO) { readTelemetry(ctx) }
+        }
     }
     val clock by produceState(initialValue = "") {
         val f = SimpleDateFormat("HH:mm", Locale.getDefault())
-        while (true) { value = f.format(Date()); delay(5000) }
+        value = f.format(Date())
+        ZkmSamplerBus.slowTick.collect { value = f.format(Date()) }
     }
 
     // Detektor game hidup/mati mengikuti saklar utama (juga memulihkan service setelah proses dimatikan).
@@ -541,7 +545,7 @@ private fun TopBar(
     onExplore: () -> Unit, onSettings: () -> Unit
 ) {
     Row(Modifier.fillMaxWidth().height(46.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text("ZKM", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Black, letterSpacing = 3.sp)
+        Text("ZKM NEXT", color = Color.White, fontSize = 17.sp, fontWeight = FontWeight.Black, letterSpacing = 3.sp)
         Spacer(Modifier.width(8.dp))
         Box(Modifier.width(2.dp).height(18.dp).background(accent))
         Spacer(Modifier.width(8.dp))

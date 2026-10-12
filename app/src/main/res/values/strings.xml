@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Zuan Kernel Manager</string>
+    <string name="app_name">Zuan Kernel Manager Next</string>
 
     <!-- Advanced Display Strings -->
     <string name="display_panel_advanced">Panel &amp; Advanced Tuning</string>
@@ -45,7 +45,7 @@
     <string name="pref_language_import_success">Language pack imported: %1$d strings applied. Restarting…</string>
     <string name="pref_language_export_failed">Language pack export failed: %1$s</string>
     <string name="pref_language_import_failed">Language pack import failed: %1$s</string>
-    <string name="pref_language_pack_filename">ZKM_Language_Pack.json</string>
+    <string name="pref_language_pack_filename">ZKMNext_Language_Pack.json</string>
 
     <string name="nav_home">Home</string>
     <string name="nav_soc">SoC</string>
@@ -124,18 +124,16 @@
     <string name="pref_wallpaper_style">Wallpaper &amp; Style</string>
     <string name="pref_wallpaper_style_desc">Colors, theme, app icon</string>
     <string name="sect_custom">Customization</string>
+    <string name="sect_updates">Updates</string>
+    <string name="pref_check_manager_updates">Check for manager updates</string>
+    <string name="pref_check_manager_updates_desc">Automatically check for manager updates</string>
+    <string name="pref_check_beta_updates">Check for beta updates</string>
+    <string name="pref_check_beta_updates_desc">Automatically check for beta builds from the main branch</string>
     <string name="label_applied_dpi">Applied DPI</string>
     <string name="pref_applied_dpi_desc">Current: %1$d dpi</string>
-    <string name="pref_alt_icon">Alternate Icon</string>
-    <string name="pref_alt_icon_desc">Use alternative app icon</string>
-    <string name="pref_polling">Polling Interval</string>
-    <string name="pref_polling_desc">%1$dms</string>
 
     <string name="dialog_title_dpi">Applied DPI</string>
     <string name="dialog_msg_dpi">Current device DPI is %1$d. Adjust slider to change application density.\n\nSelected: %2$d dpi</string>
-    <string name="dialog_title_polling">Polling Interval</string>
-    <string name="dialog_msg_polling">Set the refresh interval for system monitoring (1–30 seconds).</string>
-    <string name="label_interval_sec">Interval (seconds)</string>
     <string name="btn_confirm">Confirm</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_apply">Apply</string>
@@ -182,7 +180,7 @@
     <string name="fps_shell_granted">Shizuku (ADB) Connected</string>
     <string name="fps_shell_not_found">Shizuku Not Ready</string>
     <string name="fps_shell_available_desc">Running through Shizuku without root. FPS is read from SurfaceFlinger.</string>
-    <string name="fps_shell_missing_desc">Start Shizuku and grant ZKM permission, then come back to this page.</string>
+    <string name="fps_shell_missing_desc">Start Shizuku and grant ZKM Next permission, then come back to this page.</string>
     <string name="fps_root_missing_desc">Please root your device to use FPS Manager.</string>
 
     <string name="fps_game_launcher">Game Launcher</string>
@@ -262,6 +260,8 @@
     <string name="home_update_avail">Update Available:</string>
 
     <string name="about_maintainer_title">Maintainer ZKM Projects</string>
+    <string name="about_maintainer_next_title">Maintainer ZKMNEXT Projects</string>
+    <string name="about_link_channel_official">Channel Official</string>
     <string name="about_opensource_thanks">Thanks to open source projects</string>
     <string name="about_section_categories">Categories</string>
     <string name="about_section_links">Links</string>
@@ -764,7 +764,7 @@
     <string name="logs_tag">Tag</string>
     <string name="btn_done">Done</string>
 
-    <string name="fps_notification_title">ZKM Monitor Running</string>
+    <string name="fps_notification_title">ZKM Next Monitor Running</string>
     <string name="fps_notification_text">Tap to open app</string>
     <string name="fps_monitor_title">Monitor</string>
     <string name="fps_cpu">CPU</string>
@@ -877,7 +877,6 @@
     <string name="about_section_developer">About Developer</string>
     <string name="about_section_app_info">About app info</string>
     <string name="about_section_community">About Community</string>
-    <string name="about_section_collaborator">About Collaborator</string>
     <string name="about_changelog">Changelog</string>
     <string name="about_opensource">Open Source</string>
 
@@ -1359,7 +1358,7 @@
     <string name="lp_widget_gallery">Widget Gallery</string>
     <string name="lp_you_are_about_to_delete_a_critical_system_setting">You are about to delete a critical system setting:</string>
     <string name="lp_your_name">Your Name</string>
-    <string name="lp_zkm_logs">ZKM Logs</string>
+    <string name="lp_zkm_logs">ZKM Next Logs</string>
     <string name="lp_name">[ { "name": ... } ]</string>
     <string name="lp_algorithm">algorithm</string>
     <string name="lp_cfq">cfq</string>
@@ -1387,7 +1386,7 @@
     <string name="lp_toast_settings_export_failed">Export failed: %1$s</string>
     <string name="lp_toast_settings_imported">Imported %1$d settings. Restarting…</string>
     <string name="lp_toast_settings_import_failed">Import failed: %1$s</string>
-    <string name="lp_toast_saved_report">Saved to: Downloads/ZKM_Reports/%1$s</string>
+    <string name="lp_toast_saved_report">Saved to: Downloads/ZKMNext_Reports/%1$s</string>
     <string name="lp_toast_export_failed">Export Failed: %1$s</string>
     <string name="lp_toast_download_start">Start downloading updates...</string>
     <string name="lp_toast_download_failed">Failed to start download: %1$s</string>
@@ -1425,11 +1424,11 @@
     <string name="lp_a11y_refresh">Refresh</string>
     <string name="lp_a11y_toggle_source">Toggle Source</string>
     <string name="lp_a11y_important">Important</string>
-    <string name="lp_a11y_update_zkm">Update ZKM</string>
+    <string name="lp_a11y_update_zkm">Update ZKM Next</string>
     <string name="lp_a11y_downloading_latest_version">Downloading latest version...</string>
 
     <string name="lp_notification_activity_logger">Activity Logger Active</string>
-    <string name="lp_notification_overlay">ZKM Overlay</string>
+    <string name="lp_notification_overlay">ZKM Next Overlay</string>
     <string name="lp_notification_smart_cutoff">Smart Cut-off Active</string>
     <string name="lp_notification_recording_history">Recording activity history...</string>
     <string name="lp_notification_scanning_activities">Scanning Activities...</string>
@@ -1441,7 +1440,7 @@
     <string name="lp_overall_network_intelligence">Network Intelligence</string>
     <string name="lp_overall_thermal_intelligence">Thermal Intelligence</string>
     <string name="lp_overall_process_intelligence">Process Intelligence</string>
-    <string name="lp_overall_system_center">ZKM System Center</string>
+    <string name="lp_overall_system_center">ZKM Next System Center</string>
     <string name="lp_overall_adaptive_summary">Adaptive Summary</string>
     <string name="lp_overall_smart_profile">Smart Profile</string>
     <string name="lp_overall_power_intelligence">Power Intelligence</string>
@@ -1902,7 +1901,7 @@
 
     <string name="fps_overlay_presets">Overlay Presets</string>
     <string name="fps_pc_overlay_variants">PC Overlay Variants</string>
-    <string name="fps_pc_overlay_desc">Desktop-style counters powered by ZKM Android metrics.</string>
+    <string name="fps_pc_overlay_desc">Desktop-style counters powered by ZKM Next Android metrics.</string>
     <string name="fps_android_layout">Android Layout</string>
     <string name="fps_telemetry_metrics">Telemetry Metrics</string>
     <string name="fps_position">Position</string>
@@ -2142,7 +2141,7 @@
     <string name="help_overall_b1">Tap the FAB (floating button) to add, remove, reorder or restyle widgets.</string>
     <string name="help_overall_b2">Long-press a widget in edit mode to drag it into your preferred layout.</string>
     <string name="help_overall_b3">Tap most widgets to jump straight to the related tool screen.</string>
-    <string name="help_overall_b4">Set the refresh (polling) interval in Settings &gt; Dashboard to balance smoothness vs battery.</string>
+    <string name="help_overall_b4">Live stats refresh automatically while the screen is open, so there is nothing to configure.</string>
     <string name="help_overall_b5">Your profile card, avatar frame and greeting are customizable from the profile widget.</string>
     <string name="help_dashboard_title">Home</string>
     <string name="help_dashboard_desc">The central hub that groups every ZKM Next tool by category. Cards marked unsupported are hidden automatically on devices without the required hardware.</string>
@@ -2426,7 +2425,7 @@
     <string name="propdet_need_consent">This feature needs your permission to save a local snapshot of your device properties so it can detect missing, changed and newly added props later.</string>
     <string name="propdet_review_consent">Review &amp; allow</string>
     <string name="propdet_consent_title">Allow prop snapshot?</string>
-    <string name="propdet_consent_body">To detect changes, ZKM will read your device properties (getprop) once and keep a snapshot as a baseline. The snapshot is stored only in this app\'s private storage on your device and is never uploaded or shared. You can reset or delete it at any time from this tab.</string>
+    <string name="propdet_consent_body">To detect changes, ZKM Next will read your device properties (getprop) once and keep a snapshot as a baseline. The snapshot is stored only in this app\'s private storage on your device and is never uploaded or shared. You can reset or delete it at any time from this tab.</string>
     <string name="propdet_consent_agree">Allow</string>
     <string name="propdet_consent_decline">Not now</string>
     <string name="propdet_status_safe">Safe</string>
@@ -2482,4 +2481,82 @@
     <string name="raw_copy">Copy</string>
     <string name="raw_copied">Copied</string>
     <string name="raw_disclaimer">Raw kernel data, for reference only</string>
+    <string name="upd_settings_title">Update Settings</string>
+    <string name="upd_settings_entry_desc">Auto-check, beta channel, update dialog</string>
+    <string name="upd_section_build">This build</string>
+    <string name="upd_row_version">Version</string>
+    <string name="upd_row_channel">Channel</string>
+    <string name="upd_row_build">Build type</string>
+    <string name="upd_channel_stable">Stable</string>
+    <string name="upd_channel_beta">Beta</string>
+    <string name="upd_section_status">Update status</string>
+    <string name="upd_status_idle">Tap the button to look for a new version</string>
+    <string name="upd_status_checking">Contacting GitHub…</string>
+    <string name="upd_status_uptodate">You are on the latest version</string>
+    <string name="upd_status_available">Version %1$s is ready</string>
+    <string name="upd_status_error">Could not check right now</string>
+    <string name="upd_last_checked">Last checked %1$s</string>
+    <string name="upd_never_checked">Not checked yet</string>
+    <string name="upd_btn_check">Check now</string>
+    <string name="upd_btn_view">View update</string>
+    <string name="upd_section_auto">Automatic checks</string>
+    <string name="upd_pref_dialog">Show update dialog</string>
+    <string name="upd_pref_dialog_desc">Pop up a dialog on launch when a new version is found</string>
+    <string name="upd_section_storage">Storage</string>
+    <string name="upd_clear_title">Clear downloaded updates</string>
+    <string name="upd_clear_desc">Old update files use %1$s</string>
+    <string name="upd_cleared">Removed %1$d file(s)</string>
+    <string name="upd_section_links">Releases &amp; community</string>
+    <string name="upd_link_changelog">Changelog</string>
+    <string name="upd_link_changelog_desc">What changed in each version</string>
+    <string name="upd_link_releases">All releases</string>
+    <string name="upd_link_channel">Official channel</string>
+    <!-- Intro setup (optional steps after "Select working mode") + About support -->
+    <string name="intro_btn_continue">Continue</string>
+    <string name="intro_setup_skip">Skip</string>
+    <string name="intro_setup_skip_all">Skip setup</string>
+    <string name="intro_setup_optional_title">Totally optional</string>
+    <string name="intro_setup_support_step">05 / SUPPORT</string>
+    <string name="intro_setup_support_title">Support the developer</string>
+    <string name="intro_setup_support_desc">ZKM Next is free and open source. If it helps you, a coffee keeps the updates coming.</string>
+    <string name="intro_setup_support_btn">Buy me a coffee</string>
+    <string name="intro_setup_support_note">Skip this if you like. You can always find it later in About.</string>
+    <string name="intro_setup_profile_step">06 / PROFILE</string>
+    <string name="intro_setup_profile_title">Make it yours</string>
+    <string name="intro_setup_profile_desc">Add your name, a photo, GIF or short video, and an avatar frame. They show up on the Overall screen. Skip anything and change it later.</string>
+    <string name="intro_setup_frame_title">AVATAR FRAME</string>
+    <string name="intro_setup_frame_none">No frame</string>
+    <string name="intro_setup_profile_photo_hint">Tap the circle to choose a photo or video</string>
+    <string name="intro_setup_profile_name">Your name</string>
+    <string name="intro_setup_appearance_step">07 / APPEARANCE</string>
+    <string name="intro_setup_appearance_title">Pick your look</string>
+    <string name="intro_setup_appearance_desc">Light or dark, Dynamic Color or a theme color. Changes apply right away.</string>
+    <string name="intro_setup_appearance_hint">More styles, wallpapers and avatar frames are in Wallpaper Style</string>
+    <string name="intro_setup_theme_light">Light</string>
+    <string name="intro_setup_theme_dark">Dark</string>
+    <string name="intro_setup_theme_system">System</string>
+    <string name="intro_setup_dynamic_title">Dynamic Color</string>
+    <string name="intro_setup_dynamic_desc">Use colors from your wallpaper</string>
+    <string name="intro_setup_dynamic_unsupported">Needs Android 12 or newer</string>
+    <string name="intro_setup_palette_title">THEME COLOR</string>
+    <string name="intro_setup_backup_step">08 / BACKUP &amp; LANGUAGE</string>
+    <string name="intro_setup_backup_title">Restore or translate</string>
+    <string name="intro_setup_backup_desc">Already have a settings backup or a language pack? Bring it in now, or skip and keep the defaults.</string>
+    <string name="intro_setup_restore_restarting">Settings restored. Restarting…</string>
+    <string name="intro_setup_help_title">Need a hand?</string>
+    <string name="intro_setup_help_desc">Open About, then Help &amp; Documentation for a guide to every menu. The help button on each screen explains it too.</string>
+    <string name="about_section_support_dev">Support Developer</string>
+    <string name="about_support_coffee_title">Buy Me a Coffee</string>
+    <string name="about_support_coffee_desc">Support the development of ZKM Next</string>
+    <!-- Versi Lite -->
+    <string name="pref_lite_mode">Lite version</string>
+    <string name="pref_lite_mode_desc">Lighter app: all blur, glass and heavy effects are turned off and the look is simplified. Turn off to return to Pro (normal).</string>
+    <string name="lite_mode_title">Lite mode</string>
+    <string name="lite_mode_desc">Turn on Lite mode for a lighter app, or leave it off to use Pro (full look). You can switch any time in Settings.</string>
+    <string name="lite_mode_state_on">Lite · lighter, simple look</string>
+    <string name="lite_mode_state_off">Pro · full look and effects</string>
+    <string name="lite_banner_title">Lite mode is on</string>
+    <string name="lite_banner_desc">Heavy features (blur, glass, liquid glass, video wallpaper, weather, animated wallpaper, banner and fancy navigation) are not supported in Lite. Your choices are kept and come back when you switch to Pro.</string>
+    <string name="lite_banner_switch_pro">Switch to Pro</string>
+    <string name="lite_locked_toast">Not available in Lite mode. Switch to Pro to use it.</string>
 </resources>

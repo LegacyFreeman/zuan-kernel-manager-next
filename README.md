@@ -91,6 +91,26 @@ The project brings frequently used kernel and system controls into one interface
 
 ---
 
+## 🧩 Home-screen Widgets & App Shortcuts
+
+Long-press the ZKM icon (or open the launcher's widget picker) to add:
+
+| Widget | What it does |
+| --- | --- |
+| **ZKM Performance** | One-tap Balance / Dynamic / Performance CPU mode |
+| **ZKM Quick Actions** | Refresh-rate cycle, Clear RAM, Do Not Disturb, Game Space |
+| **ZKM Menu** | 8 shortcuts: Game Space, SoC, Battery, Thermal, Display, Process, Terminal, Storage |
+| **ZKM Game Launcher** | Your Game Space games, most recently played first |
+| **ZKM Live Stats** | Battery, power draw, RAM and temperature (tap to refresh) |
+
+App shortcuts (long-press the icon): **Game Space**, **Performance**, **Clear RAM**, **Thermal**.
+
+Actions that change the system need Root or Shizuku/Axeron, same as inside the app.
+Code lives in `feature/widget/`; widgets use plain `RemoteViews` (no extra dependency) and follow
+light/dark and Material You colours on Android 12+.
+
+---
+
 ## 🎨 Theme System
 
 ZKM Next is designed so the **application itself owns its appearance settings**.
@@ -207,8 +227,8 @@ Zuan Kernel Manager Next
 Clone the repository and open the project in your Android IDE.
 
 ```bash
-git clone https://github.com/ZUANVFX01/ZKM.git
-cd ZKM
+git clone https://github.com/zuanvfx02/zuan-kernel-manager-next.git
+cd zuan-kernel-manager-next
 ```
 
 Then build the debug APK:
@@ -295,11 +315,15 @@ See [`LICENSE`](LICENSE) for the full license text.
 
 <div align="center">
 
-### ZUAN / ZUANVFX01
+### Zuanvfx01 · Zuanvfx02
 
 Android • Kernel • System Tools • UI/UX
 
-[![GitHub](https://img.shields.io/badge/GitHub-ZUANVFX01-181717?style=for-the-badge&logo=github)](https://github.com/ZUANVFX01)
+[![GitHub](https://img.shields.io/badge/GitHub-Zuanvfx01-181717?style=for-the-badge&logo=github)](https://github.com/zuanvfx01)
+[![GitHub](https://img.shields.io/badge/GitHub-Zuanvfx02-181717?style=for-the-badge&logo=github)](https://github.com/zuanvfx02)
+[![Telegram](https://img.shields.io/badge/Telegram-Official%20Channel-26A5E4?style=for-the-badge&logo=telegram)](https://t.me/zuankernelmanagernext)
+
+📦 Releases: https://github.com/zuanvfx02/zuan-kernel-manager-next/releases
 
 </div>
 

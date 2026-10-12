@@ -14,7 +14,14 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.edit
 import com.zuan.kernelmanager.next.ui.theme.ThemeMode
 import com.zuan.kernelmanager.next.ui.theme.ZkmIconShapeStyle
+import com.zuan.kernelmanager.next.ui.components.ZkmLite
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -264,6 +271,38 @@ class SettingsPreference(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
 
     // --- STATES ---
+    // --- VERSI LITE (Lite vs Pro) ---
+    // Nilai asli pilihan user di Wallpaper Style Screen TIDAK pernah diubah oleh Lite.
+    // Flow di bawah yang berfungsi sebagai "fitur berat" diekspos lewat [liteGate]: selama
+    // Lite aktif nilainya dipaksa ke versi ringan, begitu Lite dimatikan (Pro) nilai asli
+    // user otomatis kembali. Semua layar yang membaca flow ini ikut ter-downgrade tanpa
+    // perlu diubah satu per satu.
+    private val liteScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
+
+    private val _liteMode = MutableStateFlow(prefs.getBoolean(LITE_MODE_KEY, false))
+    /** true = Versi Lite (ringan), false = Pro (normal). */
+    val liteMode: StateFlow<Boolean> = _liteMode.asStateFlow()
+
+    init { ZkmLite.active = _liteMode.value }
+
+    fun getLiteMode(): Boolean = _liteMode.value
+    fun setLiteMode(enabled: Boolean) {
+        prefs.edit { putBoolean(LITE_MODE_KEY, enabled) }
+        _liteMode.value = enabled
+        ZkmLite.active = enabled
+    }
+
+    private fun <T> liteGate(raw: StateFlow<T>, lite: (T) -> T): StateFlow<T> =
+        combine(raw, _liteMode) { value, isLite -> if (isLite) lite(value) else value }
+            .stateIn(
+                liteScope,
+                SharingStarted.Eagerly,
+                if (_liteMode.value) lite(raw.value) else raw.value
+            )
+
+    /** Nilai asli pilihan user (tanpa override Lite) — dipakai hanya bila memang perlu. */
+    fun isVideoWallpaperRaw(): Boolean = _isVideoWallpaper.value
+
     private val _themeMode = MutableStateFlow(getThemeMode())
     val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
 
@@ -274,7 +313,7 @@ class SettingsPreference(context: Context) {
     val isDynamicColor: StateFlow<Boolean> = _isDynamicColor.asStateFlow()
 
     private val _pollingInterval = MutableStateFlow(getPollingInterval())
-    val pollingInterval: StateFlow<Long> = _pollingInterval.asStateFlow()
+    val pollingInterval: StateFlow<Long> = liteGate(_pollingInterval) { if (it < LITE_MIN_POLLING_MS) LITE_MIN_POLLING_MS else it }
 
     private val _appDpi = MutableStateFlow(getAppDpi())
     val appDpi: StateFlow<Int> = _appDpi.asStateFlow()
@@ -287,29 +326,29 @@ class SettingsPreference(context: Context) {
     val backgroundImageUri: StateFlow<String?> = _backgroundImageUri.asStateFlow()
 
     private val _isVideoWallpaper = MutableStateFlow(getIsVideoWallpaper())
-    val isVideoWallpaper: StateFlow<Boolean> = _isVideoWallpaper.asStateFlow()
+    val isVideoWallpaper: StateFlow<Boolean> = liteGate(_isVideoWallpaper) { false }
 
     private val _useSystemWallpaper = MutableStateFlow(getUseSystemWallpaper())
     val useSystemWallpaper: StateFlow<Boolean> = _useSystemWallpaper.asStateFlow()
 
     private val _navBarTransparency = MutableStateFlow(getNavBarTransparency())
-    val navBarTransparency: StateFlow<Float> = _navBarTransparency.asStateFlow()
+    val navBarTransparency: StateFlow<Float> = liteGate(_navBarTransparency) { 1f }
 
     private val _cardDarkness = MutableStateFlow(getCardDarkness())
-    val cardDarkness: StateFlow<Float> = _cardDarkness.asStateFlow()
+    val cardDarkness: StateFlow<Float> = liteGate(_cardDarkness) { 1f }
 
     private val _isBgBlur = MutableStateFlow(getBgBlurEnabled())
-    val isBgBlur: StateFlow<Boolean> = _isBgBlur.asStateFlow()
+    val isBgBlur: StateFlow<Boolean> = liteGate(_isBgBlur) { false }
 
     private val _bgContrast = MutableStateFlow(getBgContrast())
     val bgContrast: StateFlow<Float> = _bgContrast.asStateFlow()
     
     private val _isHazeEnabled = MutableStateFlow(getHazeEnabled())
-    val isHazeEnabled: StateFlow<Boolean> = _isHazeEnabled.asStateFlow()
+    val isHazeEnabled: StateFlow<Boolean> = liteGate(_isHazeEnabled) { false }
 
     // --- [BARU] CARD GLASS STYLE (LIQUID GLASS) STATES ---
     private val _cardGlassStyle = MutableStateFlow(getCardGlassStyle())
-    val cardGlassStyle: StateFlow<CardGlassStyle> = _cardGlassStyle.asStateFlow()
+    val cardGlassStyle: StateFlow<CardGlassStyle> = liteGate(_cardGlassStyle) { CardGlassStyle.FROSTED_GLASS }
 
     private val _liquidCornerRadius = MutableStateFlow(getLiquidCornerRadius())
     val liquidCornerRadius: StateFlow<Float> = _liquidCornerRadius.asStateFlow()
@@ -328,13 +367,13 @@ class SettingsPreference(context: Context) {
 
     // --- [BARU] TOGGLE / SLIDER / DIALOG STYLE STATES ---
     private val _toggleStyle = MutableStateFlow(getToggleStyle())
-    val toggleStyle: StateFlow<ToggleStyle> = _toggleStyle.asStateFlow()
+    val toggleStyle: StateFlow<ToggleStyle> = liteGate(_toggleStyle) { if (it == ToggleStyle.LIQUID_GLASS) ToggleStyle.CLASSIC else it }
 
     private val _sliderStyle = MutableStateFlow(getSliderStyle())
-    val sliderStyle: StateFlow<SliderStyle> = _sliderStyle.asStateFlow()
+    val sliderStyle: StateFlow<SliderStyle> = liteGate(_sliderStyle) { if (it == SliderStyle.LIQUID_GLASS) SliderStyle.CLASSIC else it }
 
     private val _dialogStyle = MutableStateFlow(getDialogStyle())
-    val dialogStyle: StateFlow<DialogStyle> = _dialogStyle.asStateFlow()
+    val dialogStyle: StateFlow<DialogStyle> = liteGate(_dialogStyle) { DialogStyle.HAZE_BLUR }
 
     private val _customToggleOnImagePath = MutableStateFlow(prefs.getString(CUSTOM_TOGGLE_ON_IMAGE_KEY, null))
     val customToggleOnImagePath: StateFlow<String?> = _customToggleOnImagePath.asStateFlow()
@@ -346,7 +385,7 @@ class SettingsPreference(context: Context) {
     val customSliderThumbImagePath: StateFlow<String?> = _customSliderThumbImagePath.asStateFlow()
 
     private val _bgType = MutableStateFlow(getBgType())
-    val bgType: StateFlow<BgType> = _bgType.asStateFlow()
+    val bgType: StateFlow<BgType> = liteGate(_bgType) { if (it == BgType.EXPRESSIVE) BgType.SYSTEM else it }
 
     private val _solidColor = MutableStateFlow(getSolidColor())
     val solidColor: StateFlow<Int> = _solidColor.asStateFlow()
@@ -356,18 +395,18 @@ class SettingsPreference(context: Context) {
 
     // --- NAVIGATION STATES ---
     private val _navStyle = MutableStateFlow(getNavStyle())
-    val navStyle: StateFlow<NavStyle> = _navStyle.asStateFlow()
+    val navStyle: StateFlow<NavStyle> = liteGate(_navStyle) { if (it == NavStyle.LIQUID_CAPSULE || it == NavStyle.LIQUID_CAPSULE_2) NavStyle.CLASSIC_MATERIAL else it }
 
     private val _navLabelState = MutableStateFlow(getNavLabelState())
     val navLabelState: StateFlow<NavLabelState> = _navLabelState.asStateFlow()
 
     // --- WEATHER EFFECT STATES ---
     private val _weatherEffect = MutableStateFlow(getWeatherEffect())
-    val weatherEffect: StateFlow<WeatherEffect> = _weatherEffect.asStateFlow()
+    val weatherEffect: StateFlow<WeatherEffect> = liteGate(_weatherEffect) { WeatherEffect.NONE }
 
     // [BARU] Avatar Decoration (bingkai profil ala Discord)
     private val _avatarDecoration = MutableStateFlow(AvatarDecorationStyle.fromName(prefs.getString(AVATAR_DECORATION_KEY, null)))
-    val avatarDecoration: StateFlow<AvatarDecorationStyle> = _avatarDecoration.asStateFlow()
+    val avatarDecoration: StateFlow<AvatarDecorationStyle> = liteGate(_avatarDecoration) { if (it.isStatic) it else AvatarDecorationStyle.NONE }
 
     private val _weatherIntensity = MutableStateFlow(getWeatherIntensity())
     val weatherIntensity: StateFlow<Float> = _weatherIntensity.asStateFlow()
@@ -381,7 +420,7 @@ class SettingsPreference(context: Context) {
 
     // --- [BETA] APPBAR BANNER PROGRESSIVE ---
     private val _appBarBannerEnabled = MutableStateFlow(prefs.getBoolean(APPBAR_BANNER_ENABLED_KEY, false))
-    val appBarBannerEnabled: StateFlow<Boolean> = _appBarBannerEnabled.asStateFlow()
+    val appBarBannerEnabled: StateFlow<Boolean> = liteGate(_appBarBannerEnabled) { false }
 
     private val _appBarBannerUri = MutableStateFlow(prefs.getString(APPBAR_BANNER_URI_KEY, null))
     val appBarBannerUri: StateFlow<String?> = _appBarBannerUri.asStateFlow()
@@ -427,7 +466,7 @@ class SettingsPreference(context: Context) {
     val customFontPath: StateFlow<String?> = _customFontPath.asStateFlow()
 
     private val _highRefreshRate = MutableStateFlow(getHighRefreshRate())
-    val highRefreshRate: StateFlow<Boolean> = _highRefreshRate.asStateFlow()
+    val highRefreshRate: StateFlow<Boolean> = liteGate(_highRefreshRate) { false }
 
     // --- INTRO STATES ---
     private val _hasCompletedIntro = MutableStateFlow(getHasCompletedIntro())
@@ -448,7 +487,46 @@ class SettingsPreference(context: Context) {
         _adaptiveEcoMode.value = enabled
     }
 
+    // --- UPDATE CHECK (GitHub releases zuanvfx02/zuan-kernel-manager-next) ---
+    private val _checkManagerUpdates = MutableStateFlow(getCheckManagerUpdates())
+    val checkManagerUpdates: StateFlow<Boolean> = _checkManagerUpdates.asStateFlow()
+
+    fun getCheckManagerUpdates(): Boolean = prefs.getBoolean(CHECK_MANAGER_UPDATES_KEY, true)
+    fun setCheckManagerUpdates(enabled: Boolean) {
+        prefs.edit { putBoolean(CHECK_MANAGER_UPDATES_KEY, enabled) }
+        _checkManagerUpdates.value = enabled
+    }
+
+    private val _checkBetaUpdates = MutableStateFlow(getCheckBetaUpdates())
+    val checkBetaUpdates: StateFlow<Boolean> = _checkBetaUpdates.asStateFlow()
+
+    fun getCheckBetaUpdates(): Boolean = prefs.getBoolean(CHECK_BETA_UPDATES_KEY, false)
+    fun setCheckBetaUpdates(enabled: Boolean) {
+        prefs.edit { putBoolean(CHECK_BETA_UPDATES_KEY, enabled) }
+        _checkBetaUpdates.value = enabled
+    }
+
+    private val _showUpdateDialog = MutableStateFlow(getShowUpdateDialog())
+    val showUpdateDialog: StateFlow<Boolean> = _showUpdateDialog.asStateFlow()
+
+    fun getShowUpdateDialog(): Boolean = prefs.getBoolean(SHOW_UPDATE_DIALOG_KEY, true)
+    fun setShowUpdateDialog(enabled: Boolean) {
+        prefs.edit { putBoolean(SHOW_UPDATE_DIALOG_KEY, enabled) }
+        _showUpdateDialog.value = enabled
+    }
+
+    private val _lastUpdateCheck = MutableStateFlow(prefs.getLong(LAST_UPDATE_CHECK_KEY, 0L))
+    val lastUpdateCheck: StateFlow<Long> = _lastUpdateCheck.asStateFlow()
+    fun setLastUpdateCheck(millis: Long) {
+        prefs.edit { putLong(LAST_UPDATE_CHECK_KEY, millis) }
+        _lastUpdateCheck.value = millis
+    }
+
     companion object {
+        private const val SHOW_UPDATE_DIALOG_KEY = "show_update_dialog"
+        private const val LAST_UPDATE_CHECK_KEY = "last_update_check"
+        private const val CHECK_MANAGER_UPDATES_KEY = "check_manager_updates"
+        private const val CHECK_BETA_UPDATES_KEY = "check_beta_updates"
         private const val THEME_KEY = "theme_mode"
         private const val THEME_COLOR_KEY = "theme_color_name"
         private const val DYNAMIC_COLOR_KEY = "dynamic_color_enabled"
@@ -515,6 +593,9 @@ class SettingsPreference(context: Context) {
         private const val ACCEPTED_TERMS_KEY = "accepted_terms"
         private const val ACCEPTED_RISK_KEY = "accepted_risk"
         private const val ADAPTIVE_ECO_MODE_KEY = "adaptive_eco_mode"
+        private const val LITE_MODE_KEY = "lite_mode"
+        /** Polling monitor minimal 5 detik di Versi Lite supaya CPU tidak terus bangun. */
+        private const val LITE_MIN_POLLING_MS = 5000L
 
         private const val DEFAULT_POLLING_INTERVAL = 3000L
         private const val DEFAULT_DPI = 0
@@ -588,7 +669,6 @@ class SettingsPreference(context: Context) {
     fun setDynamicColorEnabled(enabled: Boolean) { prefs.edit { putBoolean(DYNAMIC_COLOR_KEY, enabled) }; _isDynamicColor.value = enabled }
     private fun getDynamicColorEnabled(): Boolean = prefs.getBoolean(DYNAMIC_COLOR_KEY, false)
 
-    fun setPollingInterval(interval: Long) { prefs.edit { putLong(POLLING_INTERVAL_KEY, interval) }; _pollingInterval.value = interval }
     private fun getPollingInterval(): Long = prefs.getLong(POLLING_INTERVAL_KEY, DEFAULT_POLLING_INTERVAL)
 
     fun setAppDpi(dpi: Int) { prefs.edit { putInt(DPI_KEY, dpi) }; _appDpi.value = dpi }

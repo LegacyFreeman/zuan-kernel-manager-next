@@ -7,6 +7,7 @@
  */
 package com.zuan.kernelmanager.next.ui.navigation
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -52,7 +53,7 @@ fun MainSwipeScreen(
     val scope = rememberCoroutineScope()
 
     // Permintaan pindah tab dari layar lain (mis. kartu Overall -> tab SoC) tanpa meninggalkan pager.
-    val pendingRoute by ZkmTabNavigator.pendingMainRoute.collectAsState()
+    val pendingRoute by ZkmTabNavigator.pendingMainRoute.collectAsStateWithLifecycle()
     LaunchedEffect(pendingRoute) {
         val route = pendingRoute ?: return@LaunchedEffect
         val index = tabs.indexOfFirst { it.route == route }

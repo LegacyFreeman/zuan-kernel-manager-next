@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import dev.chrisbanes.haze.materials.HazeMaterials
 import kotlin.math.roundToInt
 import com.zuan.kernelmanager.next.R
@@ -130,7 +130,7 @@ fun TerminalPreferences(
     val prefGlassModifier = if (useLiquidPanel) {
         Modifier.zkmLiquidGlassCard(backdrop = liquidBackdrop!!, spec = liquidSpec!!, tint = prefGlassTint, borderColor = Color.Transparent)
     } else if (isBlurEnabled) {
-        Modifier.hazeEffect(state = hazeState, style = HazeMaterials.thin().copy(blurRadius = glassBlurRadius.dp)).background(prefGlassTint)
+        Modifier.zkmHazeEffect(state = hazeState, style = HazeMaterials.thin().copy(blurRadius = glassBlurRadius.dp)).background(prefGlassTint)
     } else {
         Modifier.background(Color(0xFF181825).copy(alpha = 0.95f))
     }

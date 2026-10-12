@@ -8,6 +8,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalHazeMaterialsApi::class, androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
 package com.zuan.kernelmanager.next.feature.home.menu
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
 import com.zuan.kernelmanager.next.ui.components.zkmCardFill
@@ -82,8 +83,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -177,7 +178,7 @@ fun ThermalDevicesScreen(
             val colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(bgSaturation) })
             val uri = Uri.parse(bgUriString)
 
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 if (isVideo) {
                     VideoWallpaperPlayer(uri = uri, modifier = Modifier.fillMaxSize().then(blurModifier))
                 } else {
@@ -189,7 +190,7 @@ fun ThermalDevicesScreen(
             // Background harus jadi child hazeSource (bukan modifier sebelum
             // hazeSource) supaya ikut terekam ke buffer haze — fix progressive
             // blur appbar di mode non-custom.
-            Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 0f)) {
+            Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 0f)) {
                 Box(modifier = Modifier.fillMaxSize().background(themeBgColor))
             }
         }
@@ -205,7 +206,7 @@ fun ThermalDevicesScreen(
             Box(modifier = Modifier.fillMaxSize()) {
                 
                 // LAYER 1: SCROLLABLE CONTENT
-                Box(modifier = Modifier.fillMaxSize().hazeSource(state = hazeState, zIndex = 1f)) {
+                Box(modifier = Modifier.fillMaxSize().zkmHazeSource(state = hazeState, zIndex = 1f)) {
                     if (isLoading) {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { 
                             CircularProgressIndicator(color = effectivePrimary) 
@@ -274,7 +275,7 @@ fun ThermalDevicesScreen(
                         .onGloballyPositioned { coordinates ->
                             headerHeightPx = coordinates.size.height
                         }
-                        .hazeEffect(
+                        .zkmHazeEffect(
                             state = hazeState,
                             style = headerHazeStyle
                         ) {
@@ -351,7 +352,7 @@ fun ThermalDevicesScreen(
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp),
                             shape = RoundedCornerShape(22.dp),
-                            color = if (isCustomBg) Color.White.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.7f)
+                            color = if (isCustomBg) Color.White.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceContainerHighest.zkmLiteAlpha(0.7f)
                         ) {
                             ScrollableTabRow(
                                 selectedTabIndex = pagerState.currentPage,

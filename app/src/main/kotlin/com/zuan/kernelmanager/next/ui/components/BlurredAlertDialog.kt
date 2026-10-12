@@ -8,6 +8,8 @@
 
 package com.zuan.kernelmanager.next.ui.components
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import android.os.Build
 import android.view.View
 import android.view.Window
@@ -51,6 +53,8 @@ object ZkmDialogDefaults {
     const val BlurRadius = 64
     const val DimAmount = 0.18f
     const val MaxContainerAlpha = 0.88f
+    /** Dialog solid penuh di Versi Lite (tanpa blur di belakangnya, jadi tidak boleh tembus pandang). */
+    val containerAlpha: Float get() = if (ZkmLite.active) 1f else MaxContainerAlpha
     val Shape = RoundedCornerShape(28.dp)
     val ContentPadding = 24.dp
 }
@@ -80,7 +84,8 @@ private fun isCrossWindowBlurAvailable(view: View): Boolean {
  */
 @android.annotation.SuppressLint("NewApi")
 private fun applyWindowBlur(view: View, blurRadius: Int, dimAmount: Float?) {
-    val blurOk = isCrossWindowBlurAvailable(view)
+    // Versi Lite: tidak ada blur jendela dialog/sheet, cukup dim biasa (lihat ZkmLite).
+    val blurOk = isCrossWindowBlurAvailable(view) && !ZkmLite.active
     val dialogWindow = findDialogWindow(view)
     if (dialogWindow != null) {
         dialogWindow.setBackgroundDrawableResource(android.R.color.transparent)
@@ -176,7 +181,7 @@ fun BlurredAlertDialog(
             Modifier.zkmLiquidGlassCard(
                 backdrop = LocalZkmLiquidBackdrop.current!!,
                 spec = ZkmLiquidDialogSpec,
-                tint = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.50f),
+                tint = MaterialTheme.colorScheme.surfaceContainerHigh.zkmLiteAlpha(0.50f),
             )
         } else {
             Modifier.clip(ZkmDialogDefaults.Shape)
@@ -185,7 +190,7 @@ fun BlurredAlertDialog(
         Surface(
             modifier = modifier.widthIn(min = 280.dp, max = 560.dp).heightIn(max = maxPanelHeight).then(panelModifier),
             shape = ZkmDialogDefaults.Shape,
-            color = if (liquid) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = ZkmDialogDefaults.MaxContainerAlpha),
+            color = if (liquid) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh.zkmLiteAlpha(ZkmDialogDefaults.containerAlpha),
             contentColor = textContentColor,
             tonalElevation = tonalElevation
         ) {
@@ -251,7 +256,7 @@ fun BlurredAlertDialog(
 internal fun rememberUseLiquidDialogOverlay(): Boolean {
     val context = androidx.compose.ui.platform.LocalContext.current
     val prefs = remember { com.zuan.kernelmanager.next.feature.settings.SettingsPreference.getInstance(context) }
-    val dialogStyle by prefs.dialogStyle.collectAsState()
+    val dialogStyle by prefs.dialogStyle.collectAsStateWithLifecycle()
     if (dialogStyle != com.zuan.kernelmanager.next.feature.settings.DialogStyle.LIQUID_GLASS) return false
     if (!isLiquidGlassSupported()) return false
     if (LocalZkmDialogHost.current == null) return false
@@ -309,7 +314,7 @@ fun ZkmDialogPanel(
     Surface(
         modifier = modifier.fillMaxWidth().widthIn(max = 560.dp).then(heightModifier).then(panelModifier),
         shape = shape,
-        color = if (useLiquidGlass) Color.Transparent else containerColor.copy(alpha = minOf(containerColor.alpha, ZkmDialogDefaults.MaxContainerAlpha)),
+        color = if (useLiquidGlass) Color.Transparent else containerColor.copy(alpha = minOf(containerColor.alpha, ZkmDialogDefaults.containerAlpha)),
         contentColor = contentColor,
         tonalElevation = 0.dp
     ) {

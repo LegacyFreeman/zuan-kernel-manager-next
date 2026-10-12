@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 ZKM
+ * Copyright (c) 2025 ZKM Next
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -9,6 +9,7 @@
 
 package com.zuan.kernelmanager.next.feature.about
 
+import com.zuan.kernelmanager.next.ui.components.zkmLiteAlpha
 import com.zuan.kernelmanager.next.ui.adaptive.zkmLargeAppBarExpandedHeight
 import com.zuan.kernelmanager.next.ui.components.zkmAppBarHazeStyle
 import com.zuan.kernelmanager.next.ui.components.zkmCardHazeEffect
@@ -69,6 +70,7 @@ import com.zuan.kernelmanager.next.ui.components.VideoWallpaperPlayer
 import com.zuan.kernelmanager.next.ui.components.WeatherEffectOverlay
 import com.zuan.kernelmanager.next.ui.navigation.NavigationRoute
 import com.zuan.kernelmanager.next.feature.help.ZkmHelpButton
+import com.zuan.kernelmanager.next.ui.ZKM_SUPPORT_URL
 import com.zuan.kernelmanager.next.feature.settings.BgType
 import com.zuan.kernelmanager.next.feature.settings.SettingsViewModel
 import com.zuan.kernelmanager.next.feature.settings.WeatherEffect
@@ -77,8 +79,8 @@ import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.hazeSource
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeSource
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import com.zuan.kernelmanager.next.ui.components.ZkmHazeStyleCache
@@ -177,7 +179,7 @@ fun AboutScreen(
     
     val targetCardColor = when {
         isGlassActive -> zkmGlassFallbackTint(zkmIsDarkTheme())
-        isCustomBg -> MaterialTheme.colorScheme.surface.copy(alpha = cardDarkness)
+        isCustomBg -> MaterialTheme.colorScheme.surface.zkmLiteAlpha(cardDarkness)
         else -> themeCardColor
     }
 
@@ -196,7 +198,7 @@ fun AboutScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 0f)
+                    .zkmHazeSource(state = hazeState, zIndex = 0f)
             ) {
                 if (isCustomBg && bgUriString != null) {
                     val blurModifier = if (isBgBlur && blurStrength > 0f) {
@@ -249,7 +251,7 @@ fun AboutScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .hazeSource(state = hazeState, zIndex = 1f)
+                    .zkmHazeSource(state = hazeState, zIndex = 1f)
                     .verticalScroll(scrollState)
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -259,153 +261,87 @@ fun AboutScreen(
                 // DEVELOPER SECTION
                 ThemedSectionTitle(stringResource(R.string.about_section_developer), accentColor)
                 Spacer(modifier = Modifier.height(8.dp))
-                
-                ThemedExpressiveCard(
-                    containerColor = targetCardColor,
+
+                AboutDeveloperCard(
+                    avatarUrl = "https://avatars.githubusercontent.com/u/207377902?v=4",
+                    name = "Zuanvfx01",
+                    subtitle = stringResource(R.string.about_maintainer_title),
+                    onClick = { openUrl(context, "https://github.com/zuanvfx01") },
+                    cardColor = targetCardColor,
                     isGlassActive = isGlassActive,
                     hazeState = hazeState,
-                    onClick = { }
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(CardPadding),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AsyncImage(
-                            model = "https://avatars.githubusercontent.com/u/207377902?v=4",
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
-                        )
-                        
-                        Spacer(modifier = Modifier.width(16.dp))
-                        
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Zuanvfx01",
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 17.sp
-                                ),
-                                color = onSurfaceColor
-                            )
-                            Text(
-                                text = stringResource(R.string.about_maintainer_title),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = onSurfaceVariantColor
-                            )
-                        }
-                        
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                            contentDescription = null,
-                            tint = onSurfaceVariantColor,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-                
+                    onSurface = onSurfaceColor,
+                    onSurfaceVariant = onSurfaceVariantColor
+                )
+
                 Spacer(modifier = Modifier.height(8.dp))
-                
-                ThemedExpressiveCard(
-                    containerColor = targetCardColor,
+
+                AboutDeveloperCard(
+                    avatarUrl = "https://avatars.githubusercontent.com/zuanvfx02",
+                    name = "Zuanvfx02",
+                    subtitle = stringResource(R.string.about_maintainer_next_title),
+                    onClick = { openUrl(context, "https://github.com/zuanvfx02") },
+                    cardColor = targetCardColor,
                     isGlassActive = isGlassActive,
                     hazeState = hazeState,
-                    onClick = { openUrl(context, "https://zuanvfx01.github.io/ZKM/") }
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(CardPadding),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        ThemedIconContainer(
-                            icon = Icons.Outlined.Language,
-                            primaryColor = accentColor
-                        )
-                        
-                        Spacer(modifier = Modifier.width(16.dp))
-                        
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = stringResource(R.string.about_link_website),
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 17.sp
-                                ),
-                                color = onSurfaceColor
-                            )
-                            Text(
-                                text = "zuanvfx01.github.io/ZKM",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = onSurfaceVariantColor
-                            )
-                        }
-                        
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                            contentDescription = null,
-                            tint = onSurfaceVariantColor,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                // COLLABORATOR SECTION
-                ThemedSectionTitle(stringResource(R.string.about_section_collaborator), accentColor)
+                    onSurface = onSurfaceColor,
+                    onSurfaceVariant = onSurfaceVariantColor
+                )
+
                 Spacer(modifier = Modifier.height(8.dp))
-                
-                ThemedExpressiveCard(
-                    containerColor = targetCardColor,
+
+                AboutLinkCard(
+                    icon = Icons.Outlined.Language,
+                    title = stringResource(R.string.about_link_website),
+                    subtitle = "zuanvfx01.github.io/ZKM",
+                    onClick = { openUrl(context, "https://zuanvfx01.github.io/ZKM/") },
+                    external = false,
+                    cardColor = targetCardColor,
                     isGlassActive = isGlassActive,
                     hazeState = hazeState,
-                    onClick = { }
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(CardPadding),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        ThemedIconContainer(
-                            icon = Icons.Outlined.Person,
-                            primaryColor = accentColor
-                        )
-                        
-                        Spacer(modifier = Modifier.width(16.dp))
-                        
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Rve",
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 17.sp
-                                ),
-                                color = onSurfaceColor
-                            )
-                            Text(
-                                text = "Collaborator",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = onSurfaceVariantColor
-                            )
-                        }
-                        
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                            contentDescription = null,
-                            tint = onSurfaceVariantColor,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-                
+                    accent = accentColor,
+                    onSurface = onSurfaceColor,
+                    onSurfaceVariant = onSurfaceVariantColor
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                AboutLinkCard(
+                    icon = Icons.Outlined.Language,
+                    title = stringResource(R.string.about_link_website),
+                    subtitle = "zuanvfx02.github.io/zuan-kernel-manager-next",
+                    onClick = { openUrl(context, "https://zuanvfx02.github.io/zuan-kernel-manager-next/#download") },
+                    external = false,
+                    cardColor = targetCardColor,
+                    isGlassActive = isGlassActive,
+                    hazeState = hazeState,
+                    accent = accentColor,
+                    onSurface = onSurfaceColor,
+                    onSurfaceVariant = onSurfaceVariantColor
+                )
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
+                // SUPPORT DEVELOPER SECTION - Buy Me a Coffee
+                ThemedSectionTitle(stringResource(R.string.about_section_support_dev), accentColor)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                AboutLinkCard(
+                    icon = Icons.Outlined.Coffee,
+                    title = stringResource(R.string.about_support_coffee_title),
+                    subtitle = stringResource(R.string.about_support_coffee_desc),
+                    onClick = { openUrl(context, ZKM_SUPPORT_URL) },
+                    external = true,
+                    cardColor = targetCardColor,
+                    isGlassActive = isGlassActive,
+                    hazeState = hazeState,
+                    accent = accentColor,
+                    onSurface = onSurfaceColor,
+                    onSurfaceVariant = onSurfaceVariantColor
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
                 // APPLICATION SECTION - Help, Changelog & Open Source
                 ThemedSectionTitle("Application", accentColor)
                 Spacer(modifier = Modifier.height(8.dp))
@@ -691,6 +627,22 @@ fun AboutScreen(
                 // COMMUNITY SECTION
                 ThemedSectionTitle(stringResource(R.string.about_section_community), accentColor)
                 Spacer(modifier = Modifier.height(8.dp))
+
+                AboutLinkCard(
+                    icon = Icons.Outlined.Campaign,
+                    title = stringResource(R.string.about_link_channel_official),
+                    subtitle = "@zuankernelmanagernext",
+                    onClick = { openUrl(context, "https://t.me/zuankernelmanagernext") },
+                    external = true,
+                    cardColor = targetCardColor,
+                    isGlassActive = isGlassActive,
+                    hazeState = hazeState,
+                    accent = accentColor,
+                    onSurface = onSurfaceColor,
+                    onSurfaceVariant = onSurfaceVariantColor
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
                 
                 ThemedExpressiveCard(
                     containerColor = targetCardColor,
@@ -866,7 +818,7 @@ fun AboutScreen(
                     .align(Alignment.TopCenter)
                     .fillMaxWidth()
                     .onGloballyPositioned { headerHeightPx = it.size.height }
-                    .hazeEffect(
+                    .zkmHazeEffect(
                         state = hazeState,
                         style = headerHazeStyle
                     ) {
@@ -1012,7 +964,7 @@ fun ThemedExpressiveCard(
             .zkmCardHazeEffect(shape = shape,
                 state = hazeState,
                 style = ZkmHazeStyleCache.of(
-                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
+                    backgroundColor = MaterialTheme.colorScheme.surface.zkmLiteAlpha(0.2f),
                     blurRadius = 20.dp,
                     noiseFactor = 0.05f,
                     tints = emptyList()
@@ -1057,6 +1009,128 @@ fun ThemedIconContainer(
         contentAlignment = Alignment.Center
     ) {
         ZkmIconGlyph(icon = icon, tint = primaryColor, iconSize = 24.dp)
+    }
+}
+
+@Composable
+private fun AboutDeveloperCard(
+    avatarUrl: String,
+    name: String,
+    subtitle: String,
+    onClick: () -> Unit,
+    cardColor: Color,
+    isGlassActive: Boolean,
+    hazeState: HazeState,
+    onSurface: Color,
+    onSurfaceVariant: Color
+) {
+    ThemedExpressiveCard(
+        containerColor = cardColor,
+        isGlassActive = isGlassActive,
+        hazeState = hazeState,
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(CardPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = avatarUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = name,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 17.sp
+                    ),
+                    color = onSurface
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = onSurfaceVariant
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                contentDescription = null,
+                tint = onSurfaceVariant,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun AboutLinkCard(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit,
+    external: Boolean,
+    cardColor: Color,
+    isGlassActive: Boolean,
+    hazeState: HazeState,
+    accent: Color,
+    onSurface: Color,
+    onSurfaceVariant: Color
+) {
+    ThemedExpressiveCard(
+        containerColor = cardColor,
+        isGlassActive = isGlassActive,
+        hazeState = hazeState,
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(CardPadding),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ThemedIconContainer(icon = icon, primaryColor = accent)
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 17.sp
+                    ),
+                    color = onSurface
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = onSurfaceVariant
+                )
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = onSurfaceVariant,
+                    modifier = Modifier.size(24.dp)
+                )
+                if (external) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.Outlined.OpenInNew,
+                        contentDescription = null,
+                        tint = accent,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+        }
     }
 }
 

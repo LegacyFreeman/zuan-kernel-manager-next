@@ -103,7 +103,7 @@ object LanguagePackManager {
         val text = input.bufferedReader(Charsets.UTF_8).use { it.readText() }
         val root = JSONObject(text)
         if (root.optString("format") != FORMAT) {
-            throw IllegalArgumentException("Not a ZKM language pack")
+            throw IllegalArgumentException("Not a ZKM Next language pack")
         }
         if (root.optInt("version", -1) != VERSION) {
             throw IllegalArgumentException("Unsupported language pack version")

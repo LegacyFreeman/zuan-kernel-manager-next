@@ -51,17 +51,19 @@ enum class ChangeType {
 
 object ChangelogsUtils {
     
-    private const val GITHUB_API_URL = "https://api.github.com/repos/ZUANVFX01/ZKM/releases/latest"
-    private const val TELEGRAM_URL = "https://r.jina.ai/http://t.me/s/zuanvfxproject3" // Via jina.ai reader
+    private const val GITHUB_API_URL = "https://api.github.com/repos/zuanvfx02/zuan-kernel-manager-next/releases/latest"
+    const val RELEASES_URL = "https://github.com/zuanvfx02/zuan-kernel-manager-next/releases"
+    const val TELEGRAM_CHANNEL_URL = "https://t.me/zuankernelmanagernext"
+    private const val TELEGRAM_URL = "https://r.jina.ai/http://t.me/s/zuankernelmanagernext" // Via jina.ai reader
     private val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
     private val apiDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
     
-    suspend fun fetchLatestRelease(currentVersionCode: Int): Result<RemoteReleaseInfo> {
+    suspend fun fetchLatestRelease(currentVersionName: String): Result<RemoteReleaseInfo> {
         return withContext(Dispatchers.IO) {
             try {
                 val connection = URL(GITHUB_API_URL).openConnection()
                 connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
-                connection.setRequestProperty("User-Agent", "ZuanKernelManager")
+                connection.setRequestProperty("User-Agent", "ZKMNext")
                 connection.connectTimeout = 10000
                 connection.readTimeout = 10000
                 
@@ -90,7 +92,7 @@ object ChangelogsUtils {
                         changelog = body,
                         downloadUrl = htmlUrl,
                         publishedAt = date,
-                        isNewer = versionCode > currentVersionCode,
+                        isNewer = com.zuan.kernelmanager.next.feature.update.isNewerVersion(version, currentVersionName),
                         tagName = tagName,
                         source = "GitHub"
                     )
@@ -101,7 +103,7 @@ object ChangelogsUtils {
         }
     }
     
-    suspend fun fetchTelegramLatestPost(currentVersionCode: Int): Result<RemoteReleaseInfo> {
+    suspend fun fetchTelegramLatestPost(currentVersionName: String): Result<RemoteReleaseInfo> {
         return withContext(Dispatchers.IO) {
             try {
                 val connection = URL(TELEGRAM_URL).openConnection()
@@ -149,9 +151,9 @@ object ChangelogsUtils {
                         version = version,
                         versionCode = versionCode,
                         changelog = message,
-                        downloadUrl = "https://t.me/zuanvfxproject3",
+                        downloadUrl = TELEGRAM_CHANNEL_URL,
                         publishedAt = date.ifEmpty { "Recently" },
-                        isNewer = versionCode > currentVersionCode,
+                        isNewer = com.zuan.kernelmanager.next.feature.update.isNewerVersion(version, currentVersionName),
                         tagName = "v$version",
                         source = "Telegram"
                     )
@@ -176,65 +178,19 @@ object ChangelogsUtils {
     
     fun getLocalChangelogs(): List<ChangelogEntry> = listOf(
         ChangelogEntry(
-            version = "3.0.0",
-            versionCode = 300,
-            date = "18 February 2025",
+            version = "1.0.0",
+            versionCode = 100,
+            date = "Initial release",
             isImportant = true,
             changes = listOf(
-                ChangeItem(ChangeType.NEW, "Complete UI redesign with Material3 Expressive"),
-                ChangeItem(ChangeType.NEW, "Added glassmorphism effects with Haze library"),
-                ChangeItem(ChangeType.NEW, "Video wallpaper support for background"),
-                ChangeItem(ChangeType.NEW, "Weather effects overlay (Rain, Snow)"),
-                ChangeItem(ChangeType.NEW, "Custom DPI settings per app"),
-                ChangeItem(ChangeType.NEW, "Changelog auto-check from GitHub & Telegram"),
-                ChangeItem(ChangeType.IMPROVEMENT, "Enhanced kernel parameter editing"),
-                ChangeItem(ChangeType.IMPROVEMENT, "Better root handling with libsu"),
-                ChangeItem(ChangeType.FIX, "Fixed memory leak in terminal"),
-                ChangeItem(ChangeType.FIX, "Fixed navigation bar hide behavior")
-            )
-        ),
-        ChangelogEntry(
-            version = "2.5.0",
-            versionCode = 250,
-            date = "15 January 2025",
-            changes = listOf(
-                ChangeItem(ChangeType.NEW, "Added Dex2oat compiler controls"),
-                ChangeItem(ChangeType.NEW, "Doze mode configuration"),
-                ChangeItem(ChangeType.IMPROVEMENT, "Battery controller improvements"),
-                ChangeItem(ChangeType.IMPROVEMENT, "Thermal devices management"),
-                ChangeItem(ChangeType.FIX, "Fixed GPU stats on some devices"),
-                ChangeItem(ChangeType.SECURITY, "Updated root permission checks")
-            )
-        ),
-        ChangelogEntry(
-            version = "2.4.0",
-            versionCode = 240,
-            date = "28 December 2024",
-            isBeta = true,
-            changes = listOf(
-                ChangeItem(ChangeType.NEW, "Kernel Flasher integration"),
-                ChangeItem(ChangeType.NEW, "KSU WebUI support"),
-                ChangeItem(ChangeType.NEW, "Activity Launcher utility"),
-                ChangeItem(ChangeType.PERFORMANCE, "Optimized app startup time"),
-                ChangeItem(ChangeType.FIX, "Display settings crash fix")
-            )
-        ),
-        ChangelogEntry(
-            version = "2.0.0",
-            versionCode = 200,
-            date = "1 November 2024",
-            isImportant = true,
-            changes = listOf(
-                ChangeItem(ChangeType.NEW, "Complete rewrite in Jetpack Compose"),
-                ChangeItem(ChangeType.NEW, "Liquid navigation bar style"),
-                ChangeItem(ChangeType.NEW, "Modern tabs navigation option"),
-                ChangeItem(ChangeType.NEW, "Custom background image support"),
-                ChangeItem(ChangeType.NEW, "Multi-language support"),
-                ChangeItem(ChangeType.SECURITY, "Root access validation")
+                ChangeItem(ChangeType.NEW, "First public release of ZKM Next"),
+                ChangeItem(ChangeType.NEW, "Kotlin + Jetpack Compose (Material 3 Expressive) interface"),
+                ChangeItem(ChangeType.NEW, "Root, ADB (Shizuku / Axeron) and Basic working modes"),
+                ChangeItem(ChangeType.NEW, "Update checker connected to GitHub Releases of ZKM Next")
             )
         )
     )
-    
+
     fun getChangeTypeColor(type: ChangeType): String = when (type) {
         ChangeType.NEW -> "#4CAF50"
         ChangeType.IMPROVEMENT -> "#2196F3"

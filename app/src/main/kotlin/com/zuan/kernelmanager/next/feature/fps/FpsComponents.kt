@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import com.zuan.kernelmanager.next.ui.components.zkmHazeEffect
 import dev.chrisbanes.haze.HazeStyle
 import com.zuan.kernelmanager.next.ui.components.zkmGlassCard
 import com.zuan.kernelmanager.next.ui.components.zkmGlassTint
