@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Game Space - mode Shizuku / no-root + dokumentasi Help. Semua klaim di sini sudah dicocokkan dengan kode NonRootBoost. -->
+<resources>
+    <!-- level akses -->
+    <string name="gsx_nr_lvl_root">Режим Root — доступны все функции Game Space.</string>
+    <string name="gsx_nr_lvl_shizuku_root">Shizuku запущен с правами root — доступны все функции Game Space, включая управление CPU и GPU.</string>
+    <string name="gsx_nr_lvl_adb">Shizuku (ADB, без root). Работает: Game Mode, очистка памяти, ограничение фоновых процессов, блокировка частоты обновления, скриншоты и запись, выключение Battery Saver. Требуется root: частота CPU и GPU, governor, приоритет процессов.</string>
+    <string name="gsx_nr_lvl_basic">Базовый режим — привилегированные процессы не запускаются. Запустите Shizuku, затем переключитесь в режим ADB в настройках, чтобы разблокировать эти инструменты.</string>
+
+    <!-- hasil ganti mode -->
+    <string name="gsx_nr_mode_saved">Режим сохранён</string>
+    <string name="gsx_nr_mode_waiting">Режим сохранён — будет применён при запуске игры</string>
+    <string name="gsx_nr_mode_failed">Android не принял команду Game Mode для этого приложения</string>
+    <string name="gsx_nr_mode_note">Без root каждый режим сопоставляется с Android Game Mode: Balance оставляет его без изменений, Dynamic и Performance запрашивают Performance Game Mode. Dynamic снижает режим до Standard, когда устройство сообщает о термическом ограничении, и возвращает его, когда охлаждается.</string>
+
+    <!-- kartu Shizuku Tools -->
+    <string name="gsx_nr_title">Инструменты Shizuku</string>
+    <string name="gsx_nr_sub">Настоящие улучшения без root, восстанавливаемые после завершения игры</string>
+    <string name="gsx_hub_card_shizuku">Инструменты Shizuku</string>
+    <string name="gsx_nr_gm">Performance Game Mode</string>
+    <string name="gsx_nr_gm_d">Попросить Android запускать игру в режиме Performance Game Mode (Android 12+). Применяется для Dynamic и Performance. Эффект зависит от прошивки и игры.</string>
+    <string name="gsx_nr_ram">Очистить память</string>
+    <string name="gsx_nr_ram_d">Закрывает кэшированные фоновые приложения. Игра на переднем плане не затрагивается.</string>
+    <string name="gsx_nr_bg">Ограничение фоновых процессов</string>
+    <string name="gsx_nr_bg_d">Во время игры останавливает работу других установленных приложений, которые выполняются в фоне. Исходные настройки восстанавливаются после завершения игры. Сообщения из ограниченных приложений могут приходить с задержкой.</string>
+    <string name="gsx_nr_keep">Всегда разрешено</string>
+    <string name="gsx_nr_keep_d">Приложения лаунчера, клавиатуры, SMS и звонков всегда остаются доступными. Добавьте любые другие приложения, которые не нужно ограничивать.</string>
+    <string name="gsx_nr_keep_add">Добавить приложение</string>
+    <string name="gsx_nr_keep_hint">Выберите приложения, которые ограничитель никогда не должен трогать в режиме Explore, в меню Shizuku Tools.</string>
+    <string name="gsx_nr_bat">Выключить Battery Saver</string>
+    <string name="gsx_nr_bat_d">Battery Saver замедляет CPU. Он выключается при запуске игры и не включается автоматически.</string>
+    <string name="gsx_nr_fixed">Режим фиксированной производительности (экспериментально)</string>
+    <string name="gsx_nr_fixed_d">Запрашивает у службы питания производителя устойчивую производительность в режиме Performance. Многие ROM игнорируют это. После завершения игры снова отключается.</string>
+    <string name="gsx_nr_modes_title">Что делают режимы без root</string>
+    <string name="gsx_nr_modes_body">Balance: оставляет системный Game Mode без изменений. Dynamic: Performance Game Mode, понижает режим до Standard при умеренном термическом ограничении, возвращает его после охлаждения. Performance: Performance Game Mode плюс режим фиксированной производительности, если он включён.</string>
+    <string name="gsx_nr_rootonly_title">Требуется root (здесь недоступно)</string>
+    <string name="gsx_nr_rootonly_body">Ограничения частоты CPU и GPU, governor, приоритет процессов, boost планировщика, read-ahead для хранилища и pressure write для swap работают с файлами ядра, которые shell Shizuku ADB изменить не может. Это не подделка. Если сам Shizuku работает с root, они также работают.</string>
+    <string name="gsx_nr_note">Применяются только изменения, которые Android действительно принимает, и все они восстанавливаются в конце сессии, даже если ZKM Next был закрыт в середине игры.</string>
+
+    <!-- splash -->
+    <string name="gsx_sp_l_gm">Запрошен Performance Game Mode</string>
+    <string name="gsx_sp_l_bg">Фоновые приложения ограничены</string>
+    <string name="gsx_sp_m_gm">Game Mode установлен в Performance</string>
+    <string name="gsx_sp_m_fixed">Запрошена фиксированная производительность</string>
+    <string name="gsx_sp_m_bglimit">Фоновые приложения ограничены</string>
+    <string name="gsx_sp_m_bat">Battery Saver выключен</string>
+
+    <!-- Help di dalam Game Space (Handheld + Explore) -->
+    <string name="gsx_help_4_t">Рабочие режимы</string>
+    <string name="gsx_help_4_d">Root: все функции. Shizuku с правами root: то же, что и Root. Shizuku ADB: Game Mode, очистка памяти, ограничение фоновых процессов, частота обновления, скриншоты и запись, выключение Battery Saver. Basic: ничего привилегированного. Элементы, которые недоступны в вашем режиме, отображаются отключёнными, но не подменяются.</string>
+    <string name="gsx_help_5_t">Режимы CPU: Balance, Dynamic, Performance</string>
+    <string name="gsx_help_5_d">С root они устанавливают governor и ограничения частоты для каждого кластера CPU. Без root они сопоставляются с Android Game Mode: Balance оставляет его без изменений, Dynamic и Performance запрашивают Performance Game Mode, а Dynamic снижает нагрузку, когда устройство перегревается.</string>
+    <string name="gsx_help_6_t">Пользовательский режим и инструменты</string>
+    <string name="gsx_help_6_d">Пользовательский режим меняет ограничения CPU и GPU для каждого режима и требует root для записи. Root Tools (root) и Shizuku Tools (без root) содержат системные усиления, запускаемые при старте игры и восстанавливаемые после её завершения. Термозащита работает в обоих режимах.</string>
+    <string name="gsx_help_7_t">Handheld или Explore</string>
+    <string name="gsx_help_7_d">Handheld — это ландшафтная консоль в стиле Mecha. Explore — это один прокручиваемый экран, который следует вашему стилю обоев. Оба режима используют одни и те же настройки, поэтому при переключении ничего не теряется. Используйте переключатель сверху.</string>
+
+    <!-- Help Center: topik Game Space -->
+    <string name="help_gamespace_title">Game Space</string>
+    <string name="help_gamespace_desc">Запускает ваши игры с оптимальным набором параметров и даёт встроенную панель с актуальной статистикой, быстрыми переключателями и режимами производительности. Работает в режиме Root и в режиме Shizuku (без root).</string>
+    <string name="help_gamespace_b1">Главный переключатель: включает обнаружение. Добавляйте игры через «Add game»; каждая игра может иметь собственный профиль или следовать глобальным настройкам по умолчанию.</string>
+    <string name="help_gamespace_b2">Разрешения: Usage Access находит игру на переднем плане, Display over other apps показывает панель. Оба запрашиваются только здесь.</string>
+    <string name="help_gamespace_b3">Во время сессии ZKM Next может включать Do Not Disturb, блокировать всплывающие уведомления, фиксировать режим яркости и частоту обновления, а также запрашивать Game Mode. Каждое значение сначала сохраняется, а затем восстанавливается после выхода из игры.</string>
+    <string name="help_gamespace_b4">Режимы: Balance, Dynamic и Performance. С root они управляют governor и частотой CPU по кластерам. В режиме Shizuku ADB они сопоставляются с Android Game Mode, а Dynamic снижается, когда устройство сообщает о термическом ограничении.</string>
+    <string name="help_gamespace_b5">Shizuku Tools (без root): Performance Game Mode, очистка памяти, ограничение фоновых процессов со списком всегда разрешённых приложений, выключение Battery Saver и экспериментальный режим фиксированной производительности. Root Tools добавляет приоритет процессов, boost планировщика, read-ahead и swap pressure.</string>
+    <string name="help_gamespace_b6">Стили панели: Energy Cube (ландшафтный хаб с левым и правым меню) или Compact. Handheld — это консоль Mecha; Explore — прокручиваемый экран. Оба используют одни и те же настройки.</string>
+    <string name="help_gamespace_b7">Начальный экран Energy Cube показывает только то, что действительно произошло в этой сессии. Если ваш режим не может выполнить действие, оно просто не отображается.</string>
+    <string name="help_gamespace_warn">Game Mode и фиксированная производительность зависят от прошивки и конкретной игры; некоторые игнорируют их. Управление частотой CPU и GPU требует root. Ограничитель фоновых процессов может задерживать сообщения от ограниченных приложений во время игры.</string>
+
+    <string name="help_faq_gs_shizuku_title">Game Space с Shizuku (без root)</string>
+    <string name="help_faq_gs_shizuku_body">Запустите Shizuku (беспроводная отладка или adb), предоставьте ZKM Next доступ, затем выберите режим ADB в настройках. Game Space затем использует только те команды, которые может выполнять пользователь shell: Game Mode, очистка памяти, appops, настройки и команды питания. Файлы ядра, такие как governor CPU или частоты GPU, нельзя записывать из этого shell, поэтому эти элементы остаются отключёнными, а не поддельными. Если ваш Shizuku работает с root, ZKM Next обнаруживает это и автоматически разблокирует функции root.</string>
+    <string name="help_faq_gs_modes_title">Почему в режиме Shizuku нет ползунка частоты CPU?</string>
+    <string name="help_faq_gs_modes_body">Android позволяет менять частоту CPU и GPU только с root. Приложение без root, которое показывает такой ползунок, ничего не меняло бы. ZKM Next вместо этого использует то, что официально поддерживает Android: Game Mode, термически-aware stepping и ограничение фоновых процессов. Значения Custom Mode всё равно сохраняются и используются сразу после переключения на Root.</string>
+</resources>

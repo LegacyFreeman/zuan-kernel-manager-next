@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Game Space (ZKM Next original implementation) -->
+<resources>
+    <string name="ext_gamespace">Game Space</string>
+    <string name="desc_gamespace">Игровой режим, боковая панель, живые статистики, прицел и профили для каждого приложения</string>
+
+    <!-- notification -->
+    <string name="gs_notif_channel">Game Space</string>
+    <string name="gs_notif_idle">Ожидание запуска игры</string>
+    <string name="gs_notif_playing">Играет %1$s</string>
+
+    <!-- status card -->
+    <string name="gs_master_title">Game Space</string>
+    <string name="gs_status_off">Выкл.</string>
+    <string name="gs_status_starting">Запуск…</string>
+    <string name="gs_status_watching">Ожидание ваших игр</string>
+    <string name="gs_status_playing">Играет %1$s</string>
+    <string name="gs_preview_open">Панель предварительного просмотра</string>
+    <string name="gs_preview_close">Закрыть предпросмотр</string>
+    <string name="gs_preview">Предпросмотр</string>
+    <string name="gs_preview_hint">Не в игре</string>
+
+    <!-- permissions -->
+    <string name="gs_perm_title">Требования</string>
+    <string name="gs_perm_overlay">Отображение поверх других приложений</string>
+    <string name="gs_perm_overlay_desc">Нужно для показа боковой панели и прицела</string>
+    <string name="gs_perm_usage">Доступ к статистике использования</string>
+    <string name="gs_perm_usage_desc">Определяет, какая игра находится на переднем плане</string>
+    <string name="gs_perm_dnd">Доступ к режиму «Не беспокоить»</string>
+    <string name="gs_perm_dnd_desc">Необязательно. Позволяет Game Space подавлять прерывания</string>
+    <string name="gs_perm_shell">Привилегированная оболочка (%1$s)</string>
+    <string name="gs_perm_shell_desc">Нужно для скриншотов, записи, всплывающих уведомлений, режима яркости, игрового режима и частоты обновления. Установите режим работы в Настройках</string>
+    <string name="gs_grant">Предоставить</string>
+
+    <!-- games -->
+    <string name="gs_games_title">Мои игры</string>
+    <string name="gs_add_game">Добавить игру</string>
+    <string name="gs_games_empty">Пока нет игр. Добавьте одну, и Game Space будет запускаться автоматически при открытии.</string>
+    <string name="gs_default_profile">Профиль по умолчанию</string>
+    <string name="gs_custom_profile">Пользовательский профиль</string>
+    <string name="gs_search">Поиск приложений</string>
+    <string name="gs_tag_game">Игра</string>
+    <string name="gs_remove">Удалить</string>
+    <string name="gs_use_custom">Пользовательский профиль</string>
+    <string name="gs_use_custom_desc">Переопределить профиль по умолчанию только для этой игры</string>
+
+    <!-- options -->
+    <string name="gs_defaults_title">Профиль по умолчанию</string>
+    <string name="gs_defaults_desc">Применяется ко всем играм без собственного профиля. Всё восстанавливается, когда вы выходите из игры.</string>
+    <string name="gs_opt_panel">Боковая панель</string>
+    <string name="gs_opt_panel_desc">Показывать угловой маркер со статистикой и быстрыми плитками</string>
+    <string name="gs_opt_dnd">Не беспокоить</string>
+    <string name="gs_opt_dnd_desc">Только приоритетные прерывания во время игры</string>
+    <string name="gs_opt_heads">Блокировать всплывающие уведомления</string>
+    <string name="gs_opt_heads_desc">Не даёт баннерам перекрывать экран</string>
+    <string name="gs_opt_bright">Зафиксировать режим яркости</string>
+    <string name="gs_opt_bright_desc">Отключает адаптивную яркость, чтобы экран не затемнялся</string>
+    <string name="gs_opt_perf">Игровой режим производительности</string>
+    <string name="gs_opt_perf_desc">Запрашивает системный игровой режим производительности для этого приложения</string>
+    <string name="gs_opt_ram">Очищать RAM при запуске</string>
+    <string name="gs_opt_ram_desc">Завершает кэшированные фоновые процессы при открытии игры</string>
+    <string name="gs_opt_hz">Частота обновления</string>
+    <string name="gs_opt_hz_desc">Экспериментально. Зависит от прошивки и дисплея</string>
+    <string name="gs_hz_auto">Авто</string>
+    <string name="gs_opt_cross">Прицел</string>
+    <string name="gs_opt_cross_desc">Прицел, работающий через касание, в центре экрана</string>
+    <string name="gs_cross_size">Размер</string>
+    <string name="gs_cross_opacity">Прозрачность</string>
+
+    <!-- look -->
+    <string name="gs_look_title">Внешний вид панели</string>
+    <string name="gs_look_edge">Край дока</string>
+    <string name="gs_edge_left">Слева</string>
+    <string name="gs_edge_right">Справа</string>
+    <string name="gs_look_accent">Акцент</string>
+    <string name="gs_look_autohide">Автозакрытие панели</string>
+    <string name="gs_never">Никогда</string>
+
+    <!-- panel tiles & messages -->
+    <string name="gs_tile_shot">Снимок</string>
+    <string name="gs_tile_rec">Запись</string>
+    <string name="gs_tile_stop">Стоп</string>
+    <string name="gs_tile_dnd">DND</string>
+    <string name="gs_tile_heads">Без баннера</string>
+    <string name="gs_tile_bright">Яркость</string>
+    <string name="gs_tile_perf">Произв.</string>
+    <string name="gs_tile_ram">Очистка</string>
+    <string name="gs_tile_cross">Прицел</string>
+    <string name="gs_saved">Сохранено %1$s</string>
+    <string name="gs_rec_started">Запись началась (макс. 3 мин)</string>
+    <string name="gs_rec_stopped">Запись сохранена</string>
+    <string name="gs_ram_cleared">Фоновые процессы очищены</string>
+    <string name="gs_need_privileged">Нужен режим Root или Shizuku</string>
+    <string name="gs_no_game">Игровой процесс не запущен. Откройте игру из списка, чтобы использовать режим производительности</string>
+    <string name="gs_shizuku_not_ready">Shizuku не запущен или у ZKM Next пока нет разрешения. Запустите Shizuku и предоставьте доступ</string>
+    <string name="gs_root_denied">Доступ root был отклонён. Предоставьте ZKM Next в менеджере root</string>
+    <string name="gs_cmd_failed">Команда не выполнена: %1$s</string>
+    <string name="gs_need_dnd">Сначала предоставьте доступ к «Не беспокоить»</string>
+    <!-- Energy Cube hub -->
+    <string name="gs_look_style">Стиль наложения</string>
+    <string name="gs_style_cube">Energy Cube</string>
+    <string name="gs_style_compact">Компактная панель</string>
+    <string name="gs_hub_title">ENERGY CUBE</string>
+    <string name="gs_hub_rise">Подъём</string>
+    <string name="gs_hub_mode_balance">Баланс</string>
+    <string name="gs_hub_mode_dynamic">Динамический</string>
+    <string name="gs_hub_mode_performance">Производительность</string>
+    <string name="gs_mode_saved_nonroot">Режим сохранён</string>
+    <string name="gs_mode_failed">Не удалось сменить режим CPU: %1$s</string>
+    <string name="gs_hub_normal">Нормально</string>
+    <string name="gs_hub_cool">Прохладно</string>
+    <string name="gs_hub_warm">Тепло</string>
+    <string name="gs_hub_hot">Жарко</string>
+    <string name="gs_hub_line_perf_on">Усиление производительности включено</string>
+    <string name="gs_hub_line_perf_off">Стандартная производительность</string>
+    <string name="gs_hub_line_quiet">Прерывания заблокированы</string>
+    <string name="gs_hub_line_notif">Уведомления активны</string>
+    <string name="gs_hub_line_rec">Идёт запись</string>
+    <string name="gs_hub_line_cross">Прицел активен</string>
+    <string name="gs_hub_line_ready">Game Space активен</string>
+    <string name="gs_hub_card_perf">Производительность</string>
+    <string name="gs_hub_card_counter">Счётчик</string>
+    <string name="gs_hub_card_cross">Прицел</string>
+    <string name="gs_hub_card_dock">Сторона дока</string>
+    <string name="gs_hub_wifi">Wi‑Fi</string>
+    <string name="gs_hub_dnd">DND</string>
+    <string name="gs_hub_hz_default">По умолчанию</string>
+    <string name="gs_hub_info">Инфо</string>
+    <string name="gs_hub_rotation">Блокировка поворота</string>
+    <string name="gs_hub_screen_rec">Запись экрана</string>
+    <string name="gs_hub_optimize">Оптимизировать</string>
+    <string name="gs_hub_shot">Скриншот</string>
+    <string name="gs_hub_heads">Без баннера</string>
+    <string name="gs_hub_bright">Блокировка яркости</string>
+
+    <!-- screen mode -->
+    <string name="gs_screen_mode_title">Режим экрана</string>
+    <string name="gs_screen_mode_desc">Выберите, как приложение будет отображаться во время использования Game Space.</string>
+    <string name="gs_mode_explore">Исследование</string>
+    <string name="gs_mode_explore_desc">Свободный поворот. Портретная или альбомная ориентация — как вам удобно держать телефон.</string>
+    <string name="gs_mode_handheld">В руке</string>
+    <string name="gs_mode_handheld_desc">Фиксирует приложение в альбомной 16:9 ориентации и открывает полноэкранную консоль Game Space.</string>
+
+    <!-- handheld console -->
+    <string name="gs_hh_brand">GAME SPACE</string>
+    <string name="gs_hh_lobby">Лобби игр</string>
+    <string name="gs_hh_arsenal">Арсенал</string>
+    <string name="gs_hh_arsenal_title">ARSENAL</string>
+    <string name="gs_hh_arsenal_sub">Быстрая загрузка применяется ко всем играм</string>
+    <string name="gs_hh_selected">СЕЙЧАС ВЫБРАНО</string>
+    <string name="gs_hh_start">ЗАПУСТИТЬ ИГРУ</string>
+    <string name="gs_hh_played">Игралась %1$s</string>
+    <string name="gs_hh_never_played">Ещё не играли</string>
+    <string name="gs_hh_no_games">Ваше лобби пусто</string>
+    <string name="gs_hh_no_games_desc">Добавьте игры, и они выстроятся здесь, готовые к запуску.</string>
+    <string name="gs_hh_open_settings">Настройки</string>
+    <string name="gs_hh_cannot_launch">Не удаётся открыть эту игру</string>
+    <string name="gs_hh_cpu">Режим CPU</string>
+    <string name="gs_hh_edit_game">Профиль игры</string>
+    <!-- Handheld: dialog Mecha -->
+    <string name="gs_hh_picker_sub">Выберите приложение для размещения в лобби</string>
+    <string name="gs_hh_games_only">Игры</string>
+    <string name="gs_hh_scanning">СКАНИРОВАНИЕ ПРИЛОЖЕНИЙ</string>
+    <string name="gs_hh_no_apps">Приложения не найдены</string>
+    <string name="gs_hh_apps_count">%1$d приложений</string>
+    <string name="gs_hh_close">Закрыть</string>
+    <string name="gs_hh_done">Готово</string>
+    <string name="gs_hh_profile_sub">Набор для каждой игры</string>
+    <string name="gs_hh_confirm_remove">Нажмите ещё раз, чтобы удалить</string>
+    <string name="gs_hh_settings_sub">Центр управления</string>
+    <string name="gs_hh_tab_system">Система</string>
+    <string name="gs_hh_tab_defaults">По умолчанию</string>
+    <string name="gs_hh_tab_look">Вид</string>
+    <string name="gs_hh_grant">Предоставить</string>
+    <string name="gs_hh_switch_explore">Переключиться в режим исследования</string>
+    <string name="gs_hh_section_loadout">Набор</string>
+    <string name="gs_hh_section_refresh">Частота обновления</string>
+    <string name="gs_hh_section_cross">Прицел</string>
+</resources>

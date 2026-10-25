@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Game Space: Custom Mode, Root Tools, sub-overlay, splash Energy Cube.
+-->
+<resources>
+    <!-- entry points -->
+    <string name="gsx_sb_control_short">Управление</string>
+    <string name="gsx_sb_custom">Пользовательский режим</string>
+    <string name="gsx_sb_root">Root-инструменты</string>
+    <string name="gsx_cp_customize">Настроить режимы</string>
+    <string name="gsx_hub_card_custom">Пользовательский режим</string>
+    <string name="gsx_hub_card_root">Root-инструменты</string>
+    <string name="gsx_sub_close">Закрыть</string>
+
+    <!-- thermal moved note (Game Center > Cooling) -->
+    <string name="gsx_cool_moved_title">Термозащита перемещена</string>
+    <string name="gsx_cool_moved_desc">Откройте Super Base → Пользовательский режим → выберите режим → Thermal. Теперь она задаётся отдельно для каждого режима и по умолчанию отключена.</string>
+
+    <!-- Custom Mode -->
+    <string name="gsx_cm_title">Пользовательский режим</string>
+    <string name="gsx_cm_sub">CPU · GPU · термозащита для каждого режима</string>
+    <string name="gsx_cm_legend">Точка = активный режим. Выберите режим, чтобы редактировать его.</string>
+    <string name="gsx_cm_use">Использовать пользовательские значения</string>
+    <string name="gsx_cm_use_desc">Выкл. = встроенное поведение этого режима</string>
+    <string name="gsx_cm_builtin">Этот режим использует встроенное поведение. Включите пользовательские значения, чтобы задать собственные лимиты CPU / GPU, governor и термозащиту.</string>
+    <string name="gsx_cm_need_root">Лимиты частоты и governor записываются в ядро, для этого нужен Root. Без Root значения сохраняются только локально.</string>
+    <string name="gsx_cm_cpu">CPU</string>
+    <string name="gsx_cm_gpu">GPU</string>
+    <string name="gsx_cm_thermal">Термозащита</string>
+    <string name="gsx_cm_max">Макс. частота</string>
+    <string name="gsx_cm_min">Мин. частота</string>
+    <string name="gsx_cm_governor">Governor</string>
+    <string name="gsx_cm_auto">Авто</string>
+    <string name="gsx_cm_t_guard">Термозащита</string>
+    <string name="gsx_cm_t_guard_desc">Переходить в Balance, когда телефон слишком горячий</string>
+    <string name="gsx_cm_t_limit">Температура срабатывания</string>
+    <string name="gsx_cm_t_note">Использует датчик батареи и возвращается в этот режим, когда температура падает на 3 °C. Не используется, пока активен Balance.</string>
+    <string name="gsx_cm_apply">Применить &amp; активировать</string>
+    <string name="gsx_cm_reset">Сбросить режим</string>
+    <string name="gsx_cm_applied">Режим %1$s применён</string>
+    <string name="gsx_cm_was_reset">Режим сброшен до встроенного поведения</string>
+
+    <!-- Root Tools -->
+    <string name="gsx_rt_title">Root Tools</string>
+    <string name="gsx_rt_sub">Усиления на системном уровне, восстанавливаются после завершения игры</string>
+    <string name="gsx_rt_splash">Начальный экран Energy Cube</string>
+    <string name="gsx_rt_splash_desc">Экран оптимизации на 5 секунд при запуске игры</string>
+    <string name="gsx_rt_section">Применяется при запуске игры</string>
+    <string name="gsx_rt_need_root">Эти ускорения требуют Root. Они остаются выключенными в Shizuku / Basic mode.</string>
+    <string name="gsx_rt_ram">Очистка памяти</string>
+    <string name="gsx_rt_ram_d">Закрывает кэшированные фоновые приложения и сбрасывает page cache</string>
+    <string name="gsx_rt_prio">Приоритет игры</string>
+    <string name="gsx_rt_prio_d">Повышает приоритет CPU / I/O для игры и защищает её от memory killer</string>
+    <string name="gsx_rt_sched">Ускорение планировщика</string>
+    <string name="gsx_rt_sched_d">Включает sched_boost во время игры (ядро должно поддерживать это)</string>
+    <string name="gsx_rt_io">Предзагрузка чтения хранилища</string>
+    <string name="gsx_rt_io_d">Больше предзагрузки чтения для сокращения времени загрузки уровней</string>
+    <string name="gsx_rt_swap">Уменьшить давление swap</string>
+    <string name="gsx_rt_swap_d">Устанавливает swappiness в 20, чтобы игра оставалась в RAM</string>
+    <string name="gsx_rt_clean_now">Очистить память сейчас</string>
+    <string name="gsx_rt_cleaned">Готово — освобождено %1$d МБ</string>
+    <string name="gsx_rt_failed">Не удалось очистить память</string>
+    <string name="gsx_rt_note">Каждое изменение записывается и восстанавливается в конце сессии. Вентилятор, touch sampling и аналогичные аппаратные функции зависят от устройства и здесь не управляются.</string>
+
+    <!-- Energy Cube splash -->
+    <string name="gsx_sp_title">ENERGY CUBE</string>
+    <string name="gsx_sp_mode_on">Режим %1$s включён</string>
+    <string name="gsx_sp_l_prep">Подготовка игры</string>
+    <string name="gsx_sp_l_clean">Очистка и ускорение выполнены</string>
+    <string name="gsx_sp_l_prio">Приоритет игры повышен</string>
+    <string name="gsx_sp_l_perf">Усиление производительности включено</string>
+    <string name="gsx_sp_l_sched">Ускорение планировщика включено</string>
+    <string name="gsx_sp_m_mem">Память очищена</string>
+    <string name="gsx_sp_m_mem_mb">Очищено %1$d МБ памяти</string>
+    <string name="gsx_sp_m_bg">Фоновые приложения закрыты</string>
+    <string name="gsx_sp_m_prio">Процесс игры приоритетен</string>
+    <string name="gsx_sp_m_sched">Ускорение планировщика включено</string>
+    <string name="gsx_sp_m_io">Предзагрузка чтения хранилища увеличена</string>
+    <string name="gsx_sp_m_swap">Давление swap снижено</string>
+    <string name="gsx_sp_m_mode">Режим %1$s готов</string>
+    <string name="gsx_sp_m_ready">Теперь оптимизировано для игр</string>
+    <string name="gsx_cm_cluster_scope">Область CPU</string>
+    <string name="gsx_cm_cluster_all">Все кластеры</string>
+    <string name="gsx_cm_cluster_each">По кластеру</string>
+    <!-- Dynamic engine -->
+    <string name="gsx_dyn_title">Динамический движок</string>
+    <string name="gsx_dyn_live">LIVE</string>
+    <string name="gsx_dyn_idle">Начинает работать, когда игра запущена в режиме Dynamic. Всё, что здесь показано, измеряется, а не является пресетом.</string>
+    <string name="gsx_dyn_stat1">Нагрузка CPU %1$d%% · %2$.1f°C · лимит частоты %3$d%%</string>
+    <string name="gsx_dyn_stat2">RAM %1$d / %2$d МБ свободно · хранилище %3$d%% свободно</string>
+    <string name="gsx_dyn_stat3">Записи CPU %1$d · очистки RAM %2$d · обрезки кэша %3$d</string>
+    <string name="gsx_dyn_last">Последнее действие: %1$s</string>
+    <string name="gsx_dyn_cpu">Адаптивный CPU</string>
+    <string name="gsx_dyn_cpu_d">Поднимает и снижает min/max для каждого кластера по текущей нагрузке и температуре. Учитывает ограничения вашего пользовательского режима.</string>
+    <string name="gsx_dyn_cpu_lock">Нужен Root или запущенный Shizuku с правами root. Заблокировано в Shizuku (ADB) и Basic.</string>
+    <string name="gsx_dyn_ram">Умная RAM</string>
+    <string name="gsx_dyn_ram_d">Очищает кэшированные фоновые приложения, когда свободная RAM становится слишком малой (перерыв 2 мин).</string>
+    <string name="gsx_dyn_sto">Умное хранилище</string>
+    <string name="gsx_dyn_sto_d">Обрезает кэш приложений, когда внутреннее хранилище почти заполнено. Никогда не трогает ваши файлы.</string>
+    <string name="gsx_dyn_locked">ЗАБЛОКИРОВАНО</string>
+    <string name="gsx_dyn_strip">DYNAMIC %1$s · нагрузка %2$d%% · лимит %3$d%%</string>
+    <string name="gsx_tile_trim">Обрезать кэш</string>
+    <string name="gsx_trim_done">Кэш приложений обрезан</string>
+    <string name="gsx_tile_dyn">Dynamic</string>
+    <string name="gsx_dyn_on">Динамический режим включён</string>
+</resources>

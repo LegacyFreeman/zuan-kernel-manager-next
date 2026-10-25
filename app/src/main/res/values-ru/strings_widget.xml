@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget picker -->
+    <string name="zw_name_performance">ZKM Performance</string>
+    <string name="zw_desc_performance">Одним касанием переключайте режимы CPU Balance, Dynamic и Performance.</string>
+    <string name="zw_name_toggles">ZKM Быстрые действия</string>
+    <string name="zw_desc_toggles">Частота обновления, очистка RAM, режим Не беспокоить и ярлыки Game Space.</string>
+    <string name="zw_name_menu">ZKM Меню</string>
+    <string name="zw_desc_menu">Мгновенный переход в Game Space, SoC, Battery, Thermal, Display и другое.</string>
+    <string name="zw_name_games">ZKM Запуск игр</string>
+    <string name="zw_desc_games">Запускайте игры Game Space прямо с главного экрана.</string>
+    <string name="zw_name_stats">ZKM Live Stats</string>
+    <string name="zw_desc_stats">Показатели батареи, потребления, RAM и температуры на одном экране. Нажмите для обновления.</string>
+
+    <!-- Content -->
+    <string name="zw_active_fmt">Активно: %1$s</string>
+    <string name="zw_hz_auto">Авто</string>
+    <string name="zw_hz_fmt">%1$d Гц</string>
+    <string name="zw_on">Вкл.</string>
+    <string name="zw_off">Выкл.</string>
+    <string name="zw_refresh_rate">Обновление</string>
+    <string name="zw_clear_ram">Очистить RAM</string>
+    <string name="zw_free_fmt">Свободно %1$s ГБ</string>
+    <string name="zw_dnd">DND</string>
+    <string name="zw_game_space">Game Space</string>
+    <string name="zw_no_games">Пока нет игр. Добавьте игры в Game Space.</string>
+    <string name="zw_games_count_fmt">%1$d игр</string>
+    <string name="zw_updated_fmt">Обновлено %1$s</string>
+    <string name="zw_stat_battery">Батарея</string>
+    <string name="zw_stat_charging">Заряжается</string>
+    <string name="zw_stat_power">Питание</string>
+    <string name="zw_stat_power_in">Мощность зарядки</string>
+    <string name="zw_stat_power_out">Потребление</string>
+    <string name="zw_stat_ram">RAM %1$s / %2$s ГБ</string>
+    <string name="zw_stat_temp">Температура батареи</string>
+    <string name="zw_cpu_fmt">CPU %1$d МГц</string>
+
+    <!-- Menu labels -->
+    <string name="zw_menu_gamespace">Game Space</string>
+    <string name="zw_menu_soc">SoC</string>
+    <string name="zw_menu_battery">Батарея</string>
+    <string name="zw_menu_thermal">Thermal</string>
+    <string name="zw_menu_display">Display</string>
+    <string name="zw_menu_process">Процесс</string>
+    <string name="zw_menu_terminal">Terminal</string>
+    <string name="zw_menu_storage">Storage</string>
+
+    <!-- Action feedback -->
+    <string name="zw_toast_mode_ok">Применён режим %1$s</string>
+    <string name="zw_toast_failed">Действие не удалось. Требуется доступ Root или Shizuku.</string>
+    <string name="zw_toast_ram_ok">RAM очищена</string>
+    <string name="zw_toast_dnd_denied">Разрешите доступ к Do Not Disturb для ZKM или используйте Root/Shizuku.</string>
+    <string name="zw_toast_hz_fmt">Частота обновления: %1$s</string>
+
+    <!-- App shortcuts (long-press app icon) -->
+    <string name="zw_sc_gamespace_short">Game Space</string>
+    <string name="zw_sc_gamespace_long">Открыть Game Space</string>
+    <string name="zw_sc_boost_short">Performance</string>
+    <string name="zw_sc_boost_long">Режим Performance</string>
+    <string name="zw_sc_ram_short">Очистить RAM</string>
+    <string name="zw_sc_ram_long">Очистить RAM сейчас</string>
+    <string name="zw_sc_thermal_short">Thermal</string>
+    <string name="zw_sc_thermal_long">Открыть Thermal</string>
+</resources>
